@@ -24,10 +24,12 @@ class Controller extends BaseController
 		{
 			foreach($search as $key=>$searchvalue)
 			{
-                if (strtoupper($operation) == 'LIKE') {
-                    $query =  $query->where($tableColumns[$key], $operation, '%'.$searchvalue.'%');
-                } else {
-                    $query =  $query->where($tableColumns[$key], $operation, $searchvalue);
+                if ($searchvalue != '') {
+                    if (strtoupper($operation) == 'LIKE') {
+                        $query =  $query->where($tableColumns[$key], $operation, '%'.$searchvalue.'%');
+                    } else {
+                        $query =  $query->where($tableColumns[$key], $operation, $searchvalue);
+                    }
                 }
 			}
 		}

@@ -37,6 +37,16 @@ Route::namespace('V1')->middleware(['cors'])->group(function() {
             Route::get('user-master/{id}', 'UserMasterController@show');
             Route::post('user-master', 'UserMasterController@store');
             Route::put('user-master/{id}', 'UserMasterController@update');
+
+            Route::get('customer-master', 'CustomerMasterController@index');
+            Route::get('customer-master/{id}', 'CustomerMasterController@show');
+            Route::post('customer-master', 'CustomerMasterController@store');
+            Route::put('customer-master/{id}', 'CustomerMasterController@update');
+
+            Route::get('order-master', 'OrderMasterController@index');
+            Route::get('order-master/{id}', 'OrderMasterController@show');
+            Route::post('order-master', 'OrderMasterController@store');
+            Route::put('order-master/{id}', 'OrderMasterController@update');
         });
     });
     
