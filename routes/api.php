@@ -51,6 +51,9 @@ Route::namespace('V1')->middleware(['cors'])->group(function() {
             Route::get('challan-list', 'ChallanController@index');
 
             Route::get('stock-master', 'StockMasterController@index');
+
+            Route::get('outstanding', 'OutstandingController@index');
+            Route::get('outstanding/{id}', 'OutstandingController@show');
         });
     });
     
