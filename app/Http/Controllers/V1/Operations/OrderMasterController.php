@@ -38,7 +38,7 @@ class OrderMasterController extends Controller {
     }
 
     public function show($id) {
-        $user = OrderMaster::where('id', $id)->first();
+        $user = OrderMasterView::where('id', $id)->first();
         return $this->success('OrderMaster Responses !!', $user, 200);
     }
 
