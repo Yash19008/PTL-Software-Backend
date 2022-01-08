@@ -47,6 +47,8 @@ Route::namespace('V1')->middleware(['cors'])->group(function() {
             Route::get('order-master/{id}', 'OrderMasterController@show');
             Route::post('order-master', 'OrderMasterController@store');
             Route::put('order-master/{id}', 'OrderMasterController@update');
+            
+            Route::get('challan-list', 'ChallanController@index');
         });
     });
     
