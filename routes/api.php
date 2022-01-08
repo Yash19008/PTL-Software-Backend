@@ -54,6 +54,14 @@ Route::namespace('V1')->middleware(['cors'])->group(function() {
 
             Route::get('outstanding', 'OutstandingController@index');
             Route::get('outstanding/{id}', 'OutstandingController@show');
+
+            Route::get('option-master', 'OptionMasterController@index');
+            Route::get('option-master/{id}', 'OptionMasterController@show');
+            Route::put('option-master/{id}', 'OptionMasterController@update');
+
+            Route::get('delete-ptsc-stocks', 'OptionMasterController@deletePtscStock');
+            Route::get('copy-ptsc-stocks', 'OptionMasterController@copyPtscStock');
+            
         });
     });
     
