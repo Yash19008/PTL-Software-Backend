@@ -62,8 +62,11 @@ Route::namespace('V1')->middleware(['cors'])->group(function() {
             Route::get('delete-ptsc-stocks', 'OptionMasterController@deletePtscStock');
             Route::get('copy-ptsc-stocks', 'OptionMasterController@copyPtscStock');
 
-            
             Route::get('search-history', 'SearchHistoryMasterController@index');
+
+            Route::get('push-notification', 'PushNotificationController@index');
+            Route::post('push-notification-size', 'PushNotificationController@sendsize');
+            Route::post('push-notification-message', 'PushNotificationController@sendmessage');
             
         });
     });
