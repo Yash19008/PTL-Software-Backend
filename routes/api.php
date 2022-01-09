@@ -67,6 +67,15 @@ Route::namespace('V1')->middleware(['cors'])->group(function() {
             Route::get('push-notification', 'PushNotificationController@index');
             Route::post('push-notification-size', 'PushNotificationController@sendsize');
             Route::post('push-notification-message', 'PushNotificationController@sendmessage');
+
+            Route::post('search-size', 'SearchSizeController@searchSize');
+
+            Route::get('all-product-group', 'ProductGroupController@all_list');
+            Route::get('product-group', 'ProductGroupController@index');
+            Route::get('product-group/{id}', 'ProductGroupController@show');
+            Route::post('product-group', 'ProductGroupController@store');
+            Route::put('product-group/{id}', 'ProductGroupController@update');
+            Route::delete('product-group/{id}', 'ProductGroupController@destroy');
             
         });
     });
