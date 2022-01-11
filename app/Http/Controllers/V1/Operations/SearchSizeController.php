@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use DB;
 
 use App\Models\V1\Operations\OptionMaster;
+use App\Models\V1\Operations\ProductGroup;
 
 class SearchSizeController extends Controller {
 
@@ -79,6 +80,25 @@ class SearchSizeController extends Controller {
                 ORDER BY utiliz DESC,gsm");
         $output = array_merge($result, $peptek_result);
         return $this->success('Search Size Responses List', $output, 200);
+    }
+    
+    public function getMasters() {
+        $data_record = ProductGroup::all();
+        
+        if($data_record) 
+        { 
+            $output['data']['product_group'] = $data_record;
+            $output['message'] = 'Master Records !!';
+            $output['status'] = 'success';
+        }
+        else
+        {
+           $output['message'] = 'Records not found !!';
+            $output['status'] = 'error';
+        }
+        
+        echo json_encode($output, JSON_NUMERIC_CHECK);
+    
     }
 
 }

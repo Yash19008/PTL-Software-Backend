@@ -134,5 +134,40 @@ class OutstandingController extends Controller {
     {         
         return array( "date" => "date", "customer_name" => "customer_name" , "mobile" => "mobile", "voucher_type" => "voucher_type", "total_amount" => "total_amount", "part_paid" => "part_paid", "balance" => "balance");
     }
+    
+    public function company(Request $request)
+    {
+        $mobile_no = $request->get('mobile');
+        if($mobile_no)
+        {
+            // find how many company is register on this number 
+            $data=array();
+            
+            $data_record=DB::select("SELECT customer_name FROM outstanding WHERE `mobile` = '".$mobile_no."' GROUP BY customer_name");
+          
+            foreach($data_record as $value)
+            {
+            
+                $array=array("company_name" => $value->customer_name);
+                $array1=array("oustanding" => $this->outstanding_details($value->customer_name));
+                $array2=array("summary" => $this->summary($value->customer_name));
+                $array3=array("total" => $this->total($value->customer_name));
+                
+                $data[]=array_merge($array,$array1,$array2,$array3);
+            }
+            
+            $output['data'] = $data;
+            $output['message'] = 'Outstanding List !!';
+            $output['status'] = 'success';
+        }
+        else
+        {
+            $output['message'] = 'No result found !!';
+            $output['status'] = 'error';
+        }
+        
+        echo json_encode($output, JSON_NUMERIC_CHECK);
+
+    }
 
 }

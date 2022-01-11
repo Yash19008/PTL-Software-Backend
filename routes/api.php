@@ -81,5 +81,33 @@ Route::namespace('V1')->middleware(['cors'])->group(function() {
             
         });
     });
+
+    
+    Route::namespace('Authentication')->group(function() {
+        Route::prefix("API_login")->group(function () {
+            Route::get('get_details', 'LoginController@get_details');
+            Route::post('login_new', 'LoginController@login_new');
+            Route::get('verify_no_new', 'LoginController@verify_no_new');
+            Route::get('SendSMS/{mobile_no}', 'LoginController@SendSMS');
+            Route::get('verify_otp', 'LoginController@verify_otp');
+            Route::get('set_password', 'LoginController@set_password');
+        });
+    });
+
+    
+    Route::namespace('Operations')->group(function() {
+        Route::prefix("API_labels")->group(function () {
+            Route::get('labels', 'LabelController@index');
+        });
+        Route::prefix("API_outstand")->group(function () {
+            Route::get('company', 'OutstandingController@company');
+        });
+        Route::prefix("API_search")->group(function () {
+            Route::get('getMasters', 'SearchSizeController@getMasters');
+        });
+        Route::prefix("API_bank")->group(function () {
+            Route::get('bank_details', 'LabelController@bank_details');
+        });
+    });
     
 });
