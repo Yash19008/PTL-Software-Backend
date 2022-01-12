@@ -45,7 +45,6 @@ Route::namespace('V1')->middleware(['cors'])->group(function() {
 
             Route::get('order-master', 'OrderMasterController@index');
             Route::get('order-master/{id}', 'OrderMasterController@show');
-            Route::post('order-master', 'OrderMasterController@store');
             Route::put('order-master/{id}', 'OrderMasterController@update');
             
             Route::get('challan-list', 'ChallanController@index');
@@ -104,9 +103,23 @@ Route::namespace('V1')->middleware(['cors'])->group(function() {
         });
         Route::prefix("API_search")->group(function () {
             Route::get('getMasters', 'SearchSizeController@getMasters');
+            Route::post('search_dynamic_column_wise', 'SearchSizeController@search_dynamic_column_wise');
+            Route::get('GetStockdetail', 'StockMasterController@GetStockdetail');
         });
         Route::prefix("API_bank")->group(function () {
             Route::get('bank_details', 'LabelController@bank_details');
+        });
+        Route::prefix("API_notification")->group(function () {
+            Route::get('push_notification_list', 'PushNotificationController@push_notification_list');
+        });
+        Route::prefix("API_status")->group(function () {
+            Route::get('onactioncall', 'OptionMasterController@onactioncall');
+            Route::get('get_challan_list', 'ChallanController@get_challan_list');
+            Route::get('detials', 'ChallanController@detials');
+        });
+        Route::prefix("API_addorder")->group(function () {
+            Route::get('find_company_list', 'OrderMasterController@find_company_list');
+            Route::post('add_order', 'OrderMasterController@add_order');
         });
     });
     

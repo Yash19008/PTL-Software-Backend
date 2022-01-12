@@ -90,4 +90,9 @@ class OptionMasterController extends Controller {
 
         return $this->success('Peptek Stocks Copied', null, 200);
     }
+    
+    public function onactioncall() {
+        $result1 = OptionMaster::where('option', 'onaction_call')->first();
+	    echo $number_no=$result1->value;
+    }
 }

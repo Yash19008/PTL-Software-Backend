@@ -249,5 +249,19 @@ class PushNotificationController extends Controller {
 
         return $response;
     }
+    
+    public function push_notification_list(Request $request) {
+        
+        $mobile = $request->get('mobile');
+        
+        $data_record=DB::select("SELECT *, DATE_FORMAT(timestamp, '%d-%m-%Y %H:%i:%S') as timestamp FROM `push_not_data` WHERE `mobile` = $mobile ORDER BY id DESC limit 5");
+       
+        $output['data'] = $data_record;
+        $output['message'] = 'Size in Inch Detail !!';
+        $output['status'] = 'success';
+        
+        echo json_encode($output, JSON_NUMERIC_CHECK);
+        
+    }
 
 }
