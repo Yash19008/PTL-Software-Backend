@@ -34,7 +34,7 @@ class StockMasterController extends Controller {
 
     public function GetStockdetail(Request $request) {
         $stock_id = $request->get('stock_id');
-        
+        $data = NULL;
         // search from PTL Stock
         $data_record1 = StockMaster::where('id', $stock_id)->first();
         // print_r($this->db->last_query());exit;
