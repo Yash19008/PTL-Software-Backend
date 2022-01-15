@@ -1,0 +1,65 @@
+<?php
+
+namespace App\Http\Controllers\V1\Operations;
+
+use App\Http\Controllers\Controller;
+
+class LabelController extends Controller {
+
+    public function index()
+    {
+        
+        $data_record['bank_details']['bank_details_title'] = 'Bank Details';
+        $data_record['bank_details']['bank_name'] = 'Bank Name';
+        $data_record['bank_details']['account_name'] = 'Account Name';
+        $data_record['bank_details']['account_number'] = 'Account Number';
+        $data_record['bank_details']['neft_code'] = 'RTGS/NEFT Code';
+        $data_record['bank_details']['branch_location'] = 'Branch Location';
+        $data_record['bank_details']['bank_logo'] = 'Branch Logo';
+        
+        $data_record['contact_us']['logo'] = 'Bank Name';
+        $data_record['contact_us']['addess'] = 'Address: 208/5639, Anita Kutir, New Pant Nagar, Opp. R-odeon Garden, Ghatkopar(E), Mumbai-400075';
+        $data_record['contact_us']['mobile'] = 'Tel: 02249615770';
+        $data_record['contact_us']['email'] = 'paptechsalescorp@gmail.com';
+        
+        
+        $data_record['order_status']['contact_number'] = '7400471233';
+        
+        $output['data'] = $data_record;
+        $output['message'] = 'Labels !!';
+        $output['status'] = 'success';
+        
+        echo json_encode($output, JSON_NUMERIC_CHECK);
+    }
+
+    
+    public function bank_details() {
+        $data=array(
+                    [    
+                        "bank_name"=>'Axis Bank Ltd.',
+                        "account_name"=>'Pap Tech Sales Corporation',
+                        "account_number"=>'9200 200 662 398 03',
+                        "neft_code"=>'UTIB 000 00 29',
+                        "branch_location"=>'Ghatkopar East',
+                        "bank_logo"=>'http://admin.paptechsales.com/assets/global/custom/axis_bank_logo.png'
+                    ]
+                    /*,
+                    [    "bank_name"=>'ABC',
+                        "account_name"=>'ABC',
+                        "account_number"=>'06672 00 00 00 750',
+                        "neft_code"=>'HDFC00000667',
+                        "branch_location"=>'Akruli Road, Kandivali East',
+                        "bank_logo"=>'http://papertradelink.com/assets/global/custom/axis_bank_logo.png'
+                    ],*/
+        );
+                            
+        $data_record['bank_details'] = $data;
+        
+        $output['data'] = $data_record;
+        $output['message'] = 'Size in Inch Detail !!';
+        $output['status'] = 'success';
+        
+        echo json_encode($output, JSON_NUMERIC_CHECK);
+    }
+
+}
