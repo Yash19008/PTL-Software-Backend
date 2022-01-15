@@ -125,7 +125,7 @@ class SearchSizeController extends Controller {
         $data = $this->search_new_common($request, 'dynamic');
         $output1['data'] = $data;
         
-        echo json_encode($output1, JSON_NUMERIC_CHECK);
+        return response()->json($output1, 200);
     }
     
     
