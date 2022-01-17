@@ -166,7 +166,7 @@ class OutstandingController extends Controller {
             $output['status'] = 'error';
         }
         
-        echo json_encode($output, JSON_NUMERIC_CHECK);
+        return response()->json($output, 200);
 
     }
 

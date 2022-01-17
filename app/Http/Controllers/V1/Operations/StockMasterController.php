@@ -64,14 +64,14 @@ class StockMasterController extends Controller {
             $output['status'] = 'error';
         }
         
-        echo json_encode($output, JSON_NUMERIC_CHECK);
+        return response()->json($output, 200);
     
     }
 
     public function full_stock()
     {
         $data_record = StockMaster::all();
-        echo json_encode($data_record, JSON_NUMERIC_CHECK);
+        return response()->json($data_record, 200);
     }
 
 }

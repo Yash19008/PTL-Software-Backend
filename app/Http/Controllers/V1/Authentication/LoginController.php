@@ -53,7 +53,7 @@ class LoginController extends Controller
             } else {
                 $data=array("otp"=>NULL,"active"=>NULL,"count"=>0,"password"=>NULL);
             }
-            echo json_encode($data);
+            return response()->json($data, 200);
         }  
     }
     
@@ -87,11 +87,11 @@ class LoginController extends Controller
             $output['data'] = $data_record;
             $output['message'] = 'Login Successfully Done !!';
             $output['status'] = 'success';
-            echo json_encode($output, JSON_NUMERIC_CHECK);
+            return response()->json($output, 200);
         } catch (\Exception $e) {
             $output['message'] = 'Something is Wrong !!';
             $output['status'] = 'error';
-            echo json_encode($output, JSON_NUMERIC_CHECK);
+            return response()->json($output, 200);
         }
     }
     
@@ -103,12 +103,12 @@ class LoginController extends Controller
                 $data_record = CustomerMaster::where('mobile', $mobile_no)->first();
                 $count=CustomerMaster::where('mobile', $mobile_no)->count();
                 $data=array("otp"=>NULL,"active"=>$data_record->active,"count"=>$count,"password"=>$data_record->password);
-                echo json_encode($data);
+                return response()->json($data, 200);
             } catch (\Exception $e) {
                 \Log::info($e);
                 $output['message'] = 'Something is Wrong !!';
                 $output['status'] = 'error';
-                echo json_encode($output, JSON_NUMERIC_CHECK);
+                return response()->json($output, 200);
             }
         }      
     }

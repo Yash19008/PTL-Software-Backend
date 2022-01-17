@@ -102,7 +102,7 @@ class SearchSizeController extends Controller {
             $output['status'] = 'error';
         }
         
-        echo json_encode($output, JSON_NUMERIC_CHECK);
+        return response()->json($output, 200);
     
     }
     
@@ -250,7 +250,7 @@ class SearchSizeController extends Controller {
             $output1['data'] = $data_record;
             $output1['message'] = 'Size in Inch Record List !!';
             $output1['status'] = 'success';
-            echo json_encode($output1, JSON_NUMERIC_CHECK);
+            return response()->json($output, 200);
         }
         else
         {
