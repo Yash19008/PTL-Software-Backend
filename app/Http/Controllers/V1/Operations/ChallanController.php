@@ -69,7 +69,7 @@ class ChallanController extends Controller {
             $output['message'] = 'No record found !!';
             $output['status'] = 'error';
         }
-        echo json_encode($output, JSON_NUMERIC_CHECK);
+        return response()->json($output, 200);
     }
     
     public function detials(Request $request) {   
@@ -98,7 +98,7 @@ class ChallanController extends Controller {
             $output['message'] = 'No record found !!';
             $output['status'] = 'error';
         }
-        echo json_encode($output, JSON_NUMERIC_CHECK);
+        return response()->json($output, 200);
     }
 
 }

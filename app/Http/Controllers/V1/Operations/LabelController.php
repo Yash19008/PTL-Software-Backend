@@ -29,7 +29,7 @@ class LabelController extends Controller {
         $output['message'] = 'Labels !!';
         $output['status'] = 'success';
         
-        echo json_encode($output, JSON_NUMERIC_CHECK);
+        return response()->json($output, 200);
     }
 
     
@@ -58,7 +58,7 @@ class LabelController extends Controller {
         $output['message'] = 'Size in Inch Detail !!';
         $output['status'] = 'success';
         
-        echo json_encode($output, JSON_NUMERIC_CHECK);
+        return response()->json($output, 200);
     }
 
 }

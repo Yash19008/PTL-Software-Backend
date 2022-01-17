@@ -86,7 +86,7 @@ class OrderMasterController extends Controller {
             $output['status'] = 'error';
         }
         
-        echo json_encode($output, JSON_NUMERIC_CHECK);
+        return response()->json($output, 200);
     }
     
     
@@ -116,7 +116,7 @@ class OrderMasterController extends Controller {
         $output['data'] = $id;
         $output['message'] = 'Record added successfully !!';
         $output['status'] = 'success';
-        echo json_encode($output, JSON_NUMERIC_CHECK);
+        return response()->json($output, 200);
     }
 
 }
