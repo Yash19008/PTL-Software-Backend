@@ -59,7 +59,7 @@ Route::namespace('V1')->middleware(['cors'])->group(function() {
             Route::put('option-master/{id}', 'OptionMasterController@update');
 
             Route::get('delete-ptsc-stocks', 'OptionMasterController@deletePtscStock');
-            Route::get('copy-ptsc-stocks', 'OptionMasterController@copyPtscStock');
+            Route::post('copy-ptsc-stocks', 'OptionMasterController@copyPtscStock');
 
             Route::get('search-history', 'SearchHistoryMasterController@index');
             
