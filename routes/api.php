@@ -105,7 +105,7 @@ Route::namespace('V1')->middleware(['cors'])->group(function() {
             Route::get('getMasters', 'SearchSizeController@getMasters');
             Route::post('search_dynamic_column_wise', 'SearchSizeController@search_dynamic_column_wise');
             Route::get('GetStockdetail', 'StockMasterController@GetStockdetail');
-            Route::get('full_stock', 'StockMasterController@full_stock');
+            Route::post('full_stock', 'StockMasterController@full_stock');
         });
         Route::prefix("API_bank")->group(function () {
             Route::get('bank_details', 'LabelController@bank_details');

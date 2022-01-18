@@ -70,7 +70,20 @@ class StockMasterController extends Controller {
 
     public function full_stock()
     {
-        $data_record = StockMaster::all();
+        $where = '';
+        if(isset($_REQUEST['quality']))
+        {
+            $quality = $_REQUEST['quality'];
+            $where = explode(";", $quality);
+            array_shift($where);
+            foreach($where as $value)
+            {
+                $orwhere=array("quality" => $value);
+            }
+            $data_record = StockMaster::orWhere($orwhere)->get();
+        } else {
+            $data_record = StockMaster::all();
+        }
         return response()->json($data_record, 200);
     }
 
