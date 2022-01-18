@@ -76,11 +76,12 @@ class StockMasterController extends Controller {
             $quality = $_REQUEST['quality'];
             $where = explode(";", $quality);
             array_shift($where);
+            $query =  StockMaster::select("*");
             foreach($where as $value)
             {
-                $orwhere=array("quality" => $value);
+                $query->orWhere('quality', $value);
             }
-            $data_record = StockMaster::orWhere($orwhere)->get();
+            $data_record = $query->get();
         } else {
             $data_record = StockMaster::all();
         }
