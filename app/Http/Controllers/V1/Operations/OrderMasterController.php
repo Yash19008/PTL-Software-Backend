@@ -10,6 +10,7 @@ use App\Http\Requests\Operations\OrderMasterRequest;
 use App\Models\V1\Operations\OrderMaster;
 use App\Models\V1\Operations\OrderMasterView;
 use App\Models\V1\Operations\CustomerMaster;
+use App\Models\V1\Operations\SearchHistoryMaster;
 
 class OrderMasterController extends Controller {
 
@@ -27,6 +28,8 @@ class OrderMasterController extends Controller {
 
     public function show($id) {
         $user = OrderMasterView::where('id', $id)->first();
+        $history = SearchHistoryMaster::where("customer_id", $user->cust_id)->orderBy('timestamp', 'DESC')->first();
+        $user->history = $history;
         return $this->success('OrderMaster Responses !!', $user, 200);
     }
 
