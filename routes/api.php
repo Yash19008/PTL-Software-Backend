@@ -78,6 +78,11 @@ Route::namespace('V1')->middleware(['cors'])->group(function() {
             Route::put('product-group/{id}', 'ProductGroupController@update');
             Route::delete('product-group/{id}', 'ProductGroupController@destroy');
             
+            Route::get('sales_tile', 'DashboardController@sales_tile');
+            Route::get('fastest_selling_tile', 'DashboardController@fastest_selling_tile');
+            Route::get('outstanding_tile', 'DashboardController@outstanding_tile');
+            Route::get('customer_search_history_tile', 'DashboardController@customer_search_history_tile');
+            
         });
     });
 
