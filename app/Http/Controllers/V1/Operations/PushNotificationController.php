@@ -30,7 +30,7 @@ class PushNotificationController extends Controller {
 
     public function getTableColumn()
     {         
-        return array( "id" => "id", "client_id" => "client_id" , "company_name" => "company_name", "mobile" => "mobile", "size_in_inch" => "size_in_inch");
+        return array( "id" => "id", "client_id" => "client_id" , "company_name" => "company_name", "mobile" => "mobile", "size_in_inch" => "size_in_inch", "gsm" => "gsm", "product_group" => "product_group");
     }
 
     public function sendsize(Request $request) {
