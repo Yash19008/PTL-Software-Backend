@@ -88,4 +88,10 @@ class StockMasterController extends Controller {
         return response()->json($data_record, 200);
     }
 
+    public function unique_quality()
+    {
+        $data_record = StockMaster::distinct('quality')->pluck('quality');
+        return response()->json($data_record, 200);
+    }
+
 }
