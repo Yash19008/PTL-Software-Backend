@@ -44,7 +44,7 @@ class PushNotificationController extends Controller {
         
         $new_time = date("Y-m-d H:i:s", strtotime("-$hours minutes"));
 
-        $list=DB::select("SELECT s.id, s.company_name, s.width, s.heigth, s.gsm, s.size_in_inch, s.timestamp, 
+        $list=DB::select("SELECT s.id, s.company_name, s.width, s.heigth, s.gsm, s.size_in_inch, s.timestamp, s.product_group,
         cm.id as client_id, cm.company_name, cm.mobile, cm.active, cm.stock_active, cm.oneSignalUserId, cm.oneSignalTokenId
         FROM search_history_master as s
         LEFT JOIN customer_master as cm ON cm.company_name = s.company_name
@@ -82,6 +82,8 @@ class PushNotificationController extends Controller {
                         $push_not_data['mobile'] = $record->mobile;
                         $push_not_data['onesignal_id'] = $oneSignalUserId;
                         $push_not_data['size_in_inch'] = $size_in_inch;
+                        $push_not_data['product_group'] = $record->product_group;
+                        $push_not_data['gsm'] = $record->gsm;
                         $push_not_data['record'] = json_encode($record);
                         $push_not_data['onesignal_ref_id'] = $send->id;
                         $push_not_data['message'] = $message;
@@ -148,6 +150,7 @@ class PushNotificationController extends Controller {
                 "width" => $data->width,
                 "height" => $data->heigth,
                 "gsm" => $data->gsm,
+                "product_group" => $data->product_group,
             ),
             // 'headings' => $headings,
             'contents' => $content,
