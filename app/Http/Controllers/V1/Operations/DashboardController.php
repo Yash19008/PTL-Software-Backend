@@ -6,6 +6,7 @@ use DB;
 
 use App\Http\Controllers\Controller;
 use App\Models\V1\Operations\OrderMaster;
+use App\Models\V1\Operations\ChallanList;
 use App\Models\V1\Operations\Outstanding;
 
 class DashboardController extends Controller {
@@ -19,14 +20,14 @@ class DashboardController extends Controller {
         [
             $start ." 00:00:00", 
             $end ." 23:59:59"
-        ])->groupBy(DB::raw('DATE(date)'))->orderBy('total_qty', 'DESC')->get();
+        ])->groupBy(DB::raw('DATE(date)'))->orderBy('date', 'DESC')->get();
         
         return response()->json($query, 200);
     }
     
     public function fastest_selling_tile(Request $request) {
-        $query = OrderMaster::selectRaw("*, SUM(qty) as total_qty")
-        ->groupBy('quality')->orderBy('total_qty', 'DESC')->take(50)->get();
+        $query = ChallanList::selectRaw("*, SUM(weight) as total_weight")
+        ->groupBy('quality')->orderBy('total_weight', 'DESC')->take(50)->get();
         
         return response()->json($query, 200);
     }
