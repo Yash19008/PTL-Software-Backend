@@ -27,10 +27,13 @@ class OrderMasterController extends Controller {
     }
 
     public function show($id) {
-        $user = OrderMasterView::where('id', $id)->first();
-        $history = SearchHistoryMaster::where("customer_id", $user->cust_id)->orderBy('timestamp', 'DESC')->first();
-        $user->history = $history;
-        return $this->success('OrderMaster Responses !!', $user, 200);
+        $order = OrderMasterView::where('id', $id)->first();
+        if (!empty($order->last_searched_id) && $order->last_searched_id != null) {
+            $order->history = SearchHistoryMaster::where("id", $order->last_searched_id)->first();
+        } else {
+            $order->history = null;
+        }
+        return $this->success('OrderMaster Responses !!', $order, 200);
     }
 
     public function query()

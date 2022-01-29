@@ -12,6 +12,6 @@ class OrderMasterView extends Model
     public $timestamps = false;
 
     protected $fillable = [
-        'id', 'date', 'cust_id', 'company_name', 'quality', 'size_inch_length', 'size_inch_width' , 'gsm', 'qty', 'weight', 'delivery_at', 'status', 'challan_number'
+        'id', 'date', 'cust_id', 'company_name', 'quality', 'size_inch_length', 'size_inch_width' , 'gsm', 'qty', 'weight', 'delivery_at', 'status', 'challan_number', 'last_searched_id'
     ];
 }
