@@ -27,10 +27,13 @@ class OrderMasterController extends Controller {
     }
 
     public function show($id) {
-        $user = OrderMasterView::where('id', $id)->first();
-        $history = SearchHistoryMaster::where("customer_id", $user->cust_id)->orderBy('timestamp', 'DESC')->first();
-        $user->history = $history;
-        return $this->success('OrderMaster Responses !!', $user, 200);
+        $order = OrderMasterView::where('id', $id)->first();
+        if (!empty($order->last_searched_id) && $order->last_searched_id != null) {
+            $order->history = SearchHistoryMaster::where("id", $order->last_searched_id)->first();
+        } else {
+            $order->history = null;
+        }
+        return $this->success('OrderMaster Responses !!', $order, 200);
     }
 
     public function query()
@@ -95,6 +98,7 @@ class OrderMasterController extends Controller {
     
     public function add_order(Request $request) {
 		  
+        $history = SearchHistoryMaster::where("customer_id", $request->get('customer_id'))->orderBy('timestamp', 'DESC')->first();
         $data = array(
             "date" => date('Y-m-d H:i:s'),
             "cust_id" => $request->get('customer_id'),
@@ -105,6 +109,7 @@ class OrderMasterController extends Controller {
             "product_group" => $request->get('product_group'),
             "qty" => $request->get('qty'),
             "delivery_at" => $request->get('deliv'),
+            "last_searched_id" => $history->id,
             "updated_dt" => date('Y-m-d H:i:s'),
             "update_by" => $request->get('customer_id'),
         );
