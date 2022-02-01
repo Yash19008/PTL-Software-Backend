@@ -153,7 +153,7 @@ class LoginController extends Controller
         if($mobile_no != '' && $get_otp) {
             $count=CustomerMaster::where('mobile', $mobile_no)->where('otp', $get_otp)->count();
             if($count >= 1){
-                $data=CustomerMaster::where('mobile', $mobile_no)->first();
+                $data=CustomerMaster::where('mobile', $mobile_no);
                 $datas=array("otp"=>"Y");
                 $data->update($datas);
             }

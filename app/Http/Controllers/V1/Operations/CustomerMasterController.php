@@ -36,6 +36,12 @@ class CustomerMasterController extends Controller {
 			"total_sheet"=>$request->get('total_sheet') == 'true' ? 'Yes' : 'No'
         ]);
 
+        $data = [
+			"stock_active" => $request->get('stock_active'),
+			"password"=>\Hash::make($request->get('password'))
+        ];
+        CustomerMaster::where('mobile', $request->get('mobile'))->update($data);
+
         return $this->success('CustomerMaster Response Submitted Successully !!', null, 200);
     }
 
@@ -70,6 +76,14 @@ class CustomerMasterController extends Controller {
         ];
     	$stockcolumns->update($data);
 
+        $data = [
+			"stock_active" => $request->get('stock_active')
+        ];
+        if ($request->get('password')) {
+            $data['password'] = \Hash::make($request->get('password'));
+        }
+        CustomerMaster::where('mobile', $request->get('mobile'))->update($data);
+        
         return $this->success('CustomerMaster updated successfully', $user, 200);
     }
 
