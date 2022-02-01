@@ -26,8 +26,10 @@ class DashboardController extends Controller {
     }
     
     public function fastest_selling_tile(Request $request) {
-        $query = ChallanList::selectRaw("*, SUM(weight) as total_weight")
-        ->groupBy('quality')->orderBy('total_weight', 'DESC')->take(50)->get();
+        $query = DB::select("SELECT `quality`, gsm, SUM(`weight`) as total_weight, `size_inch_length`, `size_inch_width`
+        FROM `challan_list`
+        GROUP BY `quality`, `gsm`, `size_inch_length`, `size_inch_width`
+        ORDER BY total_weight DESC");
         
         return response()->json($query, 200);
     }
@@ -46,7 +48,6 @@ class DashboardController extends Controller {
     public function customer_search_history_tile(Request $request) {
         $date = $request->get('date');
         $query = DB::select("SELECT company_name, size_in_inch, gsm, product_group, COUNT(*) count FROM search_history_master WHERE DATE(timestamp) >= '".$date."' AND DATE(timestamp) <= '".$date."' GROUP BY company_name, size_in_inch, gsm, product_group HAVING COUNT(*) > 0 ORDER BY company_name asc, count desc, size_in_inch asc;");
-        \Log::info($query);
         return response()->json($query, 200);
     }
 }

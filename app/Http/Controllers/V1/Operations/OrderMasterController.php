@@ -70,7 +70,7 @@ class OrderMasterController extends Controller {
                 $where=array("mobile" => $mobile);
             }
                 
-            $comany_name= CustomerMaster::where($where)->get();
+            $comany_name= CustomerMaster::where($where)->where('active', 1)->get();
             // remove stdclass from $data_record
             $data_record = json_decode( json_encode($comany_name), true);
                 
