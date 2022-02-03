@@ -98,6 +98,16 @@ class OrderMasterController extends Controller {
     
     public function add_order(Request $request) {
 		  
+        $historyID = null;
+        try {
+            $customer = CustomerMaster::where("id", $request->get('customer_id'))->where('active', "1")->first();
+            $customer_ids = CustomerMaster::where("mobile", $customer->mobile)->pluck('id')->toArray();
+            $history = SearchHistoryMaster::whereIn("customer_id", $customer_ids)->orderBy('timestamp', 'DESC')->first();
+            $historyID = $history->id;
+        } catch (\Exception $e) {
+            \Log::error("Fetch Search history issue for customer " . $request->get('customer_id'));
+            \Log::error($e);
+        }
         $data = array(
             "date" => date('Y-m-d H:i:s'),
             "cust_id" => $request->get('customer_id'),
@@ -108,6 +118,7 @@ class OrderMasterController extends Controller {
             "product_group" => $request->get('product_group'),
             "qty" => $request->get('qty'),
             "delivery_at" => $request->get('deliv'),
+            "last_searched_id" => $historyID,
             "updated_dt" => date('Y-m-d H:i:s'),
             "update_by" => $request->get('customer_id'),
         );
