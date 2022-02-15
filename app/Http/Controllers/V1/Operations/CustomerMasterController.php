@@ -20,7 +20,7 @@ class CustomerMasterController extends Controller {
 			"mobile"=>$request->get('mobile'),
 			"active"=>$request->get('active'),
 			"stock_active"=>$request->get('stock_active'),
-			"password"=>\Hash::make($request->get('password')),
+			"password"=> md5($request->get('password')),
 			"updated_dt"=> Carbon::now()
         ])->id;
 
@@ -38,7 +38,7 @@ class CustomerMasterController extends Controller {
 
         $data = [
 			"stock_active" => $request->get('stock_active'),
-			"password"=>\Hash::make($request->get('password'))
+			"password"=> md5($request->get('password'))
         ];
         CustomerMaster::where('mobile', $request->get('mobile'))->update($data);
 
@@ -58,7 +58,7 @@ class CustomerMasterController extends Controller {
         ];
 
         if ($request->get('password')) {
-            $data['password'] = \Hash::make($request->get('password'));
+            $data['password'] = md5($request->get('password'));
         }
 
     	$user->update($data);
@@ -80,7 +80,7 @@ class CustomerMasterController extends Controller {
 			"stock_active" => $request->get('stock_active')
         ];
         if ($request->get('password')) {
-            $data['password'] = \Hash::make($request->get('password'));
+            $data['password'] = md5($request->get('password'));
         }
         CustomerMaster::where('mobile', $request->get('mobile'))->update($data);
         
