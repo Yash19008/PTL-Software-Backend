@@ -37,6 +37,7 @@ Route::namespace('V1')->middleware(['cors'])->group(function() {
             Route::get('user-master/{id}', 'UserMasterController@show');
             Route::post('user-master', 'UserMasterController@store');
             Route::put('user-master/{id}', 'UserMasterController@update');
+            Route::get('user-details', 'UserMasterController@details');
 
             Route::get('customer-master', 'CustomerMasterController@index');
             Route::get('customer-master/{id}', 'CustomerMasterController@show');
@@ -50,6 +51,8 @@ Route::namespace('V1')->middleware(['cors'])->group(function() {
             Route::get('challan-list', 'ChallanController@index');
 
             Route::get('stock-master', 'StockMasterController@index');
+            Route::post('stocks-import', 'StockMasterController@import');
+            Route::get('last-uploaded-time', 'VendorHistoryController@lastUploaded');
 
             Route::get('outstanding', 'OutstandingController@index');
             Route::get('outstanding/{id}', 'OutstandingController@show');
