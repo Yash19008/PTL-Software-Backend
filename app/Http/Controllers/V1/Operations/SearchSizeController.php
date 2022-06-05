@@ -82,8 +82,8 @@ class SearchSizeController extends Controller {
                 group by quality, gsm, Size_INCH
                 ORDER BY utiliz DESC,gsm");
                 
-            $peptek_result = DB::select("
-                    SELECT 'PTL Vendor' as company, stock_vendors.product_group, stock_vendors.quality, gsm, dup.utiliz, dup.id, 
+            $vendor_result = DB::select("
+                    SELECT usermaster.employee_name as company, stock_vendors.product_group, stock_vendors.quality, gsm, dup.utiliz, dup.id, 
                     CONCAT(size_inch_length,' X ',size_inch_width) as Size_INCH,size_inch_length ,size_inch_width,
                     TRUNCATE(size_inch_length/".$userlength." ,0) AS LEN_UPS ,
                     TRUNCATE(size_inch_width/".$userwidth." ,0) AS WID_UPS ,
@@ -102,11 +102,14 @@ class SearchSizeController extends Controller {
                     HAVING  utiliz >= (SELECT op.value FROM options_master op WHERE op.option='utilization_ups_admin') AND utiliz <= 100 ORDER BY utiliz DESC, size_inch_length ASC) dup
                     ON stock_vendors.id = dup.id
                     
+
+                    LEFT JOIN usermaster ON  usermaster.id = stock_vendors.vendor_id
+
                     ".$where."
                     
                     group by quality, gsm, Size_INCH
                     ORDER BY utiliz DESC,gsm");
-        $output = array_merge($result, $peptek_result);
+        $output = array_merge($result, $peptek_result, $vendor_result);
         return $this->success('Search Size Responses List', $output, 200);
     }
     
@@ -255,7 +258,7 @@ $option_result = OptionMaster::where('option', 'gsm_range')->first();
                 UNION
                 
                 
-                SELECT 'PTL Vendor' as company, stock_vendors.product_group, stock_vendors.quality, gsm, util.utilization, stock_vendors.id,
+                SELECT usermaster.employee_name as company, stock_vendors.product_group, stock_vendors.quality, gsm, util.utilization, stock_vendors.id,
                 CONCAT(size_inch_length,' X ',size_inch_width) as Size_INCH,size_inch_length ,size_inch_width,
                 CONCAT(size_inch_length,' X ',size_inch_width) as size_inch,
                 TRUNCATE(size_inch_length/".$userlength." ,0) AS LEN_UPS ,
@@ -276,6 +279,8 @@ $option_result = OptionMaster::where('option', 'gsm_range')->first();
                     HAVING  utilization >= (SELECT op.value FROM options_master op WHERE op.option='utilization_ups') AND utilization <= 100 
                     ORDER BY utilization DESC, size_inch_length ASC) util
                 ON stock_vendors.id = util.id
+
+                LEFT JOIN usermaster ON  usermaster.id = stock_vendors.vendor_id
                 
                 ".$where."
                 
