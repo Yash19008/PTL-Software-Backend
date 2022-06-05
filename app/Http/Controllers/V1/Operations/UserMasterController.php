@@ -75,7 +75,7 @@ class UserMasterController extends Controller {
     {
         $user = UserMaster::where("id", \Auth::user()->id)->first();
         if ($user) {
-            if ($user->user_status == 0) {
+            if ($user->user_status == 1) {
                 return $this->failure('User not active', null, 500);
             }
             return $this->success('Vendor History Last Uploaded', $user, 200);
