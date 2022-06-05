@@ -70,5 +70,18 @@ class UserMasterController extends Controller {
     {         
         return array( "employee_name" => "employee_name", "email_id" => "email_id" , "userlevel" => "userlevel", "updated_dt" => "updated_dt", "updated_by" => "updated_by", "user_status" => "user_status");
     }
+    
+    public function details()
+    {
+        $user = UserMaster::where("id", \Auth::user()->id)->first();
+        if ($user) {
+            if ($user->user_status == 1) {
+                return $this->failure('User not active', null, 500);
+            }
+            return $this->success('Vendor History Last Uploaded', $user, 200);
+        }
+        return $this->failure('User not found', null, 500);
+    }
+
 
 }
