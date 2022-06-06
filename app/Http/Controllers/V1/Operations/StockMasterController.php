@@ -105,7 +105,7 @@ class StockMasterController extends Controller {
         $errorsObj = new \stdClass();
         try {
             $vendorId = $request->get('vendor_id');
-            if (empty($vendorId) || $vendorId == null) {
+            if (empty($vendorId) || $vendorId == null || $vendorId == 'null') {
                 $vendorId = \Auth::user()->id;
             }
             if (is_file($request->file)) {
