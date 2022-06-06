@@ -83,5 +83,11 @@ class UserMasterController extends Controller {
         return $this->failure('User not found', null, 500);
     }
 
+    public function getAllVendors()
+    {
+        $query = UserMaster::where("userlevel", 2)->where("user_status", 0)->get();
+        return $this->success('All vendors list', $query, 200);
+    }
+
 
 }

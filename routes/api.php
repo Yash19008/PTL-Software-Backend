@@ -38,6 +38,7 @@ Route::namespace('V1')->middleware(['cors'])->group(function() {
             Route::post('user-master', 'UserMasterController@store');
             Route::put('user-master/{id}', 'UserMasterController@update');            
             Route::get('user-details', 'UserMasterController@details');
+            Route::get('all-vendors', 'UserMasterController@getAllVendors');
 
             Route::get('customer-master', 'CustomerMasterController@index');
             Route::get('customer-master/{id}', 'CustomerMasterController@show');
