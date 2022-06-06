@@ -77,7 +77,10 @@ class StockMasterController extends Controller {
         ini_set('memory_limit', '2048M');
         $errorsObj = new \stdClass();
         try {
-            $vendorId = \Auth::user()->id;
+            $vendorId = $request->get('vendor_id');
+            if (empty($vendorId) || $vendorId == null) {
+                $vendorId = \Auth::user()->id;
+            }
             if (is_file($request->file)) {
                 $import = new VendorStocksImport($vendorId, true);
                 $rowsCount = 0;
