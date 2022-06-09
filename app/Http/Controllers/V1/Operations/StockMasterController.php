@@ -55,6 +55,14 @@ class StockMasterController extends Controller {
             $data = $data_record2;
         }
         
+        // search from Paptech Stock
+        $data_record3 = StockVendor::where('id', $stock_id)->first();
+        // print_r($this->db->last_query());exit;
+        if($data_record3 && $data == NULL) 
+        {
+            $data = $data_record3;
+        }
+        
         
         if($data) 
         { 

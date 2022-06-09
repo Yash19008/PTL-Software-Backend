@@ -8,6 +8,8 @@ use Carbon\Carbon;
 
 use App\Http\Requests\Operations\UserMasterRequest;
 use App\Models\V1\Operations\UserMaster;
+use DB;
+
 
 class UserMasterController extends Controller {
 
@@ -51,7 +53,18 @@ class UserMasterController extends Controller {
 
     public function query()
     {
-        $query = UserMaster::select("*");
+        // $query = UserMaster::select("*")
+        //     ->leftJoin('section_update_logs as sul', function ($join) use ($emp_id) {
+        //         $join->on('es.id', '=', 'sul.section_id')
+        //             ->where('sul.emp_id', $emp_id);
+        //     })
+
+        $query = DB::table("usermaster as users")
+            ->select('users.*', DB::raw('DATE_FORMAT(MAX(history.created_at), \'%d/%m/%Y %H:%i:%S\') as last_stock_upload'))
+            ->leftJoin('vendor_upload_history as history', function ($join) {
+                $join->on('users.id', '=', 'history.user_id');
+            })
+            ->groupBy('users.id');
         return $query;
     }
 
@@ -68,7 +81,7 @@ class UserMasterController extends Controller {
 
     public function getTableColumn()
     {         
-        return array( "employee_name" => "employee_name", "email_id" => "email_id" , "userlevel" => "userlevel", "updated_dt" => "updated_dt", "updated_by" => "updated_by", "user_status" => "user_status");
+        return array( "employee_name" => "employee_name", "email_id" => "email_id" , "userlevel" => "userlevel", "updated_dt" => "updated_dt", "updated_by" => "updated_by", "user_status" => "user_status", "last_stock_upload" => "last_stock_upload");
     }
     
     public function details()

@@ -53,6 +53,7 @@ Route::namespace('V1')->middleware(['cors'])->group(function() {
 
             Route::get('stock-master', 'StockMasterController@index');            
             Route::post('stocks-import', 'StockMasterController@import');
+            Route::get('clear_vendor_stock', 'StockMasterController@ClearVendorStock');
             Route::get('last-uploaded-time', 'VendorHistoryController@lastUploaded');
 
             Route::get('outstanding', 'OutstandingController@index');
