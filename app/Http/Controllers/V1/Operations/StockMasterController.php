@@ -54,6 +54,14 @@ class StockMasterController extends Controller {
             $data = $data_record2;
         }
         
+        // search from Paptech Stock
+        $data_record3 = StockVendor::where('id', $stock_id)->first();
+        // print_r($this->db->last_query());exit;
+        if($data_record3 && $data == NULL) 
+        {
+            $data = $data_record3;
+        }
+        
         
         if($data) 
         { 
@@ -134,6 +142,16 @@ class StockMasterController extends Controller {
     function containsOnlyNull($input)
     {
         return empty(array_filter($input, function ($a) { return $a !== null;}));
+    }
+
+    
+    public function ClearVendorStock(Request $request) {
+        try {
+            StockVendor::where("vendor_id", $request->vendor_id)->delete();
+            return $this->success('Vendor Stocks Deleted Successfully !!', null, 200);
+        } catch (\Exception $e) {
+            return $this->failure('Vendor Stocks Deleted Successfully !!', $e->getMessage(), 500);
+        }
     }
 
 }
