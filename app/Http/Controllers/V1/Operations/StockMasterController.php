@@ -11,7 +11,6 @@ use App\Models\V1\Operations\Imports\VendorStocksImport;
 use App\Models\V1\Operations\StockVendor;
 use App\Models\V1\Operations\VendorHistory;
 
-
 class StockMasterController extends Controller {
 
     public function query()
@@ -38,7 +37,7 @@ class StockMasterController extends Controller {
 
     public function GetStockdetail(Request $request) {
         $stock_id = $request->get('stock_id');
-        
+        $data = NULL;
         // search from PTL Stock
         $data_record1 = StockMaster::where('id', $stock_id)->first();
         // print_r($this->db->last_query());exit;
@@ -80,32 +79,6 @@ class StockMasterController extends Controller {
     
     }
 
-    public function full_stock()
-    {
-        $where = '';
-        if(isset($_REQUEST['quality']))
-        {
-            $quality = $_REQUEST['quality'];
-            $where = explode(";", $quality);
-            array_shift($where);
-            $query =  StockMaster::select("*");
-            foreach($where as $value)
-            {
-                $query->orWhere('quality', $value);
-            }
-            $data_record = $query->get();
-        } else {
-            $data_record = StockMaster::all();
-        }
-        return response()->json($data_record, 200);
-    }
-
-    public function unique_quality()
-    {
-        $data_record = StockMaster::distinct('quality')->pluck('quality');
-        return response()->json($data_record, 200);
-    }
-    
     public function import(Request $request)
     {
         ini_set('max_execution_time', 600000);
@@ -171,5 +144,14 @@ class StockMasterController extends Controller {
         return empty(array_filter($input, function ($a) { return $a !== null;}));
     }
 
+    
+    public function ClearVendorStock(Request $request) {
+        try {
+            StockVendor::where("vendor_id", $request->vendor_id)->delete();
+            return $this->success('Vendor Stocks Deleted Successfully !!', null, 200);
+        } catch (\Exception $e) {
+            return $this->failure('Vendor Stocks Deleted Successfully !!', $e->getMessage(), 500);
+        }
+    }
 
 }
