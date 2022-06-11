@@ -79,6 +79,32 @@ class StockMasterController extends Controller {
     
     }
 
+    public function full_stock()
+    {
+        $where = '';
+        if(isset($_REQUEST['quality']))
+        {
+            $quality = $_REQUEST['quality'];
+            $where = explode(";", $quality);
+            array_shift($where);
+            $query =  StockMaster::select("*");
+            foreach($where as $value)
+            {
+                $query->orWhere('quality', $value);
+            }
+            $data_record = $query->get();
+        } else {
+            $data_record = StockMaster::all();
+        }
+        return response()->json($data_record, 200);
+    }
+
+    public function unique_quality()
+    {
+        $data_record = StockMaster::distinct('quality')->pluck('quality');
+        return response()->json($data_record, 200);
+    }
+
     public function import(Request $request)
     {
         ini_set('max_execution_time', 600000);
