@@ -7,12 +7,13 @@ use Maatwebsite\Excel\Concerns\WithValidation;
 use Maatwebsite\Excel\Concerns\WithStartRow;
 use Maatwebsite\Excel\Concerns\SkipsErrors;
 use Maatwebsite\Excel\Concerns\SkipsFailures;
-use Maatwebsite\Excel\Validators\Failure;
+use Maatwebsite\Excel\Concerns\SkipsEmptyRows;
+
 use Carbon\Carbon;
 
 use App\Models\V1\Operations\StockVendor;
 
-class VendorStocksImport implements ToModel, WithValidation, WithStartRow
+class VendorStocksImport implements ToModel, WithValidation, WithStartRow, SkipsEmptyRows
 {
     use SkipsErrors, SkipsFailures;
     private $vendorId = null;
@@ -59,6 +60,7 @@ class VendorStocksImport implements ToModel, WithValidation, WithStartRow
             'vendor_id'     => $this->vendorId,
             'temp_flag'     => 1
         ];
+        // \Log::info($clientRowData);
         $clientId = StockVendor::create($clientRowData)->id;
     }
 
