@@ -133,8 +133,9 @@ class ChallanController extends Controller {
                 }
 
             ]
-         */
-        try {
+        */
+        //ADD STATUS AS "PENDING"/"DELIVERED"
+         try {
             $challanArr = json_decode($request->challanObj, true);
            
             foreach ($challanArr as $key => $value) {
