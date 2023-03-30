@@ -140,8 +140,8 @@ class ChallanController extends Controller {
             foreach ($challanArr as $key => $value) {
                 
                 $insert_challan_array=array(
-                    'customer_name'=>NULL,
-                    'mobile'=>Null,
+                    "customer_name"=> $value['customer_name'],
+                    "mobile"=>$value['mobile'],
                     "date" => date('Y-m-d', strtotime($value['date'])),
                     "challan_no"=> $value['challan_no'],
                     "quality"=>$value['quality'],
