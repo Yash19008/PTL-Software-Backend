@@ -169,5 +169,50 @@ class OutstandingController extends Controller {
         return response()->json($output, 200);
 
     }
+    public function import_outstanding_outside(Request $request){
+        /*
+            outstandingObj = [
+                {
+                    "date" : "2023-03-29",
+                    "customer_name": "A S PACKAGING (DHUMAL NAGAR)",
+                    "mobile":"9699814688",
+                    "email":"aspackaging2017@gmail.com",
+                    "voucher_type":"SB",
+                    "voucher_no":"G-7501",
+                    "credit_days": 30,
+                    "total_amount":15000,
+                    "part_paid":5000,
+                    "balance":10000
+                }
+            ]
+         */
+        try {
+            $outstandingArr = json_decode($request->outstandingObj, true);
+           
+            foreach ($outstandingArr as $key => $value) {
+                
+                $insert_outstanding_array=array(
+                    "date" => date('Y-m-d', strtotime($value['date'])),
+                    "customer_name"=> $value['customer_name'],
+                    "person_name"=>NULL,
+                    "mobile"=>$value['mobile'],
+                    "email"=>$value['email'],
+                    "voucher_type"=>$value['voucher_type'],
+                    "voucher_no"=>$value['voucher_no'],
+                    "credit_days"=> $value['credit_days'],
+                    "due_date"=>NULL,
+                    "over_dues"=>NULL,
+                    "total_amount"=>$value['total_amount'],
+                    "part_paid"=>$value['part_paid'],
+                    "balance"=>$value['balance'],
+                    "updated_at"=>Carbon::now(),
+                );
+                Outstanding::create($insert_outstanding_array);
+            }
+            return $this->success('Import outside outstanding successfully !!', $outstandingArr, 200);
+        } catch (\Exception $e) {
+            return $this->failure('Something Went Wrong !!', $e->getMessage(), 500);
+        }
+    }
 
 }

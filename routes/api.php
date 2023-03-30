@@ -2,6 +2,7 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+//use App\Http\Controllers\V1\Operations\StockMasterController;
 
 /*
 |--------------------------------------------------------------------------
@@ -15,6 +16,7 @@ use Illuminate\Support\Facades\Route;
 */
 
 //Routes which does not for specific tenant
+
 Route::namespace('V1')->middleware(['cors'])->group(function() {
     Route::prefix("auth")->group(function () {
         Route::namespace('Authentication')->group(function() {
@@ -25,6 +27,9 @@ Route::namespace('V1')->middleware(['cors'])->group(function() {
 
     /* Open API */
     Route::namespace('Operations')->group(function() {
+        Route::post('import-stock-outside', 'StockMasterController@import_stock_outside');
+        Route::post('import-challan-outside', 'ChallanController@import_challan_outside');
+        Route::post('import-outstanding-outside', 'OutstandingController@import_outstanding_outside');
         Route::get('business_categories_fulllist', 'BusinessCategoryController@full_list');
     });
     

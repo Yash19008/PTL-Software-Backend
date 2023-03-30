@@ -4,7 +4,7 @@ namespace App\Http\Controllers\V1\Operations;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-
+use Carbon\Carbon;
 use App\Models\V1\Operations\ChallanList;
 use DB;
 
@@ -99,6 +99,69 @@ class ChallanController extends Controller {
             $output['status'] = 'error';
         }
         return response()->json($output, 200);
+    }
+    public function import_challan_outside(Request $request){
+        /*
+            challanObj = [
+                {
+                    "date" : "2023-03-29",
+                    "challan_no": "G-9965",
+                    "quality":"TITAN HI-BRITE GB HWC",
+                    "size_inch_length":28,
+                    "size_inch_width":52,
+                    "gsm":230,
+                    "bdls": 1,
+                    "pkt_grs":1,
+                    "sheets":144,
+                    "weight":31,
+                    "delivery_at":"KANKESHWAR LAMINATORS",
+                    "status":"PENDING"
+                },
+                {
+                    "date" : "2023-03-29",
+                    "challan_no": "G-9965",
+                    "quality":"TITAN HI-BRITE GB HWC",
+                    "size_inch_length":28,
+                    "size_inch_width":52,
+                    "gsm":230,
+                    "bdls": 1,
+                    "pkt_grs":1,
+                    "sheets":144,
+                    "weight":31,
+                    "delivery_at":"KANKESHWAR LAMINATORS",
+                    "status":"PENDING"
+                }
+
+            ]
+         */
+        try {
+            $challanArr = json_decode($request->challanObj, true);
+           
+            foreach ($challanArr as $key => $value) {
+                
+                $insert_challan_array=array(
+                    'customer_name'=>NULL,
+                    'mobile'=>Null,
+                    "date" => date('Y-m-d', strtotime($value['date'])),
+                    "challan_no"=> $value['challan_no'],
+                    "quality"=>$value['quality'],
+                    "size_inch_length"=>$value['size_inch_length'],
+                    "size_inch_width"=>$value['size_inch_width'],
+                    "gsm"=>$value['gsm'],
+                    "bdls"=> $value['bdls'],
+                    "pkt_grs"=>$value['pkt_grs'],
+                    "sheets"=>$value['sheets'],
+                    "weight"=>$value['weight'],
+                    "delivery_at"=>$value['delivery_at'],
+                    "status"=>$value['status'],
+                    "updated_at"=>Carbon::now(),
+                );
+                ChallanList::create($insert_challan_array);
+            }
+            return $this->success('Import outside challan successfully !!', $challanArr, 200);
+        } catch (\Exception $e) {
+            return $this->failure('Something Went Wrong !!', $e->getMessage(), 500);
+        }
     }
 
 }
