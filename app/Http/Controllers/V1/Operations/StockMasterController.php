@@ -210,32 +210,35 @@ class StockMasterController extends Controller {
             ]
          */
         try {
-            $stockArr = json_decode($request->stockObj, true);
+           // $stockArr = json_decode($request->stockObj, true);
             //echo '<pre>';print_r($stockArr);echo '</pre>';exit();
-            
-            foreach ($stockArr as $key => $value) {
-                
-                $insert_stock_array=array(
-                    'product_group'=>$value['product_group'],
-                    'gsm'=>$value['gsm'],
-                    'size_inch_length'=>$value['size_inch_length'],
-                    'size_inch_width'=>$value['size_inch_width'],
-                    'size_cms_length'=>$value['size_cms_length'],
-                    'size_cms_width' => $value['size_cms_width'],
-                    'pkt_grs_weight'=>$value['pkt_grs_weight'],
-                    'sheet'=>$value['sheet'],
-                    'bdls'=>$value['bdls'],
-                    'pkg_mode'=>$value['pkg_mode'],
-                    'pkt_grs'=>$value['pkt_grs'],
-                    'weight'=>$value['weight'],
-                    'quality'=>$value['quality'],
-                    'gwd'=>$value['godown'],
-                    'loc'=>$value['location'],
-                    'updated_at'=>Carbon::now(),
-                );
-                StockMaster::create($insert_stock_array);
+            if(!empty($request->all())){
+                foreach ($request->all() as $key => $value) {
+                    
+                    $insert_stock_array=array(
+                        'product_group'=>$value['product_group'],
+                        'gsm'=>$value['gsm'],
+                        'size_inch_length'=>$value['size_inch_length'],
+                        'size_inch_width'=>$value['size_inch_width'],
+                        'size_cms_length'=>$value['size_cms_length'],
+                        'size_cms_width' => $value['size_cms_width'],
+                        'pkt_grs_weight'=>$value['pkt_grs_weight'],
+                        'sheet'=>$value['sheet'],
+                        'bdls'=>$value['bdls'],
+                        'pkg_mode'=>$value['pkg_mode'],
+                        'pkt_grs'=>$value['pkt_grs'],
+                        'weight'=>$value['weight'],
+                        'quality'=>$value['quality'],
+                        'gwd'=>$value['godown'],
+                        'loc'=>$value['location'],
+                        'updated_at'=>Carbon::now(),
+                    );
+                    StockMaster::create($insert_stock_array);
+                }
+                return $this->success('Import outside stock successfully !!', $request->all(), 200);
+            }else{
+                return $this->failure('Empty data found or Data not proper !!',  500);
             }
-            return $this->success('Import outside stock successfully !!', $stockArr, 200);
         } catch (\Exception $e) {
             return $this->failure('Something Went Wrong !!', $e->getMessage(), 500);
         }
