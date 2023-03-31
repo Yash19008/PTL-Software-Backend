@@ -30,6 +30,8 @@ Route::namespace('V1')->middleware(['cors'])->group(function() {
         Route::post('import-stock-outside', 'StockMasterController@import_stock_outside');
         Route::post('import-challan-outside', 'ChallanController@import_challan_outside');
         Route::post('import-outstanding-outside', 'OutstandingController@import_outstanding_outside');
+
+        Route::post('temp-stock-outside', 'TempController@temp_stock_import');
         Route::get('business_categories_fulllist', 'BusinessCategoryController@full_list');
     });
     
