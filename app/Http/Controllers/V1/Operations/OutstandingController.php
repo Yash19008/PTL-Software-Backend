@@ -190,26 +190,50 @@ class OutstandingController extends Controller {
             //$outstandingArr = json_decode($request->outstandingObj, true);
             if(!empty($request->all())){
                 foreach ($request->all() as $key => $value) {
-                    
-                    $insert_outstanding_array=array(
-                        "date" => date('Y-m-d', strtotime($value['date'])),
-                        "customer_name"=> $value['customer_name'],
-                        "person_name"=>NULL,
-                        "mobile"=>$value['mobile'],
-                        "email"=>$value['email'],
-                        "voucher_type"=>$value['voucher_type'],
-                        "voucher_no"=>$value['voucher_no'],
-                        "credit_days"=> $value['credit_days'],
-                        "due_date"=>NULL,
-                        "over_dues"=>NULL,
-                        "total_amount"=>$value['total_amount'],
-                        "part_paid"=>$value['part_paid'],
-                        "balance"=>$value['balance'],
-                        "updated_at"=>Carbon::now(),
-                    );
-                    Outstanding::create($insert_outstanding_array);
+                    $outstanding = Outstanding::where('voucher_no',$value['voucher_no'])->get();
+                        if(count($outstanding) == 0){
+                            $insert_outstanding_array=array(
+                                "date" => date('Y-m-d', strtotime($value['date'])),
+                                "customer_name"=> $value['customer_name'],
+                                "person_name"=>NULL,
+                                "mobile"=>$value['mobile'],
+                                "email"=>$value['email'],
+                                "voucher_type"=>$value['voucher_type'],
+                                "voucher_no"=>$value['voucher_no'],
+                                "credit_days"=> $value['credit_days'],
+                                "due_date"=>NULL,
+                                "over_dues"=>NULL,
+                                "total_amount"=>$value['total_amount'],
+                                "part_paid"=>$value['part_paid'],
+                                "balance"=>$value['balance'],
+                                "update_on"=>Carbon::now(),
+                            );
+                            Outstanding::create($insert_outstanding_array);
+                        }else{
+                           
+                            foreach ($outstanding as $key => $val) {
+                                $update_outstanding_array=array(
+                                    "date" => $value['date'] ? date('Y-m-d', strtotime($value['date'])) : $val['date'],
+                                    "customer_name"=> $value['customer_name'] ? $value['customer_name'] : $val['customer_name'] ,
+                                    "person_name"=>NULL,
+                                    "mobile"=>$value['mobile'] ? $value['mobile'] : $val['mobile'],
+                                    "email"=>$value['email'] ? $value['email'] : $val['email'],
+                                    "voucher_type"=>$value['voucher_type'] ? $value['voucher_type'] : $val['voucher_type'],
+                                    "voucher_no"=>$value['voucher_no'] ? $value['voucher_no'] : $val['voucher_no'],
+                                    "credit_days"=> $value['credit_days'] ? $value['credit_days'] : $val['credit_days'],
+                                    "due_date"=>NULL,
+                                    "over_dues"=>NULL,
+                                    "total_amount"=>$value['total_amount'] ? $value['total_amount'] : $val['total_amount'],
+                                    "part_paid"=>$value['part_paid'] ? $value['part_paid'] : $val['part_paid'],
+                                    "balance"=>$value['balance'] ? $value['balance'] : $val['balance'],
+                                    "update_on"=>Carbon::now(),
+                                );
+                                Outstanding::where('voucher_no',$value['voucher_no'])->update($update_outstanding_array);
+                            }
+                    }
+                   
                 }
-                return $this->success('Import outside outstanding successfully !!', $outstandingArr, 200);
+                return $this->success('Import outside outstanding successfully !!', $request->all(), 200);
             }else{
                 return $this->failure('Empty data found or Data not proper !!', 500);
             }
