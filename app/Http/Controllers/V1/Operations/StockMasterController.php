@@ -4,6 +4,7 @@ namespace App\Http\Controllers\V1\Operations;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use Carbon\Carbon;
 
 use App\Models\V1\Operations\StockMaster;
 use App\Models\V1\Operations\PeptekStock;
@@ -177,6 +178,122 @@ class StockMasterController extends Controller {
             return $this->success('Vendor Stocks Deleted Successfully !!', null, 200);
         } catch (\Exception $e) {
             return $this->failure('Vendor Stocks Deleted Successfully !!', $e->getMessage(), 500);
+        }
+    }
+    public function import_stock_outside(Request $request){
+        /*
+            stockObj = [
+                {
+                    "product_group" : "GREY BACK",
+                    "gsm": 310,
+                    "size_inch_length":19.3,
+                    "size_inch_width":39.8,
+                    "size_cms_length":49,
+                    "size_cms_width":101,
+                    "pkt_grs_weight": 22.1,
+                    "sheet":144,
+                    "bdls":7,
+                    "pkg_mode":3,
+                    "pkt_grs":21,
+                    "weight":464.1,
+                    "quality":"3M DUPLEX BOARD HWC",
+                    "godown":"GN 2",
+                    "location":"1/K-6"
+                },
+                {
+                    "product_group" : "GREY BACK",
+                    "gsm": 296,
+                    "size_inch_length":31.5,
+                    "size_inch_width":41.54,
+                    "size_cms_length":80,
+                    "size_cms_width":105.5,
+                    "pkt_grs_weight": 25,
+                    "sheet":100,
+                    "bdls":1,
+                    "pkg_mode":2,
+                    "pkt_grs":2,
+                    "weight":50,
+                    "quality":"3M PEARL WHITE GB",
+                    "godown":"GN 2",
+                    "location":"A-35"
+                },
+                {
+                 "product_group" : "GREY BACK",
+                    "gsm": 296,
+                    "size_inch_length":32,
+                    "size_inch_width":41.5,
+                    "size_cms_length":81.5,
+                    "size_cms_width":105.5,
+                    "pkt_grs_weight": 18.3,
+                    "sheet":72,
+                    "bdls":1,
+                    "pkg_mode":3,
+                    "pkt_grs":2,
+                    "weight":36.6,
+                    "quality":"3M PEARL WHITE GB",
+                    "godown":"GN 2",
+                    "location":"D-25"
+                }
+            ]
+         */
+        try {
+           // $stockArr = json_decode($request->stockObj, true);
+            //echo '<pre>';print_r($stockArr);echo '</pre>';exit();
+            if(!empty($request->all())){
+                foreach ($request->all() as $key => $value) {
+                    $stock = StockMaster::where('gsm',$value['gsm'])->where('size_inch_length',$value['size_inch_length'])->where('size_inch_width',$value['size_inch_width'])->where('quality',$value['quality'])->where('pkg_mode',$value['pkg_mode'])->where('gwd',$value['godown'])->where('loc',$value['location'])->get();
+                   
+                    if(count($stock) == 0){
+                        $insert_stock_array=array(
+                            'product_group'=>$value['product_group'],
+                            'gsm'=>$value['gsm'],
+                            'size_inch_length'=>$value['size_inch_length'],
+                            'size_inch_width'=>$value['size_inch_width'],
+                            'size_cms_length'=>$value['size_cms_length'],
+                            'size_cms_width' => $value['size_cms_width'],
+                            'pkt_grs_weight'=>$value['pkt_grs_weight'],
+                            'sheet'=>$value['sheet'],
+                            'bdls'=>$value['bdls'],
+                            'pkg_mode'=>$value['pkg_mode'],
+                            'pkt_grs'=>$value['pkt_grs'],
+                            'weight'=>$value['weight'],
+                            'quality'=>$value['quality'],
+                            'gwd'=>$value['godown'],
+                            'loc'=>$value['location'],
+                            'updated_on'=>Carbon::now(),
+                        );
+                        StockMaster::create($insert_stock_array);
+                    }else{
+                        foreach ($stock as $key => $val) {
+                            $update_stock_array=array(
+                                'product_group'=>$value['product_group'] ? $value['product_group'] : $val['product_group'],
+                                'gsm'=>$value['gsm'] ? $value['gsm'] : $val['gsm'],
+                                'size_inch_length'=>$value['size_inch_length']? $value['size_inch_length'] : $val['size_inch_length'],
+                                'size_inch_width'=>$value['size_inch_width'] ? $value['size_inch_width'] : $val['size_inch_width'],
+                                'size_cms_length'=>$value['size_cms_length'] ? $value['size_cms_length'] : $val['size_cms_length'],
+                                'size_cms_width' => $value['size_cms_width'] ? $value['size_cms_width'] : $val['size_cms_width'],
+                                'pkt_grs_weight'=>$value['pkt_grs_weight'] ? $value['pkt_grs_weight'] : $val['pkt_grs_weight'],
+                                'sheet'=>$value['sheet'] ? $value['sheet'] : $val['sheet'],
+                                'bdls'=>$value['bdls'] ? $value['bdls'] : $val['bdls'],
+                                'pkg_mode'=>$value['pkg_mode'] ? $value['pkg_mode'] : $val['pkg_mode'],
+                                'pkt_grs'=>$value['pkt_grs'] ? $value['pkt_grs'] : $val['pkt_grs'],
+                                'weight'=>$value['weight'] ? $value['weight'] : $val['weight'],
+                                'quality'=>$value['quality'] ? $value['quality'] : $val['quality'],
+                                'gwd'=>$value['godown'] ? $value['godown'] : $val['godown'],
+                                'loc'=>$value['location'] ? $value['location'] : $val['location'],
+                                'updated_on'=>Carbon::now(),
+                            );
+                            
+                            StockMaster::where('gsm',$value['gsm'])->where('size_inch_length',$value['size_inch_length'])->where('size_inch_width',$value['size_inch_width'])->where('quality',$value['quality'])->where('pkg_mode',$value['pkg_mode'])->where('gwd',$value['godown'])->where('loc',$value['location'])->update($update_stock_array);
+                        }
+                    }
+                }
+                return $this->success('Import outside stock successfully !!', $request->all(), 200);
+            }else{
+                return $this->failure('Empty data found or Data not proper !!',  500);
+            }
+        } catch (\Exception $e) {
+            return $this->failure('Something Went Wrong !!', $e->getMessage(), 500);
         }
     }
 
