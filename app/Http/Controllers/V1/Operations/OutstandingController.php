@@ -212,19 +212,17 @@ class OutstandingController extends Controller {
                            
                             foreach ($outstanding as $key => $val) {
                                 $update_outstanding_array=array(
-                                    "date" => $value['date'] ? date('Y-m-d', strtotime($value['date'])) : $val['date'],
-                                    "customer_name"=> $value['customer_name'] ? $value['customer_name'] : $val['customer_name'] ,
-                                    "person_name"=>NULL,
-                                    "mobile"=>$value['mobile'] ? $value['mobile'] : $val['mobile'],
-                                    "email"=>$value['email'] ? $value['email'] : $val['email'],
-                                    "voucher_type"=>$value['voucher_type'] ? $value['voucher_type'] : $val['voucher_type'],
-                                    "voucher_no"=>$value['voucher_no'] ? $value['voucher_no'] : $val['voucher_no'],
-                                    "credit_days"=> $value['credit_days'] ? $value['credit_days'] : $val['credit_days'],
-                                    "due_date"=>NULL,
+                                    "date" => date('Y-m-d', strtotime($value['date'])),
+                                    "customer_name"=> $value['customer_name'] ,
+                                    "mobile"=>$value['mobile'],
+                                    "email"=>$value['email'],
+                                    "voucher_type"=>$value['voucher_type'],
+                                    "voucher_no"=>$value['voucher_no'],
+                                    "credit_days"=> $value['credit_days'],
                                     "over_dues"=>NULL,
-                                    "total_amount"=>$value['total_amount'] ? $value['total_amount'] : $val['total_amount'],
-                                    "part_paid"=>$value['part_paid'] ? $value['part_paid'] : $val['part_paid'],
-                                    "balance"=>$value['balance'] ? $value['balance'] : $val['balance'],
+                                    "total_amount"=>$value['total_amount'] ,
+                                    "part_paid"=>$value['part_paid'],
+                                    "balance"=>$value['balance'],
                                     "update_on"=>Carbon::now(),
                                 );
                                 Outstanding::where('voucher_no',$value['voucher_no'])->update($update_outstanding_array);
