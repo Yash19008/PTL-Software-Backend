@@ -238,7 +238,7 @@ class StockMasterController extends Controller {
                         );
                         StockMaster::create($insert_stock_array);
                     }else{
-                        if($value['location_new'] != ''){
+                       // if($value['location_new'] != ''){
                             foreach ($stock as $key => $val) {
                                 $update_stock_array=array(
                                     'product_group'=>$value['product_group']  ,
@@ -255,13 +255,13 @@ class StockMasterController extends Controller {
                                     'weight'=>$value['weight'],
                                     'quality'=>$value['quality'],
                                     'gwd'=>$value['godown'] ,
-                                    'loc'=>$value['location'],
+                                    'loc'=>$value['location_new'] != '' ? $value['location_new'] : $value['location'],
                                     'updated_on'=>Carbon::now(),
                                 );
                             
                                 StockMaster::where('gsm',$value['gsm'])->where('size_inch_length',$value['size_inch_length'])->where('size_inch_width',$value['size_inch_width'])->where('quality',$value['quality'])->where('pkg_mode',$value['pkg_mode'])->where('gwd',$value['godown'])->where('loc',$value['location'])->update($update_stock_array);
                             }
-                        }
+                       // }
                     }
                 }
                 return $this->success('Import outside stock successfully !!', $request->all(), 200);
