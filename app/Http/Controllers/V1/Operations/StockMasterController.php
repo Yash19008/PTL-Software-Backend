@@ -212,10 +212,11 @@ class StockMasterController extends Controller {
         try {
            // $stockArr = json_decode($request->stockObj, true);
            // echo '<pre>';print_r($request->all());echo '</pre>';exit();
+         
             if(!empty($request->all())){
                 foreach ($request->all() as $key => $value) {
                     $stock = StockMaster::where('gsm',$value['gsm'])->where('size_inch_length',$value['size_inch_length'])->where('size_inch_width',$value['size_inch_width'])->where('quality',$value['quality'])->where('pkg_mode',$value['pkg_mode'])->where('gwd',$value['godown'])->where('loc',$value['location'])->get();
-                  
+                    
                     if(count($stock) == 0){
                         $insert_stock_array=array(
                             'product_group'=>$value['product_group'],
@@ -237,27 +238,29 @@ class StockMasterController extends Controller {
                         );
                         StockMaster::create($insert_stock_array);
                     }else{
-                        foreach ($stock as $key => $val) {
-                            $update_stock_array=array(
-                                'product_group'=>$value['product_group']  ,
-                                'gsm'=>$value['gsm'] ,
-                                'size_inch_length'=>$value['size_inch_length'] ,
-                                'size_inch_width'=>$value['size_inch_width'],
-                                'size_cms_length'=>$value['size_cms_length'],
-                                'size_cms_width' => $value['size_cms_width'],
-                                'pkt_grs_weight'=>$value['pkt_grs_weight'],
-                                'sheet'=>$value['sheet'],
-                                'bdls'=>$value['bdls'],
-                                'pkg_mode'=>$value['pkg_mode'],
-                                'pkt_grs'=>$value['pkt_grs'],
-                                'weight'=>$value['weight'],
-                                'quality'=>$value['quality'],
-                                'gwd'=>$value['godown'] ,
-                                'loc'=>$value['location'],
-                                'updated_on'=>Carbon::now(),
-                            );
-                          
-                            StockMaster::where('gsm',$value['gsm'])->where('size_inch_length',$value['size_inch_length'])->where('size_inch_width',$value['size_inch_width'])->where('quality',$value['quality'])->where('pkg_mode',$value['pkg_mode'])->where('gwd',$value['godown'])->where('loc',$value['location'])->update($update_stock_array);
+                        if($value['location_new'] != ''){
+                            foreach ($stock as $key => $val) {
+                                $update_stock_array=array(
+                                    'product_group'=>$value['product_group']  ,
+                                    'gsm'=>$value['gsm'] ,
+                                    'size_inch_length'=>$value['size_inch_length'] ,
+                                    'size_inch_width'=>$value['size_inch_width'],
+                                    'size_cms_length'=>$value['size_cms_length'],
+                                    'size_cms_width' => $value['size_cms_width'],
+                                    'pkt_grs_weight'=>$value['pkt_grs_weight'],
+                                    'sheet'=>$value['sheet'],
+                                    'bdls'=>$value['bdls'],
+                                    'pkg_mode'=>$value['pkg_mode'],
+                                    'pkt_grs'=>$value['pkt_grs'],
+                                    'weight'=>$value['weight'],
+                                    'quality'=>$value['quality'],
+                                    'gwd'=>$value['godown'] ,
+                                    'loc'=>$value['location'],
+                                    'updated_on'=>Carbon::now(),
+                                );
+                            
+                                StockMaster::where('gsm',$value['gsm'])->where('size_inch_length',$value['size_inch_length'])->where('size_inch_width',$value['size_inch_width'])->where('quality',$value['quality'])->where('pkg_mode',$value['pkg_mode'])->where('gwd',$value['godown'])->where('loc',$value['location'])->update($update_stock_array);
+                            }
                         }
                     }
                 }
