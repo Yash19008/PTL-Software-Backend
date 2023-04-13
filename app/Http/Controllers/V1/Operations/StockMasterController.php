@@ -280,7 +280,7 @@ class StockMasterController extends Controller {
                                 'weight'=>$value['weight'],
                                 'quality'=>$value['quality'],
                                 'gwd'=>$value['godown'],
-                                'loc'=>$value['location'],
+                                'loc'=>$value['location_new'] != '' ? $value['location_new'] : $value['location'],
                                 'updated_on'=>Carbon::now(),
                             );
                             
