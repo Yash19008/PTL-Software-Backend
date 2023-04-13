@@ -33,6 +33,8 @@ Route::namespace('V1')->middleware(['cors'])->group(function() {
         Route::post('temp-stock-outside', 'TempController@temp_stock_import');
         Route::get('business_categories_fulllist', 'BusinessCategoryController@full_list');
         Route::get('delete-all-stock', 'StockMasterController@deleteAllStock');
+        Route::get('delete-all-outstandings', 'OutstandingController@deleteAllOutstanding');
+        Route::get('delete-all-challan', 'ChallanController@deleteAllChallan');
     });
     
     Route::middleware(['jwt.verify'])->group(function() {
