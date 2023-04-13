@@ -192,6 +192,9 @@ class ChallanController extends Controller {
             return $this->failure('Something Went Wrong !!', $e->getMessage(), 500);
         }
     }
-
+    public function deleteAllChallan(){
+        ChallanList::truncate();
+        return $this->success('Challan table truncated successfully !!', 200);
+    }
 
 }

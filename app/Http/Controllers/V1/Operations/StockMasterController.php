@@ -296,5 +296,8 @@ class StockMasterController extends Controller {
             return $this->failure('Something Went Wrong !!', $e->getMessage(), 500);
         }
     }
-
+    public function deleteAllStock(){
+        StockMaster::truncate();
+        return $this->success('Stock table truncated successfully !!', 200);
+    }
 }

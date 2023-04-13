@@ -238,5 +238,8 @@ class OutstandingController extends Controller {
             return $this->failure('Something Went Wrong !!', $e->getMessage(), 500);
         }
     }
-
+    public function deleteAllOutstanding(){
+        Outstanding::truncate();
+        return $this->success('Outstanding table truncated successfully !!', 200);
+    }
 }

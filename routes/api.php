@@ -29,6 +29,9 @@ Route::namespace('V1')->middleware(['cors'])->group(function() {
         Route::post('import-challan-outside', 'ChallanController@import_challan_outside');
         Route::post('import-outstanding-outside', 'OutstandingController@import_outstanding_outside');
         Route::get('business_categories_fulllist', 'BusinessCategoryController@full_list');
+        Route::get('delete-all-stock', 'StockMasterController@deleteAllStock');
+        Route::get('delete-all-outstandings', 'OutstandingController@deleteAllOutstanding');
+        Route::get('delete-all-challan', 'ChallanController@deleteAllChallan');
     });
     
     Route::middleware(['jwt.verify'])->group(function() {
