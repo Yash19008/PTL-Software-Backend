@@ -30,6 +30,12 @@ class StockMasterController extends Controller {
         return $this->success('OrderMaster Responses List', $query, 200);
     }
 
+    public function totalWeight() {
+        $sum = StockMaster::sum('weight');
+        return $this->success('Total sum of weights', $sum, 200);
+    }
+
+
     public function getTableColumn()
     {         
         return array( "id" => "id", "product_group" => "product_group" , "gsm" => "gsm", "size_inch_length" => "size_inch_length", "size_inch_width" => "size_inch_width", "size_cms_length" => "size_cms_length", "size_cms_width" => "size_cms_width", "pkt_grs_weight" => "pkt_grs_weight", "sheet" => "sheet", "bdls" => "bdls", "pkt_grs" => "pkt_grs", "pkg_mode" => "pkg_mode", "weight" => "weight", "quality" => "quality", "gwd" => "gwd", "loc" => "loc", "updated_on" => "updated_on");
