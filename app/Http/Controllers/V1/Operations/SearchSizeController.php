@@ -26,7 +26,7 @@ class SearchSizeController extends Controller {
         $upper_range = $gsm + $gsm_range;
         $lower_range = $gsm - $gsm_range;
             
-        $where = " WHERE 1=1 ";
+        $where = " WHERE 1=1 AND weight > 0 ";
         if ($group_name) {
             $where = $where." AND product_group = '".$group_name."'";
         }
@@ -193,7 +193,7 @@ $option_result = OptionMaster::where('option', 'gsm_range')->first();
         $upper_range = $gsm + $gsm_range;
         $lower_range = $gsm - $gsm_range;
         
-        $where = " WHERE 1=1 ";
+        $where = " WHERE 1=1  AND weight > 0 ";
         if($product_group) {
             $where = $where." AND product_group = '".$product_group."'";
         }

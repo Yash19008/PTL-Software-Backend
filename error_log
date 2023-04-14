@@ -1,0 +1,36 @@
+[15-Jan-2022 09:02:10 UTC] PHP Warning:  require(/home/bkrufiyvmc69/public_html/vendor/autoload.php): failed to open stream: No such file or directory in /home/bkrufiyvmc69/public_html/artisan on line 18
+[15-Jan-2022 09:02:10 UTC] PHP Fatal error:  require(): Failed opening required '/home/bkrufiyvmc69/public_html/vendor/autoload.php' (include_path='.:/opt/alt/php56/usr/share/pear:/opt/alt/php56/usr/share/php') in /home/bkrufiyvmc69/public_html/artisan on line 18
+[15-Jan-2022 09:02:18 UTC] PHP Warning:  require(/home/bkrufiyvmc69/public_html/vendor/autoload.php): failed to open stream: No such file or directory in /home/bkrufiyvmc69/public_html/artisan on line 18
+[15-Jan-2022 09:02:18 UTC] PHP Fatal error:  require(): Failed opening required '/home/bkrufiyvmc69/public_html/vendor/autoload.php' (include_path='.:/opt/alt/php56/usr/share/pear:/opt/alt/php56/usr/share/php') in /home/bkrufiyvmc69/public_html/artisan on line 18
+[15-Jan-2022 09:02:25 UTC] PHP Warning:  require(/home/bkrufiyvmc69/public_html/vendor/autoload.php): failed to open stream: No such file or directory in /home/bkrufiyvmc69/public_html/artisan on line 18
+[15-Jan-2022 09:02:26 UTC] PHP Fatal error:  require(): Failed opening required '/home/bkrufiyvmc69/public_html/vendor/autoload.php' (include_path='.:/opt/alt/php56/usr/share/pear:/opt/alt/php56/usr/share/php') in /home/bkrufiyvmc69/public_html/artisan on line 18
+[15-Jan-2022 09:02:39 UTC] PHP Warning:  require(/home/bkrufiyvmc69/public_html/vendor/autoload.php): failed to open stream: No such file or directory in /home/bkrufiyvmc69/public_html/artisan on line 18
+[15-Jan-2022 09:02:39 UTC] PHP Fatal error:  require(): Failed opening required '/home/bkrufiyvmc69/public_html/vendor/autoload.php' (include_path='.:/opt/alt/php56/usr/share/pear:/opt/alt/php56/usr/share/php') in /home/bkrufiyvmc69/public_html/artisan on line 18
+[15-Jan-2022 09:16:07 UTC] PHP Fatal error:  Uncaught TypeError: Argument 1 passed to Illuminate\Log\Logger::__construct() must be an instance of Psr\Log\LoggerInterface, instance of Monolog\Logger given, called in /home/bkrufiyvmc69/public_html/vendor/laravel/framework/src/Illuminate/Log/LogManager.php on line 175 and defined in /home/bkrufiyvmc69/public_html/vendor/laravel/framework/src/Illuminate/Log/Logger.php:36
+Stack trace:
+#0 /home/bkrufiyvmc69/public_html/vendor/laravel/framework/src/Illuminate/Log/LogManager.php(175): Illuminate\Log\Logger->__construct(Object(Monolog\Logger), Object(Illuminate\Events\Dispatcher))
+#1 /home/bkrufiyvmc69/public_html/vendor/laravel/framework/src/Illuminate/Log/LogManager.php(122): Illuminate\Log\LogManager->createEmergencyLogger()
+#2 /home/bkrufiyvmc69/public_html/vendor/laravel/framework/src/Illuminate/Log/LogManager.php(98): Illuminate\Log\LogManager->get('stack')
+#3 /home/bkrufiyvmc69/public_html/vendor/laravel/framework/src/Illuminate/Log/LogManager.php(543): Illuminate\Log\LogManager->driver()
+#4 /home/bkrufiy in /home/bkrufiyvmc69/public_html/vendor/laravel/framework/src/Illuminate/Log/Logger.php on line 36
+[15-Jan-2022 09:16:07 UTC] PHP Fatal error:  Uncaught TypeError: Argument 1 passed to Illuminate\Log\Logger::__construct() must be an instance of Psr\Log\LoggerInterface, instance of Monolog\Logger given, called in /home/bkrufiyvmc69/public_html/vendor/laravel/framework/src/Illuminate/Log/LogManager.php on line 175 and defined in /home/bkrufiyvmc69/public_html/vendor/laravel/framework/src/Illuminate/Log/Logger.php:36
+Stack trace:
+#0 /home/bkrufiyvmc69/public_html/vendor/laravel/framework/src/Illuminate/Log/LogManager.php(175): Illuminate\Log\Logger->__construct(Object(Monolog\Logger), Object(Illuminate\Events\Dispatcher))
+#1 /home/bkrufiyvmc69/public_html/vendor/laravel/framework/src/Illuminate/Log/LogManager.php(122): Illuminate\Log\LogManager->createEmergencyLogger()
+#2 /home/bkrufiyvmc69/public_html/vendor/laravel/framework/src/Illuminate/Log/LogManager.php(98): Illuminate\Log\LogManager->get('stack')
+#3 /home/bkrufiyvmc69/public_html/vendor/laravel/framework/src/Illuminate/Log/LogManager.php(543): Illuminate\Log\LogManager->driver()
+#4 /home/bkrufiy in /home/bkrufiyvmc69/public_html/vendor/laravel/framework/src/Illuminate/Log/Logger.php on line 36
+[15-Jan-2022 09:36:54 UTC] PHP Fatal error:  Uncaught TypeError: Argument 1 passed to Illuminate\Log\Logger::__construct() must be an instance of Psr\Log\LoggerInterface, instance of Monolog\Logger given, called in /home/bkrufiyvmc69/public_html/vendor/laravel/framework/src/Illuminate/Log/LogManager.php on line 175 and defined in /home/bkrufiyvmc69/public_html/vendor/laravel/framework/src/Illuminate/Log/Logger.php:36
+Stack trace:
+#0 /home/bkrufiyvmc69/public_html/vendor/laravel/framework/src/Illuminate/Log/LogManager.php(175): Illuminate\Log\Logger->__construct(Object(Monolog\Logger), Object(Illuminate\Events\Dispatcher))
+#1 /home/bkrufiyvmc69/public_html/vendor/laravel/framework/src/Illuminate/Log/LogManager.php(122): Illuminate\Log\LogManager->createEmergencyLogger()
+#2 /home/bkrufiyvmc69/public_html/vendor/laravel/framework/src/Illuminate/Log/LogManager.php(98): Illuminate\Log\LogManager->get('stack')
+#3 /home/bkrufiyvmc69/public_html/vendor/laravel/framework/src/Illuminate/Log/LogManager.php(543): Illuminate\Log\LogManager->driver()
+#4 /home/bkrufiy in /home/bkrufiyvmc69/public_html/vendor/laravel/framework/src/Illuminate/Log/Logger.php on line 36
+[15-Jan-2022 09:36:54 UTC] PHP Fatal error:  Uncaught TypeError: Argument 1 passed to Illuminate\Log\Logger::__construct() must be an instance of Psr\Log\LoggerInterface, instance of Monolog\Logger given, called in /home/bkrufiyvmc69/public_html/vendor/laravel/framework/src/Illuminate/Log/LogManager.php on line 175 and defined in /home/bkrufiyvmc69/public_html/vendor/laravel/framework/src/Illuminate/Log/Logger.php:36
+Stack trace:
+#0 /home/bkrufiyvmc69/public_html/vendor/laravel/framework/src/Illuminate/Log/LogManager.php(175): Illuminate\Log\Logger->__construct(Object(Monolog\Logger), Object(Illuminate\Events\Dispatcher))
+#1 /home/bkrufiyvmc69/public_html/vendor/laravel/framework/src/Illuminate/Log/LogManager.php(122): Illuminate\Log\LogManager->createEmergencyLogger()
+#2 /home/bkrufiyvmc69/public_html/vendor/laravel/framework/src/Illuminate/Log/LogManager.php(98): Illuminate\Log\LogManager->get('stack')
+#3 /home/bkrufiyvmc69/public_html/vendor/laravel/framework/src/Illuminate/Log/LogManager.php(543): Illuminate\Log\LogManager->driver()
+#4 /home/bkrufiy in /home/bkrufiyvmc69/public_html/vendor/laravel/framework/src/Illuminate/Log/Logger.php on line 36
