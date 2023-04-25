@@ -203,7 +203,9 @@ class ChallanController extends Controller {
             //$challanArr = json_decode($request->challanObj, true);
             if(!empty($request->all())){
                 foreach ($request->all() as $key => $value) {
-                    $challan = ChallanList::where('challan_no',$value['challan_no'])->get();
+                    $challan = ChallanList::where('challan_no',$value['challan_no'])
+                            ->where('date', date('Y-m-d', strtotime($value['date'])))->get();
+                  
                     if(count($challan) == 0){
                         foreach ($value['items'] as $key => $val) {
                             $input = [
@@ -227,6 +229,7 @@ class ChallanController extends Controller {
                         }
 
                     }else{
+                    
                         ChallanList::where('challan_no',$value['challan_no'])->delete();
                         foreach ($value['items'] as $key => $val) {
                             $input = [

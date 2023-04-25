@@ -247,7 +247,8 @@ class OutstandingController extends Controller {
             //$outstandingArr = json_decode($request->outstandingObj, true);
             if(!empty($request->all())){
                 foreach ($request->all() as $key => $value) {
-                    $outstanding = Outstanding::where('voucher_no',$value['voucher_no'])->get();
+                    $outstanding = Outstanding::where('voucher_no',$value['voucher_no'])
+                            ->where('date', date('Y-m-d', strtotime($value['date'])))->get();
                         if(count($outstanding) == 0){
                            
                             foreach ($value['items'] as $key => $val) {
