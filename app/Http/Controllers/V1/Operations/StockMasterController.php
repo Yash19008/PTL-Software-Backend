@@ -30,6 +30,11 @@ class StockMasterController extends Controller {
         $query = $query->paginate($limit);
         return $this->success('OrderMaster Responses List', $query, 200);
     }
+    
+    public function totalWeight() {
+        $sum = StockMaster::sum('weight');
+        return $this->success('Total sum of weights', $sum, 200);
+    }
 
     public function getTableColumn()
     {         

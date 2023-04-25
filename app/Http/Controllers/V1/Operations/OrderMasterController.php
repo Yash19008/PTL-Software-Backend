@@ -108,6 +108,7 @@ class OrderMasterController extends Controller {
             \Log::error("Fetch Search history issue for customer " . $request->get('customer_id'));
             \Log::error($e);
         }
+        
         $data = array(
             "date" => date('Y-m-d H:i:s'),
             "cust_id" => $request->get('customer_id'),
