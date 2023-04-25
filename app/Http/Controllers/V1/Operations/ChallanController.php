@@ -196,5 +196,69 @@ class ChallanController extends Controller {
         ChallanList::truncate();
         return $this->success('Challan table truncated successfully !!', 200);
     }
+       public function import_challan_outside_nested(Request $request){
+       
+        //ADD STATUS AS "PENDING"/"DELIVERED"
+         try {
+            //$challanArr = json_decode($request->challanObj, true);
+            if(!empty($request->all())){
+                foreach ($request->all() as $key => $value) {
+                    $challan = ChallanList::where('challan_no',$value['challan_no'])->get();
+                    if(count($challan) == 0){
+                        foreach ($value['items'] as $key => $val) {
+                            $input = [
+                                "customer_name"=> $value['customer_name'],
+                                "mobile"=>$value['mobile'],
+                                "date" => date('Y-m-d', strtotime($value['date'])),
+                                "challan_no"=> $value['challan_no'],
+                                "delivery_at"=>$value['delivery_at'],
+                                "status"=>$value['status'],
+                                "quality"=>$val['quality'],
+                                "size_inch_length"=>$val['size_inch_length'],
+                                "size_inch_width"=>$val['size_inch_width'],
+                                "gsm"=>$val['gsm'],
+                                "bdls"=> $val['bdls'],
+                                "pkt_grs"=>$val['pkt_grs'],
+                                "sheets"=>$val['sheets'],
+                                "weight"=>$val['weight'],
+                                'updated_on'=>Carbon::now()
+                            ];
+                            ChallanList::create($input);
+                        }
+
+                    }else{
+                        ChallanList::where('challan_no',$value['challan_no'])->delete();
+                        foreach ($value['items'] as $key => $val) {
+                            $input = [
+                                "customer_name"=> $value['customer_name'],
+                                "mobile"=>$value['mobile'],
+                                "date" => date('Y-m-d', strtotime($value['date'])),
+                                "challan_no"=> $value['challan_no'],
+                                "delivery_at"=>$value['delivery_at'],
+                                "status"=>$value['status'],
+                                "quality"=>$val['quality'],
+                                "size_inch_length"=>$val['size_inch_length'],
+                                "size_inch_width"=>$val['size_inch_width'],
+                                "gsm"=>$val['gsm'],
+                                "bdls"=> $val['bdls'],
+                                "pkt_grs"=>$val['pkt_grs'],
+                                "sheets"=>$val['sheets'],
+                                "weight"=>$val['weight'],
+                                "updated_on"=>Carbon::now()
+                            ];
+                            ChallanList::create($input);
+                        }
+                      
+                    }
+                }
+                return $this->success('Import outside challan successfully !!', $request->all(), 200);
+              
+            }else{
+                return $this->failure('Empty data found or Data not proper !!', 500);
+            }
+        } catch (\Exception $e) {
+            return $this->failure('Something Went Wrong !!', $e->getMessage(), 500);
+        }
+    }
 
 }

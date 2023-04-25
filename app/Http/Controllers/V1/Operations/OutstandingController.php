@@ -242,4 +242,63 @@ class OutstandingController extends Controller {
         Outstanding::truncate();
         return $this->success('Outstanding table truncated successfully !!', 200);
     }
+    public function import_outstanding_outside_nested(Request $request){
+        try {
+            //$outstandingArr = json_decode($request->outstandingObj, true);
+            if(!empty($request->all())){
+                foreach ($request->all() as $key => $value) {
+                    $outstanding = Outstanding::where('voucher_no',$value['voucher_no'])->get();
+                        if(count($outstanding) == 0){
+                           
+                            foreach ($value['items'] as $key => $val) {
+                                $input = [
+                                    "date" =>date('Y-m-d', strtotime($value['date'])),
+                                    "customer_name"=> $value['customer_name'],
+                                    "mobile"=>$value['mobile'],
+                                    "email"=>$value['email'],
+                                    "voucher_no"=>$value['voucher_no'],
+                                    "voucher_type"=>$val['voucher_type'],
+                                    "credit_days"=> $val['credit_days'],
+                                    "due_date"=>NULL,
+                                    "over_dues"=>NULL,
+                                    "total_amount"=>$val['total_amount'],
+                                    "part_paid"=>$val['part_paid'],
+                                    "balance"=>$val['balance'],
+                                    'updated_on'=>Carbon::now(),
+                                ];
+                                Outstanding::create($input);
+                            }
+                          
+                        }else{
+                           
+                            Outstanding::where('voucher_no',$value['voucher_no'])->delete();
+                            foreach ($value['items'] as $key => $val) {
+                                $input = [
+                                    "date" =>date('Y-m-d', strtotime($value['date'])),
+                                    "customer_name"=> $value['customer_name'],
+                                    "mobile"=>$value['mobile'],
+                                    "email"=>$value['email'],
+                                    "voucher_no"=>$value['voucher_no'],
+                                    "voucher_type"=>$val['voucher_type'],
+                                    "credit_days"=> $val['credit_days'],
+                                    "over_dues"=>NULL,
+                                    "due_date"=>NULL,
+                                    "total_amount"=>$val['total_amount'],
+                                    "part_paid"=>$val['part_paid'],
+                                    "balance"=>$val['balance'],
+                                    'updated_on'=>Carbon::now(),
+                                ];
+                                Outstanding::create($input);
+                            }
+                    }
+                   
+                }
+                return $this->success('Import outside outstanding successfully !!', $request->all(), 200);
+            }else{
+                return $this->failure('Empty data found or Data not proper !!', 500);
+            }
+        } catch (\Exception $e) {
+            return $this->failure('Something Went Wrong !!', $e->getMessage(), 500);
+        }
+    }
 }
