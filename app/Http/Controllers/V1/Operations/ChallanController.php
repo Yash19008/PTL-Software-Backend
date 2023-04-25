@@ -217,6 +217,7 @@ class ChallanController extends Controller {
                                 "pkt_grs"=>$val['pkt_grs'],
                                 "sheets"=>$val['sheets'],
                                 "weight"=>$val['weight'],
+                                'updated_on'=>Carbon::now()
                             ];
                             ChallanList::create($input);
                         }
@@ -239,6 +240,7 @@ class ChallanController extends Controller {
                                 "pkt_grs"=>$val['pkt_grs'],
                                 "sheets"=>$val['sheets'],
                                 "weight"=>$val['weight'],
+                                "updated_on"=>Carbon::now()
                             ];
                             ChallanList::create($input);
                         }

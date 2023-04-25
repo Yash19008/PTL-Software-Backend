@@ -246,7 +246,7 @@ class OutstandingController extends Controller {
                                     "total_amount"=>$val['total_amount'],
                                     "part_paid"=>$val['part_paid'],
                                     "balance"=>$val['balance'],
-                                    'created_on'=>Carbon::now(),
+                                    'updated_on'=>Carbon::now(),
                                 ];
                                 Outstanding::create($input);
                             }
@@ -268,7 +268,7 @@ class OutstandingController extends Controller {
                                     "total_amount"=>$val['total_amount'],
                                     "part_paid"=>$val['part_paid'],
                                     "balance"=>$val['balance'],
-                                    'created_on'=>Carbon::now(),
+                                    'updated_on'=>Carbon::now(),
                                 ];
                                 Outstanding::create($input);
                             }
