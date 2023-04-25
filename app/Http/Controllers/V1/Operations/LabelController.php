@@ -18,9 +18,10 @@ class LabelController extends Controller {
         $data_record['bank_details']['bank_logo'] = 'Branch Logo';
         
         $data_record['contact_us']['logo'] = 'Bank Name';
-        $data_record['contact_us']['addess'] = 'Address: Gala No.4, Bldg No.1, Shiv Shankar Indl Estate, Behind Burma Shell Petrol Pump, Village Valiv, Vasai(E) - 401208';
+        // $data_record['contact_us']['addess'] = 'Address: Gala No.4, Bldg No.1, Shiv Shankar Indl Estate, Behind Burma Shell Petrol Pump, Village Valiv, Vasai(E) - 401208';
+        $data_record['contact_us']['addess'] = 'Plot No.10, Behind Sethia Industrial Park, Near Golden Chariot Hotel, Off Western Express Highway, Vasai (E), Thane - 401208';
         $data_record['contact_us']['mobile'] = 'Tel: 810 873 1234 / 740 047 1234';
-        $data_record['contact_us']['email'] = 'info@papertradelink.com';
+        $data_record['contact_us']['email'] = 'papertradelink@gmail.com';
         
         
         $data_record['order_status']['contact_number'] = '7400471233';
@@ -40,7 +41,8 @@ class LabelController extends Controller {
                         "account_number"=>'06672 00 00 00 750',
                         "neft_code"=>'HDFC 0000 667',
                         "branch_location"=>'Akruli Road, Kandivali East',
-                        "bank_logo"=>'http://papertradelink.com/assets/global/custom/hdfc_logo.png'
+                        // "bank_logo"=>'http://papertradelink.com/old_code/assets/global/custom/hdfc_logo.png'
+                        "bank_logo"=>'http://papertradelink.com/public/image/ptl_qr_code.jpeg'
                     ]
                     /*,
                     [    "bank_name"=>'ABC',

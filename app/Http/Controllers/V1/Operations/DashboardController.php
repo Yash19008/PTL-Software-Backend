@@ -15,12 +15,12 @@ class DashboardController extends Controller {
         $start = $request->get('start');
         $end = $request->get('end');
 
-        $query = ChallanList::selectRaw("*, SUM(weight) as total_weight, DATE_FORMAT(updated_on, '%d/%m/%Y') AS formatted_date")->whereRaw(
-        "(updated_on >= ? AND updated_on <= ?)", 
+        $query = ChallanList::selectRaw("*, SUM(weight) as total_weight, DATE_FORMAT(date, '%d/%m/%Y') AS formatted_date")->whereRaw(
+        "(date >= ? AND date <= ?)", 
         [
             $start ." 00:00:00", 
             $end ." 23:59:59"
-        ])->groupBy(DB::raw('DATE(updated_on)'))->orderBy('updated_on', 'DESC')->get();
+        ])->groupBy(DB::raw('DATE(date)'))->orderBy('date', 'DESC')->get();
         
         return response()->json($query, 200);
     }
