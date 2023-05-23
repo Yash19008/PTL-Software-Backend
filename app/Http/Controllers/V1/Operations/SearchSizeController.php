@@ -31,8 +31,25 @@ class SearchSizeController extends Controller {
             $where = $where." AND product_group = '".$group_name."'";
         }
             
-        $result = DB::select("
-                SELECT 'PTL' as company, stock.product_group, stock.quality, gsm, dup.utiliz, dup.id, 
+        $output = $this->searchSizeQuery('mysql', 'PTL', $userlength, $userwidth, $lower_range, $upper_range, $where);
+        
+        $admin_show_stocks_from = OptionMaster::where('option', 'admin_show_stocks_from')->first();
+        $admin_show_stocks_from = explode(',', $admin_show_stocks_from->value);
+        foreach($admin_show_stocks_from as $from) {
+            switch ($from) {
+                case 'Pap Tech':
+                    $result = $this->searchSizeQuery('ptsc_connection', $from, $userlength, $userwidth, $lower_range, $upper_range, $where);
+                    $output = array_merge($output, $result);
+                break;
+                case 'Paper Hub':
+                    $result = $this->searchSizeQuery('paper_hub_connection', $from, $userlength, $userwidth, $lower_range, $upper_range, $where);
+                    $output = array_merge($output, $result);
+                break;
+            }
+        }
+                
+        $vendor_result = DB::select("
+                SELECT usermaster.employee_name as company, stock_vendors.product_group, stock_vendors.quality, gsm, dup.utiliz, dup.id, 
                 CONCAT(size_inch_length,' X ',size_inch_width) as Size_INCH,size_inch_length ,size_inch_width,
                 TRUNCATE(size_inch_length/".$userlength." ,0) AS LEN_UPS ,
                 TRUNCATE(size_inch_width/".$userwidth." ,0) AS WID_UPS ,
@@ -42,48 +59,31 @@ class SearchSizeController extends Controller {
                 
                 SUM(sheet*pkt_grs) as total_sheet
                 
-                FROM stock
-                
-                INNER JOIN
-                    (SELECT id, (ROUND(((".$userlength."*".$userwidth.")/(size_inch_length*size_inch_width))*(TRUNCATE(TRUNCATE(size_inch_length/".$userlength.",0)*TRUNCATE(size_inch_width/".$userwidth.",0),0)) * 100)) as utiliz
-                    FROM stock
-                    WHERE stock.gsm BETWEEN ".$lower_range." AND ".$upper_range."
-                    HAVING  utiliz >= (SELECT op.value FROM options_master op WHERE op.option='utilization_ups_admin') AND utiliz <= 100 
-                    ORDER BY utiliz DESC, size_inch_length ASC) dup
-                ON stock.id = dup.id
-                
-                ".$where."
-                
-                group by quality, gsm, Size_INCH
-                ORDER BY utiliz DESC,gsm");
-                
-            $peptek_result = DB::select("
-                SELECT 'Pap Tech' as company, peptek_stock.product_group, peptek_stock.quality, gsm, dup.utiliz, dup.id, 
-                CONCAT(size_inch_length,' X ',size_inch_width) as Size_INCH,size_inch_length ,size_inch_width,
-                TRUNCATE(size_inch_length/".$userlength." ,0) AS LEN_UPS ,
-                TRUNCATE(size_inch_width/".$userwidth." ,0) AS WID_UPS ,
-                TRUNCATE(TRUNCATE(size_inch_length/".$userlength.",0)*TRUNCATE(size_inch_width/".$userwidth.",0),0) AS total_ups,
-                TRUNCATE((pkt_grs_weight/sheet*100),1)  as  sheet_weight,
-                (sheet*pkg_mode) as bundle,
-                
-                SUM(sheet*pkt_grs) as total_sheet
-                
-                FROM peptek_stock
+                FROM stock_vendors
                 
                 INNER JOIN
                 (SELECT id, (ROUND(((".$userlength."*".$userwidth.")/(size_inch_length*size_inch_width))*(TRUNCATE(TRUNCATE(size_inch_length/".$userlength.",0)*TRUNCATE(size_inch_width/".$userwidth.",0),0)) * 100)) as utiliz
-                FROM peptek_stock
-                WHERE peptek_stock.gsm BETWEEN ".$lower_range." AND ".$upper_range."
+                FROM stock_vendors
+                WHERE stock_vendors.gsm BETWEEN ".$lower_range." AND ".$upper_range."
                 HAVING  utiliz >= (SELECT op.value FROM options_master op WHERE op.option='utilization_ups_admin') AND utiliz <= 100 ORDER BY utiliz DESC, size_inch_length ASC) dup
-                ON peptek_stock.id = dup.id
+                ON stock_vendors.id = dup.id
                 
+
+                LEFT JOIN usermaster ON  usermaster.id = stock_vendors.vendor_id
+
                 ".$where."
                 
                 group by quality, gsm, Size_INCH
                 ORDER BY utiliz DESC,gsm");
-                
-            $vendor_result = DB::select("
-                    SELECT usermaster.employee_name as company, stock_vendors.product_group, stock_vendors.quality, gsm, dup.utiliz, dup.id, 
+        $output = array_merge($output, $vendor_result);
+        return $this->success('Search Size Responses List', $output, 200);
+    }
+
+    
+    public function searchSizeQuery($connection, $name, $userlength, $userwidth, $lower_range, $upper_range, $where) {
+        
+        return \DB::connection($connection)->select("
+            SELECT '".$name."' as company, stock.product_group, stock.quality, gsm, dup.utiliz, dup.id, 
                     CONCAT(size_inch_length,' X ',size_inch_width) as Size_INCH,size_inch_length ,size_inch_width,
                     TRUNCATE(size_inch_length/".$userlength." ,0) AS LEN_UPS ,
                     TRUNCATE(size_inch_width/".$userwidth." ,0) AS WID_UPS ,
@@ -93,24 +93,21 @@ class SearchSizeController extends Controller {
                     
                     SUM(sheet*pkt_grs) as total_sheet
                     
-                    FROM stock_vendors
+                    FROM stock
                     
                     INNER JOIN
-                    (SELECT id, (ROUND(((".$userlength."*".$userwidth.")/(size_inch_length*size_inch_width))*(TRUNCATE(TRUNCATE(size_inch_length/".$userlength.",0)*TRUNCATE(size_inch_width/".$userwidth.",0),0)) * 100)) as utiliz
-                    FROM stock_vendors
-                    WHERE stock_vendors.gsm BETWEEN ".$lower_range." AND ".$upper_range."
-                    HAVING  utiliz >= (SELECT op.value FROM options_master op WHERE op.option='utilization_ups_admin') AND utiliz <= 100 ORDER BY utiliz DESC, size_inch_length ASC) dup
-                    ON stock_vendors.id = dup.id
+                        (SELECT id, (ROUND(((".$userlength."*".$userwidth.")/(size_inch_length*size_inch_width))*(TRUNCATE(TRUNCATE(size_inch_length/".$userlength.",0)*TRUNCATE(size_inch_width/".$userwidth.",0),0)) * 100)) as utiliz
+                        FROM stock
+                        WHERE stock.gsm BETWEEN ".$lower_range." AND ".$upper_range."
+                        HAVING  utiliz >= (SELECT op.value FROM options_master op WHERE op.option='utilization_ups_admin') AND utiliz <= 100 
+                        ORDER BY utiliz DESC, size_inch_length ASC) dup
+                    ON stock.id = dup.id
                     
-
-                    LEFT JOIN usermaster ON  usermaster.id = stock_vendors.vendor_id
-
                     ".$where."
                     
                     group by quality, gsm, Size_INCH
-                    ORDER BY utiliz DESC,gsm");
-        $output = array_merge($result, $peptek_result, $vendor_result);
-        return $this->success('Search Size Responses List', $output, 200);
+                    ORDER BY utiliz DESC,gsm
+                    ");
     }
     
     public function getMasters() {
@@ -198,98 +195,56 @@ $option_result = OptionMaster::where('option', 'gsm_range')->first();
             $where = $where." AND product_group = '".$product_group."'";
         }
              
-        $result = DB::select("
-                SELECT 'PTL' as company, stock.product_group, stock.quality, gsm, util.utilization, stock.id,
-                CONCAT(size_inch_length,' X ',size_inch_width) as Size_INCH, size_inch_length ,size_inch_width,
-                CONCAT(size_inch_length,' X ',size_inch_width) as size_inch,
-                TRUNCATE(size_inch_length/".$userlength." ,0) AS LEN_UPS ,
-                TRUNCATE(size_inch_width/".$userwidth." ,0) AS WID_UPS ,
-                TRUNCATE(TRUNCATE(size_inch_length/".$userlength.",0)*TRUNCATE(size_inch_width/".$userwidth.",0),0) AS total_ups,
-                TRUNCATE((pkt_grs_weight/sheet*100),1)  as  sheet_weight,
-                (sheet*pkg_mode) as bundle,
-                
-                SUM(sheet*pkt_grs) as total_sheet
-                
-                FROM stock
-                
-                
-                INNER JOIN
-                    (SELECT id, (ROUND(((".$userlength."*".$userwidth.")/(size_inch_length*size_inch_width))*(TRUNCATE(TRUNCATE(size_inch_length/".$userlength.",0)*TRUNCATE(size_inch_width/".$userwidth.",0),0)) * 100)) as utilization
-                    FROM stock
-                    WHERE stock.gsm BETWEEN ".$lower_range." AND ".$upper_range." 
-                    HAVING  utilization >= (SELECT op.value FROM options_master op WHERE op.option='utilization_ups') AND utilization <= 100 
-                    ORDER BY utilization DESC, size_inch_length ASC) util
-                ON stock.id = util.id
-                
-                ".$where."
-                GROUP BY quality, gsm, Size_INCH
-                
-                
-                UNION
-                
-                
-                SELECT 'Pap Tech' as company, peptek_stock.product_group, peptek_stock.quality, gsm, util.utilization, peptek_stock.id,
-                CONCAT(size_inch_length,' X ',size_inch_width) as Size_INCH,size_inch_length ,size_inch_width,
-                CONCAT(size_inch_length,' X ',size_inch_width) as size_inch,
-                TRUNCATE(size_inch_length/".$userlength." ,0) AS LEN_UPS ,
-                TRUNCATE(size_inch_width/".$userwidth." ,0) AS WID_UPS ,
-                TRUNCATE(TRUNCATE(size_inch_length/".$userlength.",0)*TRUNCATE(size_inch_width/".$userwidth.",0),0) AS total_ups,
-                TRUNCATE((pkt_grs_weight/sheet*100),1)  as  sheet_weight,
-                (sheet*pkg_mode) as bundle,
-                
-                SUM(sheet*pkt_grs) as total_sheet
-                
-                FROM peptek_stock 
-                
-                
-                INNER JOIN
-                    (SELECT id, (ROUND(((".$userlength."*".$userwidth.")/(size_inch_length*size_inch_width))*(TRUNCATE(TRUNCATE(size_inch_length/".$userlength.",0)*TRUNCATE(size_inch_width/".$userwidth.",0),0)) * 100)) as utilization
-                    FROM peptek_stock
-                    WHERE peptek_stock.gsm BETWEEN ".$lower_range." AND ".$upper_range." 
-                    HAVING  utilization >= (SELECT op.value FROM options_master op WHERE op.option='utilization_ups') AND utilization <= 100 
-                    ORDER BY utilization DESC, size_inch_length ASC) util
-                ON peptek_stock.id = util.id
-                
-                ".$where."
-                
-                GROUP BY quality, gsm, Size_INCH
-                
-                
-                UNION
-                
-                
-                SELECT usermaster.employee_name as company, stock_vendors.product_group, stock_vendors.quality, gsm, util.utilization, stock_vendors.id,
-                CONCAT(size_inch_length,' X ',size_inch_width) as Size_INCH,size_inch_length ,size_inch_width,
-                CONCAT(size_inch_length,' X ',size_inch_width) as size_inch,
-                TRUNCATE(size_inch_length/".$userlength." ,0) AS LEN_UPS ,
-                TRUNCATE(size_inch_width/".$userwidth." ,0) AS WID_UPS ,
-                TRUNCATE(TRUNCATE(size_inch_length/".$userlength.",0)*TRUNCATE(size_inch_width/".$userwidth.",0),0) AS total_ups,
-                TRUNCATE((pkt_grs_weight/sheet*100),1)  as  sheet_weight,
-                (sheet*pkg_mode) as bundle,
-                
-                SUM(sheet*pkt_grs) as total_sheet
-                
-                FROM stock_vendors 
-                
-                
-                INNER JOIN
-                    (SELECT id, (ROUND(((".$userlength."*".$userwidth.")/(size_inch_length*size_inch_width))*(TRUNCATE(TRUNCATE(size_inch_length/".$userlength.",0)*TRUNCATE(size_inch_width/".$userwidth.",0),0)) * 100)) as utilization
-                    FROM stock_vendors
-                    WHERE stock_vendors.gsm BETWEEN ".$lower_range." AND ".$upper_range." 
-                    HAVING  utilization >= (SELECT op.value FROM options_master op WHERE op.option='utilization_ups') AND utilization <= 100 
-                    ORDER BY utilization DESC, size_inch_length ASC) util
-                ON stock_vendors.id = util.id
-
-                LEFT JOIN usermaster ON  usermaster.id = stock_vendors.vendor_id
-                
-                ".$where."
-                
-                GROUP BY quality, gsm, Size_INCH
-                ORDER BY utilization DESC, gsm
-                
-                ");
+        $output = $this->search_new_common_query('mysql', 'PTL', $userlength, $userwidth, $lower_range, $upper_range, $where);
         
-        $data_record['list'] = $result;
+        $mobile_show_stocks_from = OptionMaster::where('option', 'mobile_show_stocks_from')->first();
+        $mobile_show_stocks_from = explode(',', $mobile_show_stocks_from->value);
+        foreach($mobile_show_stocks_from as $from) {
+            switch ($from) {
+                case 'Pap Tech':
+                    $result = $this->search_new_common_query('ptsc_connection', $from, $userlength, $userwidth, $lower_range, $upper_range, $where);
+                    $output = array_merge($output, $result);
+                break;
+                case 'Paper Hub':
+                    $result = $this->search_new_common_query('paper_hub_connection', $from, $userlength, $userwidth, $lower_range, $upper_range, $where);
+                    $output = array_merge($output, $result);
+                break;
+            }
+        }
+        
+        $stock_vendors_result = DB::select(" SELECT usermaster.employee_name as company, stock_vendors.product_group, stock_vendors.quality, gsm, util.utilization, stock_vendors.id,
+            CONCAT(size_inch_length,' X ',size_inch_width) as Size_INCH,size_inch_length ,size_inch_width,
+            CONCAT(size_inch_length,' X ',size_inch_width) as size_inch,
+            TRUNCATE(size_inch_length/".$userlength." ,0) AS LEN_UPS ,
+            TRUNCATE(size_inch_width/".$userwidth." ,0) AS WID_UPS ,
+            TRUNCATE(TRUNCATE(size_inch_length/".$userlength.",0)*TRUNCATE(size_inch_width/".$userwidth.",0),0) AS total_ups,
+            TRUNCATE((pkt_grs_weight/sheet*100),1)  as  sheet_weight,
+            (sheet*pkg_mode) as bundle,
+            
+            SUM(sheet*pkt_grs) as total_sheet
+            
+            FROM stock_vendors 
+            
+            
+            INNER JOIN
+                (SELECT id, (ROUND(((".$userlength."*".$userwidth.")/(size_inch_length*size_inch_width))*(TRUNCATE(TRUNCATE(size_inch_length/".$userlength.",0)*TRUNCATE(size_inch_width/".$userwidth.",0),0)) * 100)) as utilization
+                FROM stock_vendors
+                WHERE stock_vendors.gsm BETWEEN ".$lower_range." AND ".$upper_range." 
+                HAVING  utilization >= (SELECT op.value FROM options_master op WHERE op.option='utilization_ups') AND utilization <= 100 
+                ORDER BY utilization DESC, size_inch_length ASC) util
+            ON stock_vendors.id = util.id
+
+            LEFT JOIN usermaster ON  usermaster.id = stock_vendors.vendor_id
+            
+            ".$where."
+            
+            GROUP BY quality, gsm, Size_INCH
+            ORDER BY utilization DESC, gsm
+        
+        ");
+        $output = array_merge($output, $stock_vendors_result);
+        
+        $data_record['list'] = $output;
         $data_record['stock_access'] = ($result_cust->stock_active == null) ? 0 : $result_cust->stock_active;
         $data_record = json_decode( json_encode($data_record), true);
         
@@ -304,6 +259,43 @@ $option_result = OptionMaster::where('option', 'gsm_range')->first();
         {
             return $data_record;
         }
+    }
+
+    function search_new_common_query($connection, $name, $userlength, $userwidth, $lower_range, $upper_range, $where) {
+        return \DB::connection($connection)->select("SELECT '".$name."' as company, stock.quality, gsm, util.utilization, stock.id,
+            CONCAT(size_inch_length,' X ',size_inch_width) as Size_INCH, size_inch_length ,size_inch_width,
+            CONCAT(size_inch_length,' X ',size_inch_width) as size_inch,
+            TRUNCATE(size_inch_length/".$userlength." ,0) AS LEN_UPS ,
+            TRUNCATE(size_inch_width/".$userwidth." ,0) AS WID_UPS ,
+            TRUNCATE(TRUNCATE(size_inch_length/".$userlength.",0)*TRUNCATE(size_inch_width/".$userwidth.",0),0) AS total_ups,
+            TRUNCATE((pkt_grs_weight/sheet*100),1)  as  sheet_weight,
+            (sheet*pkg_mode) as bundle,
+            
+            SUM(sheet*pkt_grs) as total_sheet
+            
+            FROM stock
+            
+            INNER JOIN
+                (SELECT id, (ROUND(((".$userlength."*".$userwidth.")/(size_inch_length*size_inch_width))*(TRUNCATE(TRUNCATE(size_inch_length/".$userlength.",0)*TRUNCATE(size_inch_width/".$userwidth.",0),0)) * 100)) as utiliz
+                FROM stock
+                WHERE stock.gsm BETWEEN ".$lower_range." AND ".$upper_range." 
+                HAVING  utiliz >= (SELECT op.value FROM options_master op WHERE op.option='utilization_ups') AND utiliz <= 100 
+                ORDER BY utiliz DESC, size_inch_length ASC ) dup
+            ON stock.id = dup.id
+            
+            INNER JOIN
+                (SELECT id, (ROUND(((".$userlength."*".$userwidth.")/(size_inch_length*size_inch_width))*(TRUNCATE(TRUNCATE(size_inch_length/".$userlength.",0)*TRUNCATE(size_inch_width/".$userwidth.",0),0)) * 100)) as utilization
+                FROM stock
+                WHERE stock.gsm BETWEEN ".$lower_range." AND ".$upper_range." 
+                HAVING  utilization >= (SELECT op.value FROM options_master op WHERE op.option='utilization_ups') AND utilization <= 100 
+                ORDER BY utilization DESC, size_inch_length ASC) util
+            ON stock.id = util.id
+            
+            ".$where."
+            
+            group by quality, gsm, Size_INCH
+            
+            ORDER BY utilization DESC,gsm");
     }
 
 }

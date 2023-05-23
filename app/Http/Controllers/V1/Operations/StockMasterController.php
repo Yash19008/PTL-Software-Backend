@@ -56,7 +56,15 @@ class StockMasterController extends Controller {
             }
         } else if ($company == 'Pap Tech') {
             // search from Paptech Stock
-            $data_record2 = PeptekStock::where('id', $stock_id)->first();
+            $data_record2 = \DB::connection('ptsc_connection')->select("Select * from stock where id=".$stock_id."");
+            // $data_record2 = PeptekStock::where('id', $stock_id)->first();
+            // print_r($this->db->last_query());exit;
+            if ($data_record2) {
+                $data = $data_record2;
+            }
+        } else if ($company == 'Paper Hub') {
+            // search from Paptech Stock
+            $data_record2 = \DB::connection('paper_hub_connection')->select("Select * from stock where id=".$stock_id."");
             // print_r($this->db->last_query());exit;
             if ($data_record2) {
                 $data = $data_record2;
