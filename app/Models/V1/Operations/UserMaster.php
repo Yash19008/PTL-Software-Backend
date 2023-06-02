@@ -27,6 +27,6 @@ class UserMaster extends Model
      * @var array
      */
     protected $fillable = [
-        'id', 'employee_name', 'password', 'email_id', 'userlevel', 'updated_dt' , 'updated_by', 'user_status'
+        'id', 'employee_name', 'password', 'email_id', 'userlevel', 'updated_dt' , 'updated_by', 'user_status', 'menus'
     ];
 }
