@@ -76,6 +76,7 @@ class SearchSizeController extends Controller {
                 group by quality, gsm, Size_INCH
                 ORDER BY utiliz DESC,gsm");
         $output = array_merge($output, $vendor_result);
+        usort($output, function($a, $b) { return $a->utiliz > $b->utiliz ? -1 : 1; });
         return $this->success('Search Size Responses List', $output, 200);
     }
 
@@ -243,7 +244,7 @@ $option_result = OptionMaster::where('option', 'gsm_range')->first();
         
         ");
         $output = array_merge($output, $stock_vendors_result);
-        
+        usort($output, function($a, $b) { return $a->utilization > $b->utilization ? -1 : 1; });
         $data_record['list'] = $output;
         $data_record['stock_access'] = ($result_cust->stock_active == null) ? 0 : $result_cust->stock_active;
         $data_record = json_decode( json_encode($data_record), true);
