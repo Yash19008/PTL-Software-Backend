@@ -55,7 +55,7 @@ class LabelController extends Controller {
         );
                             
         $data_record['bank_details'] = $data;
-        $data_record['qa_code_details'] = "http://papertradelink.com/image/ptl_qr_code.jpeg";
+        $data_record['qr_code_details'] = "http://papertradelink.com/image/ptl_qr_code.jpeg";
         
         $output['data'] = $data_record;
         $output['message'] = 'Size in Inch Detail !!';
