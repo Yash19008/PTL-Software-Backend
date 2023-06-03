@@ -53,4 +53,24 @@ class OptionMasterController extends Controller {
         $result1 = OptionMaster::where('option', 'onaction_call')->first();
 	    echo $number_no=$result1->value;
     }
+
+    public function android_version()
+    {
+        $result1 = OptionMaster::where('option', 'android_version')->first();
+        $output['data'] = $result1;
+        $output['message'] = 'Android Version !!';
+        $output['status'] = 'success';
+        
+        return response()->json($output, 200);
+    }
+
+    public function ios_version()
+    {
+        $result1 = OptionMaster::where('option', 'ios_version')->first();
+        $output['data'] = $result1;
+        $output['message'] = 'IOS Version !!';
+        $output['status'] = 'success';
+        
+        return response()->json($output, 200);
+    }
 }
