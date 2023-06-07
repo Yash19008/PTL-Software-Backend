@@ -31,7 +31,7 @@ class OutstandingController extends Controller {
             DATEDIFF(date_format(date(DATE_ADD(date, INTERVAL credit_days DAY)),'%Y-%m-%d'),CURDATE()) AS days,
             over_dues, balance,
             IF(CURDATE() > date_format(date(DATE_ADD(date, INTERVAL credit_days DAY)),'%Y-%m-%d'),'YES','NO') as red 
-            FROM `outstanding` WHERE `customer_name` = '".$company_name."'");
+            FROM `outstanding` WHERE `customer_name` = '".$company_name."'  ORDER BY id desc");
         if(count($result) > 0) {
             return $result;
         } else {
@@ -43,7 +43,7 @@ class OutstandingController extends Controller {
         
         
         $data_record=DB::select("SELECT DATE_FORMAT(date, '%b-%Y') AS Month, SUM(balance) AS Amount,
-        IF(date_format(date(DATE_ADD(date, INTERVAL credit_days DAY)),'%Y-%m-%d'),'YES','NO') as red FROM outstanding WHERE `customer_name`= '$company_name' GROUP BY DATE_FORMAT(date, '%m-%Y') order by cast(YEAR(date) as unsigned) ASC,cast(MONTH(date) as unsigned) ASC");
+        IF(date_format(date(DATE_ADD(date, INTERVAL credit_days DAY)),'%Y-%m-%d'),'YES','NO') as red FROM outstanding WHERE `customer_name`= '$company_name' GROUP BY DATE_FORMAT(date, '%m-%Y') order by cast(YEAR(date) as unsigned) DESC,cast(MONTH(date) as unsigned) DESC");
         $allrecords=$this->outstanding_details($company_name); 
         $total_due=0;
         $total_not_due=0; 
