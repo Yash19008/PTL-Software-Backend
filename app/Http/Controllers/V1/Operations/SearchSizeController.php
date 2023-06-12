@@ -19,6 +19,8 @@ class SearchSizeController extends Controller {
         $userwidth = $request->get('width');
         $gsm = $request->get('gsm');
         $group_name = $request->get('group_name');
+        $company = $request->get('company');
+        $company = isset($company) ? $company : '';
         $size_in_inch = $userlength.' X '.$userwidth;
 
         $option_result = OptionMaster::where('option','gsm_range')->first();
@@ -30,21 +32,26 @@ class SearchSizeController extends Controller {
         if ($group_name) {
             $where = $where." AND product_group = '".$group_name."'";
         }
+        $output = [];
             
-        $output = $this->searchSizeQuery('mysql', 'Pap Tech', $userlength, $userwidth, $lower_range, $upper_range, $where);
+        if ($company == '' || $company == 'Pap Tech') {
+            $output = $this->searchSizeQuery('mysql', 'Pap Tech', $userlength, $userwidth, $lower_range, $upper_range, $where);
+        }
         
         $admin_show_stocks_from = OptionMaster::where('option', 'admin_show_stocks_from')->first();
         $admin_show_stocks_from = explode(',', $admin_show_stocks_from->value);
         foreach($admin_show_stocks_from as $from) {
-            switch ($from) {
-                case 'PTL':
-                    $result = $this->searchSizeQuery('ptl_connection', $from, $userlength, $userwidth, $lower_range, $upper_range, $where);
-                    $output = array_merge($output, $result);
-                break;
-                case 'Paper Hub':
-                    $result = $this->searchSizeQuery('paper_hub_connection', $from, $userlength, $userwidth, $lower_range, $upper_range, $where);
-                    $output = array_merge($output, $result);
-                break;
+            if ($company == '' || $company == $from) {
+                switch ($from) {
+                    case 'PTL':
+                        $result = $this->searchSizeQuery('ptl_connection', $from, $userlength, $userwidth, $lower_range, $upper_range, $where);
+                        $output = array_merge($output, $result);
+                    break;
+                    case 'Paper Hub':
+                        $result = $this->searchSizeQuery('paper_hub_connection', $from, $userlength, $userwidth, $lower_range, $upper_range, $where);
+                        $output = array_merge($output, $result);
+                    break;
+                }
             }
         }
 
@@ -146,6 +153,7 @@ class SearchSizeController extends Controller {
         if($result->sheet_weight == 'Yes')   $output1['headers']['sheet_weight'] = '100 Sheet Weight';
         if($result->bundle == 'Yes')   $output1['headers']['bundle'] = 'Per Bundle No. of Sheet';
         if($result->total_sheet == 'Yes')   $output1['headers']['total_sheet'] = 'Total Sheet';
+        if($result->gwd == 'Yes')   $output1['headers']['gwd'] = 'Godown';
         
         $data = $this->search_new_common($request, 'dynamic');
         $output1['data'] = $data;
@@ -214,7 +222,7 @@ class SearchSizeController extends Controller {
             }
         }
         
-        $stock_vendors_result = DB::select("SELECT usermaster.employee_name as company, stock_vendors.product_group, stock_vendors.quality, gsm, util.utilization, stock_vendors.id,
+        $stock_vendors_result = DB::select("SELECT usermaster.employee_name as company, stock_vendors.product_group, stock_vendors.quality, gsm, util.utilization, stock_vendors.id, stock_vendors.gwd,
         CONCAT(size_inch_length,' X ',size_inch_width) as Size_INCH, size_inch_length, size_inch_width,
         CONCAT(size_inch_length,' X ',size_inch_width) as size_inch,
         TRUNCATE(size_inch_length/".$userlength." ,0) AS LEN_UPS ,
@@ -268,7 +276,7 @@ class SearchSizeController extends Controller {
     }
 
     function search_new_common_query($connection, $name, $userlength, $userwidth, $lower_range, $upper_range, $where) {
-        return \DB::connection($connection)->select("SELECT '".$name."' as company, stock.quality, gsm, util.utilization, stock.id,
+        return \DB::connection($connection)->select("SELECT '".$name."' as company, stock.quality, gsm, util.utilization, stock.id, stock.gwd,
             CONCAT(size_inch_length,' X ',size_inch_width) as Size_INCH, size_inch_length ,size_inch_width,
             CONCAT(size_inch_length,' X ',size_inch_width) as size_inch,
             TRUNCATE(size_inch_length/".$userlength." ,0) AS LEN_UPS ,
