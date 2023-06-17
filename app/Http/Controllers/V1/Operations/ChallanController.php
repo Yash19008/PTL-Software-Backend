@@ -140,31 +140,57 @@ class ChallanController extends Controller {
             if(!empty($request->all())){
                 foreach ($request->all() as $key => $value) {
                     $challan = ChallanList::where('challan_no',$value['challan_no'])->get();
-                    if(count($challan) == 0){
-                        $insert_challan_array=array(
-                            "customer_name"=> $value['customer_name'],
-                            "mobile"=>$value['mobile'],
-                            "date" => date('Y-m-d', strtotime($value['date'])),
-                            "challan_no"=> $value['challan_no'],
-                            "quality"=>$value['quality'],
-                            "size_inch_length"=>$value['size_inch_length'],
-                            "size_inch_width"=>$value['size_inch_width'],
-                            "gsm"=>$value['gsm'],
-                            "bdls"=> $value['bdls'],
-                            "pkt_grs"=>$value['pkt_grs'],
-                            "sheets"=>$value['sheets'],
-                            "weight"=>$value['weight'],
-                            "delivery_at"=>$value['delivery_at'],
-                            "status"=>$value['status'],
-                            "updated_on"=>Carbon::now(),
-                        );    
-                        ChallanList::create($insert_challan_array);
+                    $challan_erp = ChallanList::where('erp_key',$value['erp_key'])->get();
+                    if(count($challan_erp) == 0){
+                        if(count($challan) == 0){
+                            $insert_challan_array=array(
+                                "erp_key" =>$value['erp_key'],
+                                "customer_name"=> $value['customer_name'],
+                                "mobile"=>$value['mobile'],
+                                "date" => date('Y-m-d', strtotime($value['date'])),
+                                "challan_no"=> $value['challan_no'],
+                                "quality"=>$value['quality'],
+                                "size_inch_length"=>$value['size_inch_length'],
+                                "size_inch_width"=>$value['size_inch_width'],
+                                "gsm"=>$value['gsm'],
+                                "bdls"=> $value['bdls'],
+                                "pkt_grs"=>$value['pkt_grs'],
+                                "sheets"=>$value['sheets'],
+                                "weight"=>$value['weight'],
+                                "delivery_at"=>$value['delivery_at'],
+                                "status"=>$value['status'],
+                                "updated_on"=>Carbon::now(),
+                            );    
+                            ChallanList::create($insert_challan_array);
 
+                        }else{
+                            foreach ($challan  as $key => $val) {
+                                $update_challan_array=array(
+                                    "erp_key" =>$value['erp_key'],
+                                    "customer_name"=> $value['customer_name'],
+                                    "mobile"=>$value['mobile'],
+                                    "date" =>  date('Y-m-d', strtotime($value['date'])),
+                                    "quality"=>$value['quality'],
+                                    "size_inch_length"=>$value['size_inch_length'],
+                                    "size_inch_width"=>$value['size_inch_width'],
+                                    "gsm"=>$value['gsm'],
+                                    "bdls"=> $value['bdls'],
+                                    "pkt_grs"=>$value['pkt_grs'],
+                                    "sheets"=>$value['sheets'],
+                                    "weight"=>$value['weight'],
+                                    "delivery_at"=>$value['delivery_at'],
+                                    "status"=>$value['status'],
+                                    "updated_on"=>Carbon::now(),
+                                );
+                                ChallanList::where('challan_no',$value['challan_no'])->update($update_challan_array);
+                            }
+                        }
                     }else{
-                        foreach ($challan  as $key => $val) {
+                        foreach ($challan_erp  as $key => $val) {
                             $update_challan_array=array(
                                 "customer_name"=> $value['customer_name'],
                                 "mobile"=>$value['mobile'],
+                                "erp_key" =>$value['erp_key'],
                                 "date" =>  date('Y-m-d', strtotime($value['date'])),
                                 "quality"=>$value['quality'],
                                 "size_inch_length"=>$value['size_inch_length'],
@@ -180,7 +206,6 @@ class ChallanController extends Controller {
                             );
                             ChallanList::where('challan_no',$value['challan_no'])->update($update_challan_array);
                         }
-                      
                     }
                 }
                 return $this->success('Import outside challan successfully !!', $request->all(), 200);
@@ -201,32 +226,59 @@ class ChallanController extends Controller {
                 foreach ($request->all() as $key => $value) {
                     $challan = ChallanList::where('challan_no',$value['challan_no'])
                     ->where('date', date('Y-m-d', strtotime($value['date'])))->get();
-                    if(count($challan) == 0){
-                        foreach ($value['items'] as $key => $val) {
-                            $input = [
-                                "customer_name"=> $value['customer_name'],
-                                "mobile"=>$value['mobile'],
-                                "date" => date('Y-m-d', strtotime($value['date'])),
-                                "challan_no"=> $value['challan_no'],
-                                "delivery_at"=>$value['delivery_at'],
-                                "status"=>$value['status'],
-                                "quality"=>$val['quality'],
-                                "size_inch_length"=>$val['size_inch_length'],
-                                "size_inch_width"=>$val['size_inch_width'],
-                                "gsm"=>$val['gsm'],
-                                "bdls"=> $val['bdls'],
-                                "pkt_grs"=>$val['pkt_grs'],
-                                "sheets"=>$val['sheets'],
-                                "weight"=>$val['weight'],
-                                'updated_on'=>Carbon::now()
-                            ];
-                            ChallanList::create($input);
+                    $challan_erp = ChallanList::where('erp_key',$value['erp_key'])->where('date', date('Y-m-d', strtotime($value['date'])))->get();
+                    if(count($challan_erp) == 0){
+                        if(count($challan) == 0){
+                            foreach ($value['items'] as $key => $val) {
+                                $input = [
+                                    "erp_key"=>$value['erp_key'],
+                                    "customer_name"=> $value['customer_name'],
+                                    "mobile"=>$value['mobile'],
+                                    "date" => date('Y-m-d', strtotime($value['date'])),
+                                    "challan_no"=> $value['challan_no'],
+                                    "delivery_at"=>$value['delivery_at'],
+                                    "status"=>$value['status'],
+                                    "quality"=>$val['quality'],
+                                    "size_inch_length"=>$val['size_inch_length'],
+                                    "size_inch_width"=>$val['size_inch_width'],
+                                    "gsm"=>$val['gsm'],
+                                    "bdls"=> $val['bdls'],
+                                    "pkt_grs"=>$val['pkt_grs'],
+                                    "sheets"=>$val['sheets'],
+                                    "weight"=>$val['weight'],
+                                    'updated_on'=>Carbon::now()
+                                ];
+                                ChallanList::create($input);
+                            }
+                        }else{
+                            ChallanList::where('challan_no',$value['challan_no'])->delete();
+                            foreach ($value['items'] as $key => $val) {
+                                $input = [
+                                    "erp_key"=>$value['erp_key'],
+                                    "customer_name"=> $value['customer_name'],
+                                    "mobile"=>$value['mobile'],
+                                    "date" => date('Y-m-d', strtotime($value['date'])),
+                                    "challan_no"=> $value['challan_no'],
+                                    "delivery_at"=>$value['delivery_at'],
+                                    "status"=>$value['status'],
+                                    "quality"=>$val['quality'],
+                                    "size_inch_length"=>$val['size_inch_length'],
+                                    "size_inch_width"=>$val['size_inch_width'],
+                                    "gsm"=>$val['gsm'],
+                                    "bdls"=> $val['bdls'],
+                                    "pkt_grs"=>$val['pkt_grs'],
+                                    "sheets"=>$val['sheets'],
+                                    "weight"=>$val['weight'],
+                                    "updated_on"=>Carbon::now()
+                                ];
+                                ChallanList::create($input);
+                            }                 
                         }
-
                     }else{
-                        ChallanList::where('challan_no',$value['challan_no'])->delete();
+                        ChallanList::where('erp_key',$value['erp_key'])->delete();
                         foreach ($value['items'] as $key => $val) {
                             $input = [
+                                "erp_key"=>$value['erp_key'],
                                 "customer_name"=> $value['customer_name'],
                                 "mobile"=>$value['mobile'],
                                 "date" => date('Y-m-d', strtotime($value['date'])),
@@ -244,8 +296,7 @@ class ChallanController extends Controller {
                                 "updated_on"=>Carbon::now()
                             ];
                             ChallanList::create($input);
-                        }
-                      
+                        }   
                     }
                 }
                 return $this->success('Import outside challan successfully !!', $request->all(), 200);

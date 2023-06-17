@@ -237,8 +237,8 @@ class OutstandingController extends Controller {
                                 $input = [
                                     "date" =>date('Y-m-d', strtotime($value['date'])),
                                     "customer_name"=> $value['customer_name'],
-                                    "mobile"=>$value['mobile'],
-                                    "email"=>$value['email'],
+                                    "mobile"=>$val['mobile'],
+                                    "email"=>$val['email'],
                                     "voucher_no"=>$value['voucher_no'],
                                     "voucher_type"=>$val['voucher_type'],
                                     "credit_days"=> $val['credit_days'],
@@ -259,8 +259,8 @@ class OutstandingController extends Controller {
                                 $input = [
                                     "date" =>date('Y-m-d', strtotime($value['date'])),
                                     "customer_name"=> $value['customer_name'],
-                                    "mobile"=>$value['mobile'],
-                                    "email"=>$value['email'],
+                                    "mobile"=>$val['mobile'],
+                                    "email"=>$val['email'],
                                     "voucher_no"=>$value['voucher_no'],
                                     "voucher_type"=>$val['voucher_type'],
                                     "credit_days"=> $val['credit_days'],
