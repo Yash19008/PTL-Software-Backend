@@ -31,7 +31,7 @@ class OutstandingController extends Controller {
             DATEDIFF(date_format(date(DATE_ADD(date, INTERVAL credit_days DAY)),'%Y-%m-%d'),CURDATE()) AS days,
             over_dues, balance,
             IF(CURDATE() > date_format(date(DATE_ADD(date, INTERVAL credit_days DAY)),'%Y-%m-%d'),'YES','NO') as red 
-            FROM `outstanding` WHERE `customer_name` = '".$company_name."'");
+            FROM `outstanding` WHERE `customer_name` = '".$company_name."'  ORDER BY date asc");
         if(count($result) > 0) {
             return $result;
         } else {
@@ -125,7 +125,7 @@ class OutstandingController extends Controller {
         $query = $this->query();
         $tablesColumns = $this->getTableColumn();
         $query = $this->search($query, $tablesColumns, \Request::get('search'));
-        $query = $this->sort($query, $tablesColumns, \Request::get('sort'), 'email_id');
+        $query = $this->sort($query, $tablesColumns, \Request::get('sort'), 'date');
         $query = $query->paginate($limit);
         return $this->success('OutstandingView Responses List', $query, 200);
     }

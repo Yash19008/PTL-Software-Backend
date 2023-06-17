@@ -19,6 +19,7 @@ class UserMasterController extends Controller {
 			"email_id"=> $request->get('email_id'),
 			"userlevel"=>$request->get('userlevel'),
 			"user_status"=>$request->get('user_status'),
+			"menus"=>$request->get('menus'),
 			"updated_dt"=> Carbon::now(),
 			"updated_by"=> \Auth::user()->id
         ])->id;
@@ -32,6 +33,7 @@ class UserMasterController extends Controller {
 			"email_id"=>$request->get('email_id'),
 			"userlevel"=>$request->get('userlevel'),
 			"user_status"=>$request->get('user_status'),
+			"menus"=>$request->get('menus'),
 			"updated_dt"=> Carbon::now(),
 			"updated_by"=> \Auth::user()->id
         ];

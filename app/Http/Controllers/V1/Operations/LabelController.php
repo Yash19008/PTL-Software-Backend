@@ -42,7 +42,7 @@ class LabelController extends Controller {
                         "neft_code"=>'HDFC 0000 667',
                         "branch_location"=>'Akruli Road, Kandivali East',
                         // "bank_logo"=>'http://papertradelink.com/old_code/assets/global/custom/hdfc_logo.png'
-                        "bank_logo"=>'http://papertradelink.com/public/image/ptl_qr_code.jpeg'
+                        "bank_logo"=>'http://papertradelink.com/image/hdfc_new.png'
                     ]
                     /*,
                     [    "bank_name"=>'ABC',
@@ -55,6 +55,7 @@ class LabelController extends Controller {
         );
                             
         $data_record['bank_details'] = $data;
+        $data_record['qr_code_details'] = "http://papertradelink.com/image/ptl_qr_code.jpeg";
         
         $output['data'] = $data_record;
         $output['message'] = 'Size in Inch Detail !!';
