@@ -43,34 +43,42 @@ class StockMasterController extends Controller {
 
     public function GetStockdetail(Request $request) {
         $stock_id = $request->get('stock_id');
+        $company = $request->get('company');
         $data = NULL;
-        // search from PTL Stock
-        $data_record1 = StockMaster::where('id', $stock_id)->first();
-        // print_r($this->db->last_query());exit;
-        if($data_record1) 
-        {
-            $data = $data_record1;
+
+        if ($company == 'Pap Tech') {
+            // search from PTL Stock
+            $data_record1 = StockMaster::where('id', $stock_id)->first();
+            // print_r($this->db->last_query());exit;
+            if ($data_record1) {
+                $data = $data_record1;
+            }
+        } else if ($company == 'PTL') {
+            // search from Paptech Stock
+            $data_record2 = \DB::connection('ptl_connection')->select("Select * from stock where id=".$stock_id);
+            // $data_record2 = PeptekStock::where('id', $stock_id)->first();
+            // print_r($this->db->last_query());exit;
+            if ($data_record2 && count($data_record2) > 0) {
+                $data = $data_record2[0];
+            }
+        } else if ($company == 'Paper Hub') {
+            // search from Paptech Stock
+            $data_record2 = \DB::connection('paper_hub_connection')->select("Select * from stock where id=".$stock_id);
+            // print_r($this->db->last_query());exit;
+            if ($data_record2 && count($data_record2) > 0) {
+                $data = $data_record2[0];
+            }
+        } else {
+            // search from Paptech Stock
+            $data_record3 = StockVendor::where('id', $stock_id)->first();
+            // print_r($this->db->last_query());exit;
+            if ($data_record3) {
+                $data = $data_record3;
+            }
         }
-        
-        // search from Paptech Stock
-        $data_record2 = PeptekStock::where('id', $stock_id)->first();
-        // print_r($this->db->last_query());exit;
-        if($data_record2 && $data == NULL) 
-        {
-            $data = $data_record2;
-        }
-        
-        // search from Paptech Stock
-        $data_record3 = StockVendor::where('id', $stock_id)->first();
-        // print_r($this->db->last_query());exit;
-        if($data_record3 && $data == NULL) 
-        {
-            $data = $data_record3;
-        }
-        
-        
-        if($data) 
-        { 
+
+
+        if ($data) {
             $output['data'] = $data;
             $output['message'] = 'Size in Inch Detail !!';
             $output['status'] = 'success';

@@ -33,7 +33,8 @@ class CustomerMasterController extends Controller {
 			"utilization"=>$request->get('utilization') == 'true' ? 'Yes' : 'No',
 			"utilization"=>$request->get('utilization') == 'true' ? 'Yes' : 'No',
 			"bundle"=>$request->get('bundle') == 'true' ? 'Yes' : 'No',
-			"total_sheet"=>$request->get('total_sheet') == 'true' ? 'Yes' : 'No'
+			"total_sheet"=>$request->get('total_sheet') == 'true' ? 'Yes' : 'No',
+			"gwd"=>$request->get('gwd') == 'true' ? 'Yes' : 'No'
         ]);
 
         $data = [
@@ -72,7 +73,8 @@ class CustomerMasterController extends Controller {
 			"utilization"=>$request->get('utilization') == 'true' ? 'Yes' : 'No',
 			"utilization"=>$request->get('utilization') == 'true' ? 'Yes' : 'No',
 			"bundle"=>$request->get('bundle') == 'true' ? 'Yes' : 'No',
-			"total_sheet"=>$request->get('total_sheet') == 'true' ? 'Yes' : 'No'
+			"total_sheet"=>$request->get('total_sheet') == 'true' ? 'Yes' : 'No',
+			"gwd"=>$request->get('gwd') == 'true' ? 'Yes' : 'No'
         ];
     	$stockcolumns->update($data);
 

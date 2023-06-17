@@ -54,6 +54,7 @@ class LabelController extends Controller {
         );
                             
         $data_record['bank_details'] = $data;
+        $data_record['qr_code_details'] = null;
         
         $output['data'] = $data_record;
         $output['message'] = 'Size in Inch Detail !!';
