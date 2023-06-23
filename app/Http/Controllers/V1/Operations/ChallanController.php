@@ -312,4 +312,28 @@ class ChallanController extends Controller {
         ChallanList::truncate();
         return $this->success('Challan table truncated successfully !!', 200);
     }
+    public function deleteChallan(Request $request){
+        // VALIDATION RULE
+        $validation_array = array(
+            'date' => 'required|date_format:Y-m-d',
+            'challan_no' => 'required',
+        );
+        $rules = [
+            'date.required' => 'The Date is required.',
+            'challa_no.required' => 'Challan no is required.',
+            'date.date_format' => 'Please pass Y-m-d format for date.',
+        ];
+
+        // CHECK SERVER SIDE VALIDATION
+        $this->validate($request, $validation_array, $rules);
+        $challan = ChallanList::where('challan_no',$request->challan_no)->where('date',$request->date)->get();
+      
+        if(count($challan) > 0){
+            ChallanList::where('challan_no',$request->challan_no)->where('date',$request->date)->delete();
+            return $this->success('Challan has been deleted successfully !!', 200);
+        }else{
+            return $this->failure('Challan number or date not found !!', 500);
+        }
+       
+    }
 }
