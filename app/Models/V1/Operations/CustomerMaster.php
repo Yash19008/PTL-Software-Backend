@@ -8,11 +8,11 @@ class CustomerMaster extends Model
 {
 
     protected $table = "customer_master";
-    
+
     public $timestamps = false;
 
     protected $fillable = [
-        'id', 'Company_code', 'company_name', 'client_name', 'email', 'mobile' , 'password', 'otp', 'Access_stk', 'active', 'stock_active', 'oneSignalUserId', 'oneSignalTokenId', 'updated_on'
+        'id', 'Company_code', 'company_name', 'client_name', 'email', 'mobile', 'password', 'otp', 'Access_stk', 'active', 'stock_active', 'oneSignalUserId', 'oneSignalTokenId', 'updated_on', 'mobile_show_stocks_from'
     ];
 
     /**
