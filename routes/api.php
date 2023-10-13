@@ -63,6 +63,7 @@ Route::namespace('V1')->middleware(['cors'])->group(function() {
             Route::get('order-master', 'OrderMasterController@index');
             Route::get('order-master/{id}', 'OrderMasterController@show');
             Route::put('order-master/{id}', 'OrderMasterController@update');
+            Route::post('add_challan', 'OrderMasterController@addChallan');
             
             Route::get('challan-list', 'ChallanController@index');
 
