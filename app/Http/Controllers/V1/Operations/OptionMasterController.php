@@ -115,4 +115,14 @@ class OptionMasterController extends Controller {
         
         return response()->json($output, 200);
     }
+
+    public function get_challan_url()
+    {
+        $result1 = OptionMaster::where('option', 'challan_url')->first();
+        $output['data'] = $result1;
+        $output['message'] = 'Challan URL !!';
+        $output['status'] = 'success';
+        
+        return response()->json($output, 200);
+    }
 }
