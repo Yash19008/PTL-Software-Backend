@@ -144,7 +144,7 @@ Route::namespace('V1')->middleware(['cors'])->group(function() {
             Route::get('detials', 'ChallanController@detials');
             Route::get('android_version', 'OptionMasterController@android_version');
             Route::get('ios_version', 'OptionMasterController@ios_version');
-            Route::get('get_challan_url', 'OptionMasterController@get_challan_url');
+            Route::post('get_challan_url', 'OptionMasterController@get_challan_url');
         });
         Route::prefix("API_addorder")->group(function () {
             Route::get('find_company_list', 'OrderMasterController@find_company_list');
