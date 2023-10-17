@@ -64,7 +64,7 @@ class OrderMasterController extends Controller
 
     public function getTableColumn()
     {
-        return array("id" => "id", "date" => "date", "company_name" => "company_name", "quality" => "quality", "size_inch_length" => "size_inch_length", "size_inch_width" => "size_inch_width", "gsm" => "gsm", "qty" => "qty", "delivery_at" => "delivery_at", "status" => "status", "challan_number" => "challan_number", "gwd" => "gwd");
+        return array("id" => "id", "date" => "date", "company_name" => "company_name", "quality" => "quality", "size_inch_length" => "size_inch_length", "size_inch_width" => "size_inch_width", "gsm" => "gsm", "qty" => "qty", "delivery_at" => "delivery_at", "status" => "status", "challan_number" => "challan_number", "gwd" => "gwd", "company" => "company");
     }
 
     public function find_company_list(Request $request)
