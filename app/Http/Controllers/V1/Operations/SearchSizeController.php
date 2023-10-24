@@ -20,6 +20,7 @@ class SearchSizeController extends Controller {
         $gsm = $request->get('gsm');
         $group_name = $request->get('group_name');
         $company = $request->get('company');
+        $quality = $request->get('quality');
         $company = isset($company) ? $company : '';
         $size_in_inch = $userlength.' X '.$userwidth;
 
@@ -31,6 +32,9 @@ class SearchSizeController extends Controller {
         $where = " WHERE 1=1 AND weight > 0 ";
         if ($group_name) {
             $where = $where." AND product_group = '".$group_name."'";
+        }
+        if ($quality) {
+            $where = $where . " AND quality LIKE '%" . $quality . "%'";
         }
         $output = [];
             
@@ -204,11 +208,13 @@ class SearchSizeController extends Controller {
         if($product_group) {
             $where = $where." AND product_group = '".$product_group."'";
         }
-             
-        $output = $this->search_new_common_query('mysql', 'Pap Tech', $userlength, $userwidth, $lower_range, $upper_range, $where);
-        
-        $mobile_show_stocks_from = OptionMaster::where('option', 'mobile_show_stocks_from')->first();
-        $mobile_show_stocks_from = explode(',', $mobile_show_stocks_from->value);
+
+        $output = [];
+        $mobile_show_stocks_from = [];
+        if ($result_cust->mobile_show_stocks_from && $result_cust->mobile_show_stocks_from != '') {
+            $mobile_show_stocks_from = explode(',', $result_cust->mobile_show_stocks_from);
+        }
+
         foreach($mobile_show_stocks_from as $from) {
             switch ($from) {
                 case 'PTL':
@@ -217,6 +223,10 @@ class SearchSizeController extends Controller {
                 break;
                 case 'Paper Hub':
                     $result = $this->search_new_common_query('paper_hub_connection', $from, $userlength, $userwidth, $lower_range, $upper_range, $where);
+                    $output = array_merge($output, $result);
+                break;
+                case 'Pap Tech':
+                    $result = $this->search_new_common_query('mysql', $from, $userlength, $userwidth, $lower_range, $upper_range, $where);
                     $output = array_merge($output, $result);
                 break;
             }

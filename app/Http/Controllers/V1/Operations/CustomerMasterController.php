@@ -21,6 +21,7 @@ class CustomerMasterController extends Controller {
 			"active"=>$request->get('active'),
 			"stock_active"=>$request->get('stock_active'),
 			"password"=> md5($request->get('password')),
+			"mobile_show_stocks_from"=>$request->get('mobile_show_stocks_from'),
 			"updated_dt"=> Carbon::now()
         ])->id;
 
@@ -55,6 +56,7 @@ class CustomerMasterController extends Controller {
 			"mobile"=>$request->get('mobile'),
 			"active"=>$request->get('active'),
 			"stock_active"=>$request->get('stock_active'),
+			"mobile_show_stocks_from"=>$request->get('mobile_show_stocks_from'),
 			"updated_dt"=> Carbon::now()
         ];
 
