@@ -35,6 +35,8 @@ Route::namespace('V1')->middleware(['cors'])->group(function() {
         Route::get('delete-all-stock', 'StockMasterController@deleteAllStock');
         Route::get('delete-all-outstandings', 'OutstandingController@deleteAllOutstanding');
         Route::get('delete-all-challan', 'ChallanController@deleteAllChallan');
+
+        Route::post('delete-challan', 'ChallanController@deleteChallan');
     });
     
     Route::middleware(['jwt.verify'])->group(function() {
