@@ -231,7 +231,7 @@ class SearchSizeController extends Controller
         $upper_range = $gsm + $gsm_range;
         $lower_range = $gsm - $gsm_range;
 
-        $where = " WHERE 1=1  AND weight > 0 ";
+        $where = " WHERE 1=1 ";
         if ($product_group) {
             $where = $where . " AND product_group = '" . $product_group . "'";
         }
@@ -295,7 +295,7 @@ class SearchSizeController extends Controller
 
             LEFT JOIN usermaster ON  usermaster.id = stock_vendors.vendor_id
             
-            " . $where . "
+            " . $where . " AND weight > 0 
             
             GROUP BY quality, gsm, Size_INCH
             ORDER BY utilization DESC, gsm
@@ -354,7 +354,7 @@ class SearchSizeController extends Controller
                 ORDER BY utilization DESC, size_inch_length ASC) util
             ON stock.id = util.id
             
-            " . $where . "
+            " . $where . " AND weight > 0 
             
             group by quality, gsm, Size_INCH
             
