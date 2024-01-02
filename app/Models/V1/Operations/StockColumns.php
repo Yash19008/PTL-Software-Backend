@@ -12,6 +12,6 @@ class StockColumns extends Model
     public $timestamps = false;
 
     protected $fillable = [
-        'id', 'customer_id', 'quality', 'gsm', 'size_inch', 'total_ups' , 'utilization', 'sheet_weight', 'bundle', 'total_sheet', 'gwd'
+        'id', 'customer_id', 'quality', 'gsm', 'size_inch', 'total_ups' , 'utilization', 'sheet_weight', 'bundle', 'total_sheet', 'gwd', 'is_reel'
     ];
 }

@@ -10,90 +10,128 @@ use App\Http\Requests\Operations\CustomerMasterRequest;
 use App\Models\V1\Operations\CustomerMaster;
 use App\Models\V1\Operations\StockColumns;
 
-class CustomerMasterController extends Controller {
+class CustomerMasterController extends Controller
+{
 
-    public function store(CustomerMasterRequest $request) {
-		$customer_id = CustomerMaster::create([
-			"company_name"=> $request->get('company_name'),
-			"client_name"=>$request->get('client_name'),
-			"email"=>$request->get('email'),
-			"mobile"=>$request->get('mobile'),
-			"active"=>$request->get('active'),
-			"stock_active"=>$request->get('stock_active'),
-			"password"=> md5($request->get('password')),
-			"mobile_show_stocks_from"=>$request->get('mobile_show_stocks_from'),
-			"updated_dt"=> Carbon::now()
+    public function store(CustomerMasterRequest $request)
+    {
+        $customer_id = CustomerMaster::create([
+            "company_name" => $request->get('company_name'),
+            "client_name" => $request->get('client_name'),
+            "email" => $request->get('email'),
+            "mobile" => $request->get('mobile'),
+            "active" => $request->get('active'),
+            "stock_active" => $request->get('stock_active'),
+            "password" => md5($request->get('password')),
+            "mobile_show_stocks_from" => $request->get('mobile_show_stocks_from'),
+            "updated_dt" => Carbon::now()
         ])->id;
 
         StockColumns::create([
-			"customer_id"=> $customer_id,
-			"quality"=>$request->get('quality') == 'true' ? 'Yes' : 'No',
-			"gsm"=>$request->get('gsm') == 'true' ? 'Yes' : 'No',
-			"size_inch"=>$request->get('size_inch') == 'true' ? 'Yes' : 'No',
-			"total_ups"=>$request->get('total_ups') == 'true' ? 'Yes' : 'No',
-			"utilization"=>$request->get('utilization') == 'true' ? 'Yes' : 'No',
-			"utilization"=>$request->get('utilization') == 'true' ? 'Yes' : 'No',
-			"bundle"=>$request->get('bundle') == 'true' ? 'Yes' : 'No',
-			"total_sheet"=>$request->get('total_sheet') == 'true' ? 'Yes' : 'No',
-			"gwd"=>$request->get('gwd') == 'true' ? 'Yes' : 'No'
+            "customer_id" => $customer_id,
+            "quality" => $request->get('quality') == 'true' ? 'Yes' : 'No',
+            "gsm" => $request->get('gsm') == 'true' ? 'Yes' : 'No',
+            "size_inch" => $request->get('size_inch') == 'true' ? 'Yes' : 'No',
+            "total_ups" => $request->get('total_ups') == 'true' ? 'Yes' : 'No',
+            "utilization" => $request->get('utilization') == 'true' ? 'Yes' : 'No',
+            "utilization" => $request->get('utilization') == 'true' ? 'Yes' : 'No',
+            "bundle" => $request->get('bundle') == 'true' ? 'Yes' : 'No',
+            "total_sheet" => $request->get('total_sheet') == 'true' ? 'Yes' : 'No',
+            "gwd" => $request->get('gwd') == 'true' ? 'Yes' : 'No',
+            'is_reel' => 'No'
+        ]);
+
+        StockColumns::create([
+            'customer_id' => $customer_id,
+            "quality" => $request->get('reel_quality') == 'true' ? 'Yes' : 'No',
+            "gsm" => $request->get('reel_gsm') == 'true' ? 'Yes' : 'No',
+            "size_inch" => $request->get('reel_size_inch') == 'true' ? 'Yes' : 'No',
+            "total_ups" => $request->get('reel_total_ups') == 'true' ? 'Yes' : 'No',
+            "sheet_weight" => $request->get('reel_sheet_weight') == 'true' ? 'Yes' : 'No',
+            "utilization" => $request->get('reel_utilization') == 'true' ? 'Yes' : 'No',
+            "bundle" => $request->get('reel_bundle') == 'true' ? 'Yes' : 'No',
+            "total_sheet" => $request->get('reel_total_sheet') == 'true' ? 'Yes' : 'No',
+            "gwd" => $request->get('reel_gwd') == 'true' ? 'Yes' : 'No',
+            'is_reel' => 'Yes'
         ]);
 
         $data = [
-			"stock_active" => $request->get('stock_active'),
-			"password"=> md5($request->get('password'))
+            "stock_active" => $request->get('stock_active'),
+            "password" => md5($request->get('password'))
         ];
         CustomerMaster::where('mobile', $request->get('mobile'))->update($data);
 
         return $this->success('CustomerMaster Response Submitted Successully !!', null, 200);
     }
 
-    public function update(CustomerMasterRequest $request, $id) {
-    	$user = CustomerMaster::findOrFail($id);
+    public function update(CustomerMasterRequest $request, $id)
+    {
+        $user = CustomerMaster::findOrFail($id);
         $data = [
-			"company_name"=> $request->get('company_name'),
-			"client_name"=>$request->get('client_name'),
-			"email"=>$request->get('email'),
-			"mobile"=>$request->get('mobile'),
-			"active"=>$request->get('active'),
-			"stock_active"=>$request->get('stock_active'),
-			"mobile_show_stocks_from"=>$request->get('mobile_show_stocks_from'),
-			"updated_dt"=> Carbon::now()
+            "company_name" => $request->get('company_name'),
+            "client_name" => $request->get('client_name'),
+            "email" => $request->get('email'),
+            "mobile" => $request->get('mobile'),
+            "active" => $request->get('active'),
+            "stock_active" => $request->get('stock_active'),
+            "mobile_show_stocks_from" => $request->get('mobile_show_stocks_from'),
+            "updated_dt" => Carbon::now()
         ];
 
         if ($request->get('password')) {
             $data['password'] = md5($request->get('password'));
         }
 
-    	$user->update($data);
+        $user->update($data);
 
-    	$stockcolumns = StockColumns::where('customer_id', $id);
+        $stockcolumns = StockColumns::where('customer_id', $id);
         $data = [
-			"quality"=>$request->get('quality') == 'true' ? 'Yes' : 'No',
-			"gsm"=>$request->get('gsm') == 'true' ? 'Yes' : 'No',
-			"size_inch"=>$request->get('size_inch') == 'true' ? 'Yes' : 'No',
-			"total_ups"=>$request->get('total_ups') == 'true' ? 'Yes' : 'No',
-			"utilization"=>$request->get('utilization') == 'true' ? 'Yes' : 'No',
-			"utilization"=>$request->get('utilization') == 'true' ? 'Yes' : 'No',
-			"bundle"=>$request->get('bundle') == 'true' ? 'Yes' : 'No',
-			"total_sheet"=>$request->get('total_sheet') == 'true' ? 'Yes' : 'No',
-			"gwd"=>$request->get('gwd') == 'true' ? 'Yes' : 'No'
+            "quality" => $request->get('quality') == 'true' ? 'Yes' : 'No',
+            "gsm" => $request->get('gsm') == 'true' ? 'Yes' : 'No',
+            "size_inch" => $request->get('size_inch') == 'true' ? 'Yes' : 'No',
+            "total_ups" => $request->get('total_ups') == 'true' ? 'Yes' : 'No',
+            "sheet_weight" => $request->get('sheet_weight') == 'true' ? 'Yes' : 'No',
+            "utilization" => $request->get('utilization') == 'true' ? 'Yes' : 'No',
+            "bundle" => $request->get('bundle') == 'true' ? 'Yes' : 'No',
+            "total_sheet" => $request->get('total_sheet') == 'true' ? 'Yes' : 'No',
+            "gwd" => $request->get('gwd') == 'true' ? 'Yes' : 'No',
+            'is_reel' => 'No',
         ];
-    	$stockcolumns->update($data);
+        $stockcolumns->update($data);
+
+        StockColumns::updateOrInsert(
+            ['customer_id' => $id, 'is_reel' => 'Yes'],
+            [
+                'customer_id' => $id,
+                "quality" => $request->get('reel_quality') == 'true' ? 'Yes' : 'No',
+                "gsm" => $request->get('reel_gsm') == 'true' ? 'Yes' : 'No',
+                "size_inch" => $request->get('reel_size_inch') == 'true' ? 'Yes' : 'No',
+                "total_ups" => $request->get('reel_total_ups') == 'true' ? 'Yes' : 'No',
+                "sheet_weight" => $request->get('reel_sheet_weight') == 'true' ? 'Yes' : 'No',
+                "utilization" => $request->get('reel_utilization') == 'true' ? 'Yes' : 'No',
+                "bundle" => $request->get('reel_bundle') == 'true' ? 'Yes' : 'No',
+                "total_sheet" => $request->get('reel_total_sheet') == 'true' ? 'Yes' : 'No',
+                "gwd" => $request->get('reel_gwd') == 'true' ? 'Yes' : 'No',
+                'is_reel' => 'Yes'
+            ]
+        );
 
         $data = [
-			"stock_active" => $request->get('stock_active')
+            "stock_active" => $request->get('stock_active')
         ];
         if ($request->get('password')) {
             $data['password'] = md5($request->get('password'));
         }
         CustomerMaster::where('mobile', $request->get('mobile'))->update($data);
-        
+
         return $this->success('CustomerMaster updated successfully', $user, 200);
     }
 
-    public function show($id) {
+    public function show($id)
+    {
         $user = CustomerMaster::where('id', $id)->first();
-        $user->stock_columns = StockColumns::where('customer_id', $id)->first();
+        $user->stock_columns = StockColumns::where('customer_id', $id)->where('is_reel', 'No')->first();
+        $user->stock_columns_reel = StockColumns::where('customer_id', $id)->where('is_reel', 'Yes')->first();
         return $this->success('CustomerMaster Responses !!', $user, 200);
     }
 
@@ -115,8 +153,7 @@ class CustomerMasterController extends Controller {
     }
 
     public function getTableColumn()
-    {         
-        return array( "company_name" => "company_name", "client_name" => "client_name" , "email" => "email", "mobile" => "mobile", "active" => "active", "stock_active" => "stock_active", "otp" => "otp");
+    {
+        return array("company_name" => "company_name", "client_name" => "client_name", "email" => "email", "mobile" => "mobile", "active" => "active", "stock_active" => "stock_active", "otp" => "otp");
     }
-
 }
