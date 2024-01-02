@@ -47,7 +47,7 @@ Route::namespace('V1')->middleware(['cors'])->group(function() {
             Route::get('user-master', 'UserMasterController@index');
             Route::get('user-master/{id}', 'UserMasterController@show');
             Route::post('user-master', 'UserMasterController@store');
-            Route::put('user-master/{id}', 'UserMasterController@update');            
+            Route::put('user-master/{id}', 'UserMasterController@update');
             Route::get('user-details', 'UserMasterController@details');
             Route::get('all-vendors', 'UserMasterController@getAllVendors');
 
@@ -59,10 +59,11 @@ Route::namespace('V1')->middleware(['cors'])->group(function() {
             Route::get('order-master', 'OrderMasterController@index');
             Route::get('order-master/{id}', 'OrderMasterController@show');
             Route::put('order-master/{id}', 'OrderMasterController@update');
+            Route::post('add_challan', 'OrderMasterController@addChallan');
             
             Route::get('challan-list', 'ChallanController@index');
 
-            Route::get('stock-master', 'StockMasterController@index');            
+            Route::get('stock-master', 'StockMasterController@index');
             Route::post('stocks-import', 'StockMasterController@import');
             Route::get('clear_vendor_stock', 'StockMasterController@ClearVendorStock');
             Route::get('last-uploaded-time', 'VendorHistoryController@lastUploaded');
@@ -142,6 +143,7 @@ Route::namespace('V1')->middleware(['cors'])->group(function() {
             Route::get('detials', 'ChallanController@detials');
             Route::get('android_version', 'OptionMasterController@android_version');
             Route::get('ios_version', 'OptionMasterController@ios_version');
+            Route::post('get_challan_url', 'OptionMasterController@get_challan_url');
         });
         Route::prefix("API_addorder")->group(function () {
             Route::get('find_company_list', 'OrderMasterController@find_company_list');
