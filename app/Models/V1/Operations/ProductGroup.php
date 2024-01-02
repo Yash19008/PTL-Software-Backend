@@ -8,10 +8,10 @@ class ProductGroup extends Model
 {
 
     protected $table = "product_group";
-    
+
     public $timestamps = false;
 
     protected $fillable = [
-        'id', 'group_name', 'updated_on'
+        'id', 'group_name', 'is_reel', 'updated_on'
     ];
 }

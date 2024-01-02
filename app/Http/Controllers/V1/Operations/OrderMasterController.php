@@ -184,7 +184,7 @@ class OrderMasterController extends Controller
     public function addChallan(Request $request)
     {
         try {
-            OrderMaster::whereIn('id', $request->order_ids)->update(['challan_number' => $request->challan_number, 'challan_id' => $request->challan_id]);
+            OrderMaster::whereIn('id', $request->order_ids)->update(['challan_number' => $request->challan_number, 'challan_id' => $request->challan_id, 'status' => 'B']);
         } catch (\Exception $e) {
             \Log::error($e);
         }

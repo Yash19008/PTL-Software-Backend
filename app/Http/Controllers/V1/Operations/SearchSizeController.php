@@ -149,7 +149,7 @@ class SearchSizeController extends Controller
         $output1['message'] = 'Size in Inch Record List !!';
         $output1['status'] = 'success';
 
-        $result = StockColumns::where('customer_id', $customer_id)->first();
+        $result = StockColumns::where('customer_id', $customer_id)->where('is_reel', 'No')->first();
 
         if ($result->quality == 'Yes')   $output1['headers']['quality'] = 'Quality';
         if ($result->gsm == 'Yes')   $output1['headers']['gsm'] = 'GSM';
@@ -161,14 +161,37 @@ class SearchSizeController extends Controller
         if ($result->total_sheet == 'Yes')   $output1['headers']['total_sheet'] = 'Total Sheet';
         if ($result->gwd == 'Yes')   $output1['headers']['gwd'] = 'Godown';
 
-        $data = $this->search_new_common($request, 'dynamic');
+
+        $product_group = $request->get('product_group');
+        $searchReel = ProductGroup::where('group_name', $product_group)->where('is_reel', 'Yes')->first();
+        if ($searchReel) {
+            $result = StockColumns::where('customer_id', $customer_id)->where('is_reel', 'Yes')->first();
+
+            if ($result) {
+                if ($result->quality == 'Yes')   $output1['reel_headers']['quality'] = 'Quality';
+                if ($result->gsm == 'Yes')   $output1['reel_headers']['gsm'] = 'GSM';
+                if ($result->size_inch == 'Yes')   $output1['reel_headers']['size_inch'] = 'Size in Inch';
+                if ($result->total_ups == 'Yes')   $output1['reel_headers']['total_ups'] = 'Total No. of UPS';
+                if ($result->utilization == 'Yes')   $output1['reel_headers']['utilization'] = 'Utilization';
+                if ($result->sheet_weight == 'Yes')   $output1['reel_headers']['sheet_weight'] = '100 Sheet Weight';
+                if ($result->bundle == 'Yes')   $output1['reel_headers']['bundle'] = 'Per Bundle No. of Sheet';
+                if ($result->total_sheet == 'Yes')   $output1['reel_headers']['total_sheet'] = 'Total Sheet';
+                if ($result->gwd == 'Yes')   $output1['reel_headers']['gwd'] = 'Godown';
+
+                $searchReel = isset($output1['reel_headers']);
+            } else {
+                $searchReel = null;
+            }
+        }
+
+        $data = $this->search_new_common($request, $searchReel, 'dynamic');
         $output1['data'] = $data;
 
         return response()->json($output1, 200);
     }
 
 
-    public function search_new_common(Request $request, $return = 'api')
+    public function search_new_common(Request $request, $searchReel, $return = 'api')
     {
         $userlength = $request->get('length');
         $userwidth = $request->get('width');
@@ -202,6 +225,8 @@ class SearchSizeController extends Controller
         SearchHistoryMaster::create($data);
 
         $option_result = OptionMaster::where('option', 'gsm_range')->first();
+        $sheets_result_count = OptionMaster::where('option', 'sheets_result_count')->first()->value;
+        $reels_result_count = OptionMaster::where('option', 'reels_result_count')->first()->value;
         $gsm_range = $option_result->value;
         $upper_range = $gsm + $gsm_range;
         $lower_range = $gsm - $gsm_range;
@@ -212,6 +237,7 @@ class SearchSizeController extends Controller
         }
 
         $output = [];
+        $reel_output = [];
         $mobile_show_stocks_from = [];
         if ($result_cust->mobile_show_stocks_from && $result_cust->mobile_show_stocks_from != '') {
             $mobile_show_stocks_from = explode(',', $result_cust->mobile_show_stocks_from);
@@ -219,16 +245,28 @@ class SearchSizeController extends Controller
         foreach ($mobile_show_stocks_from as $from) {
             switch ($from) {
                 case 'PTL':
-                    $result = $this->search_new_common_query('mysql', $from, $userlength, $userwidth, $lower_range, $upper_range, $where);
+                    $result = $this->search_new_common_query('mysql', $from, $userlength, $userwidth, $lower_range, $upper_range, $where, $sheets_result_count);
                     $output = array_merge($output, $result);
+                    if ($searchReel) {
+                        $result = $this->reel_search_new_common_query('mysql', $from, $userlength, $userwidth, $lower_range, $upper_range, $where, $reels_result_count, $gsm);
+                        $reel_output = array_merge($reel_output, $result);
+                    }
                     break;
                 case 'Pap Tech':
-                    $result = $this->search_new_common_query('ptsc_connection', $from, $userlength, $userwidth, $lower_range, $upper_range, $where);
+                    $result = $this->search_new_common_query('ptsc_connection', $from, $userlength, $userwidth, $lower_range, $upper_range, $where, $sheets_result_count);
                     $output = array_merge($output, $result);
+                    if ($searchReel) {
+                        $result = $this->reel_search_new_common_query('ptsc_connection', $from, $userlength, $userwidth, $lower_range, $upper_range, $where, $reels_result_count, $gsm);
+                        $reel_output = array_merge($reel_output, $result);
+                    }
                     break;
                 case 'Paper Hub':
-                    $result = $this->search_new_common_query('paper_hub_connection', $from, $userlength, $userwidth, $lower_range, $upper_range, $where);
+                    $result = $this->search_new_common_query('paper_hub_connection', $from, $userlength, $userwidth, $lower_range, $upper_range, $where, $sheets_result_count);
                     $output = array_merge($output, $result);
+                    if ($searchReel) {
+                        $result = $this->reel_search_new_common_query('paper_hub_connection', $from, $userlength, $userwidth, $lower_range, $upper_range, $where, $reels_result_count, $gsm);
+                        $reel_output = array_merge($reel_output, $result);
+                    }
                     break;
             }
         }
@@ -267,7 +305,11 @@ class SearchSizeController extends Controller
         usort($output, function ($a, $b) {
             return $a->utilization > $b->utilization ? -1 : 1;
         });
+
+        $output = array_slice($output, 0, $sheets_result_count);
         $data_record['list'] = $output;
+        $reel_output = array_slice($reel_output, 0, $reels_result_count);
+        $data_record['reel_list'] = $reel_output;
         $data_record['stock_access'] = ($result_cust->stock_active == null) ? 0 : $result_cust->stock_active;
         $data_record = json_decode(json_encode($data_record), true);
 
@@ -281,7 +323,7 @@ class SearchSizeController extends Controller
         }
     }
 
-    function search_new_common_query($connection, $name, $userlength, $userwidth, $lower_range, $upper_range, $where)
+    function search_new_common_query($connection, $name, $userlength, $userwidth, $lower_range, $upper_range, $where, $sheets_result_count)
     {
         return \DB::connection($connection)->select("SELECT '" . $name . "' as company, stock.quality, gsm, util.utilization, stock.id, stock.gwd,
             CONCAT(size_inch_length,' X ',size_inch_width) as Size_INCH, size_inch_length ,size_inch_width,
@@ -317,5 +359,25 @@ class SearchSizeController extends Controller
             group by quality, gsm, Size_INCH
             
             ORDER BY utilization DESC,gsm");
+    }
+
+    function reel_search_new_common_query($connection, $name, $userlength, $userwidth, $lower_range, $upper_range, $where, $reels_result_count, $gsm)
+    {
+        return \DB::connection($connection)->select("SELECT '" . $name . "' as company, stock.quality, gsm, '100' as utilization, stock.id, stock.gwd,
+            CONCAT(size_inch_length,' X ',size_inch_width) as Size_INCH, size_inch_length ,size_inch_width,
+            CONCAT(size_inch_length,' X ',size_inch_width) as size_inch,
+            TRUNCATE(size_inch_length/" . $userlength . " ,0) AS LEN_UPS ,
+            TRUNCATE(size_inch_width/" . $userwidth . " ,0) AS WID_UPS ,
+            TRUNCATE(TRUNCATE(size_inch_length/" . $userlength . ",0)*TRUNCATE(size_inch_width/" . $userwidth . ",0),0) AS total_ups,
+            ''  as  sheet_weight,
+            TRUNCATE((stock.weight/((" . $userlength . "*" . $userwidth . "*" . $gsm . "/8.2/1307.25)/144)),-2)  as  total_sheet,
+            '' as bundle
+            
+            FROM stock
+            
+            " . $where . " AND size_inch_width = 0.00 AND size_inch_length = " . $userlength . "
+            
+            group by quality, gsm, Size_INCH
+            ORDER BY gsm");
     }
 }
