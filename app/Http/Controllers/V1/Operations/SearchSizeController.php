@@ -364,11 +364,11 @@ class SearchSizeController extends Controller
     function reel_search_new_common_query($connection, $name, $userlength, $userwidth, $lower_range, $upper_range, $where, $reels_result_count, $gsm)
     {
         return \DB::connection($connection)->select("SELECT '" . $name . "' as company, stock.quality, gsm, '100' as utilization, stock.id, stock.gwd,
-            CONCAT(size_inch_length,' X ',size_inch_width) as Size_INCH, size_inch_length ,size_inch_width,
-            CONCAT(size_inch_length,' X ',size_inch_width) as size_inch,
+            CONCAT(size_inch_length,' X '," . $userwidth . ") as Size_INCH, size_inch_length ,size_inch_width,
+            CONCAT(size_inch_length,' X '," . $userwidth . ") as size_inch,
             TRUNCATE(size_inch_length/" . $userlength . " ,0) AS LEN_UPS ,
             TRUNCATE(size_inch_width/" . $userwidth . " ,0) AS WID_UPS ,
-            TRUNCATE(TRUNCATE(size_inch_length/" . $userlength . ",0)*TRUNCATE(size_inch_width/" . $userwidth . ",0),0) AS total_ups,
+            '1' AS total_ups,
             ''  as  sheet_weight,
             TRUNCATE((stock.weight/((" . $userlength . "*" . $userwidth . "*" . $gsm . "/8.2/1307.25)/144)),-2)  as  total_sheet,
             '' as bundle
