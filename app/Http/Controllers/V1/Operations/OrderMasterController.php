@@ -64,7 +64,7 @@ class OrderMasterController extends Controller
 
     public function getTableColumn()
     {
-        return array("id" => "id", "date" => "date", "company_name" => "company_name", "quality" => "quality", "size_inch_length" => "size_inch_length", "size_inch_width" => "size_inch_width", "gsm" => "gsm", "qty" => "qty", "delivery_at" => "delivery_at", "status" => "status", "challan_number" => "challan_number", "gwd" => "gwd", "company" => "company");
+        return array("id" => "id", "date" => "date", "company_name" => "company_name", "quality" => "quality", "size_inch_length" => "size_inch_length", "size_inch_width" => "size_inch_width", "gsm" => "gsm", "qty" => "qty", "delivery_at" => "delivery_at", "status" => "status", "challan_number" => "challan_number", "gwd" => "gwd", "company" => "company", "is_reel" => "is_reel");
     }
 
     public function find_company_list(Request $request)
@@ -129,6 +129,7 @@ class OrderMasterController extends Controller
             "last_searched_id" => $historyID,
             "updated_dt" => date('Y-m-d H:i:s'),
             "update_by" => $request->get('customer_id'),
+            "is_reel" => $request->get('is_reel') ?? 'No',
         );
 
 

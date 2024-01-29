@@ -79,6 +79,7 @@ Route::namespace('V1')->middleware(['cors'])->group(function() {
             Route::get('option-master', 'OptionMasterController@index');
             Route::get('option-master/{id}', 'OptionMasterController@show');
             Route::put('option-master/{id}', 'OptionMasterController@update');
+            Route::get('option-masters', 'OptionMasterController@allItems');
 
             Route::get('delete-ptsc-stocks', 'OptionMasterController@deletePtscStock');
             Route::post('copy-ptsc-stocks', 'OptionMasterController@copyPtscStock');
@@ -145,6 +146,7 @@ Route::namespace('V1')->middleware(['cors'])->group(function() {
             Route::get('android_version', 'OptionMasterController@android_version');
             Route::get('ios_version', 'OptionMasterController@ios_version');
             Route::post('get_challan_url', 'OptionMasterController@get_challan_url');
+            Route::get('option_masters', 'OptionMasterController@allItems');
         });
         Route::prefix("API_addorder")->group(function () {
             Route::get('find_company_list', 'OrderMasterController@find_company_list');

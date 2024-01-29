@@ -48,6 +48,12 @@ class OptionMasterController extends Controller
         return $this->success('OptionMaster Responses List', $query, 200);
     }
 
+    public function allItems()
+    {
+        $query = OptionMaster::get();
+        return $this->success('OptionMasters', $query, 200);
+    }
+
     public function getTableColumn()
     {
         return array("id" => "id", "detail" => "detail", "value" => "value");
