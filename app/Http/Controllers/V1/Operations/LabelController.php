@@ -64,4 +64,14 @@ class LabelController extends Controller {
         return response()->json($output, 200);
     }
 
+    
+    public function delete_account() {
+        $output['message'] = 'Your account has been deleted !!';
+        $output['status'] = 'success';
+        
+        return response()->json($output, 200);
+    }
+
+
+
 }

@@ -124,6 +124,7 @@ Route::namespace('V1')->middleware(['cors'])->group(function() {
     Route::namespace('Operations')->group(function() {
         Route::prefix("API_labels")->group(function () {
             Route::get('labels', 'LabelController@index');
+            Route::get('delete_user_data', 'LabelController@delete_account');
         });
         Route::prefix("API_outstand")->group(function () {
             Route::get('company', 'OutstandingController@company');
