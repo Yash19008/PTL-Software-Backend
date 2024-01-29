@@ -181,17 +181,57 @@ class SearchSizeController extends Controller {
             }
         }
 
-        $data = $this->search_new_common($request, $searchReel, 'dynamic');
+        $data = $this->search_new_common($request, $request->get('length'), $request->get('width'), $searchReel, 'dynamic');
+
+
+        $option_result = OptionMaster::where('option', 'plus_minus_size_search')->first();
+        if ($option_result) {
+            $range = $option_result->value;
+
+            $userWidth = number_format((float)$request->get('width'), 2, '.', '') - $range;
+            $userLength = number_format((float)$request->get('length'), 2, '.', '') - $range;
+            $new_data = $this->search_new_common($request, $userLength, $userWidth, $searchReel, 'dynamic');
+    
+            $data['list'] = array_merge($data['list'], $new_data['list']);
+            //$data['reel_list'] = array_merge($data['reel_list'], $new_data['reel_list']);
+    
+            $data['list'] = $this->getUnique($data['list']);
+            //$data['reel_list'] = $this->getUnique($data['reel_list']);
+        }
+
+        usort($data['list'], function ($a, $b) {
+            return $b['utilization'] <=> $a['utilization'];
+        });
+            
+        usort($data['reel_list'], function ($a, $b) {
+            return $b['utilization'] <=> $a['utilization'];
+        });
+
         $output1['data'] = $data;
         
         return response()->json($output1, 200);
     }
-    
-    
-    public function search_new_common(Request $request, $searchReel, $return = 'api')
+
+    public function getUnique($data)
     {
-        $userlength = $request->get('length');
-        $userwidth = $request->get('width');
+        $unique = [];
+        foreach ($data as $item) {
+            $isUnique = true;
+            foreach ($unique as $uniqueItem) {
+                if ($uniqueItem['id'] == $item['id'] && $uniqueItem['company'] == $item['company']) {
+                    $isUnique =  false;
+                }
+            }
+            if ($isUnique) {
+                $unique[] =  $item;
+            }
+        }
+        return $unique;
+    }
+
+
+    public function search_new_common(Request $request, $userlength, $userwidth, $searchReel, $return = 'api')
+    {
         $gsm = $request->get('gsm');
         $customer_id = $request->get('customer_id');
         $product_group = $request->get('product_group');
@@ -232,6 +272,14 @@ class SearchSizeController extends Controller {
         if($product_group) {
             $where = $where." AND product_group = '".$product_group."'";
         }
+        
+        $option_result = OptionMaster::where('option', 'reel_gsm_range')->first();
+        $gsm_range = 0;
+        if ($option_result) {
+            $gsm_range = $option_result->value;
+        }
+        $reel_upper_range = $gsm + $gsm_range;
+        $reel_lower_range = $gsm - $gsm_range;
 
         $output = [];
         $reel_output = [];
@@ -246,7 +294,7 @@ class SearchSizeController extends Controller {
                     $result = $this->search_new_common_query('ptl_connection', $from, $userlength, $userwidth, $lower_range, $upper_range, $where, $sheets_result_count);
                     $output = array_merge($output, $result);
                     if ($searchReel) {
-                        $result = $this->reel_search_new_common_query('ptl_connection', $from, $userlength, $userwidth, $lower_range, $upper_range, $where, $reels_result_count, $gsm);
+                        $result = $this->reel_search_new_common_query('ptl_connection', $from, $userlength, $userwidth, $reel_lower_range, $reel_upper_range, $where, $reels_result_count, $gsm);
                         $reel_output = array_merge($reel_output, $result);
                     }
                 break;
@@ -254,7 +302,7 @@ class SearchSizeController extends Controller {
                     $result = $this->search_new_common_query('paper_hub_connection', $from, $userlength, $userwidth, $lower_range, $upper_range, $where, $sheets_result_count);
                     $output = array_merge($output, $result);
                     if ($searchReel) {
-                        $result = $this->reel_search_new_common_query('paper_hub_connection', $from, $userlength, $userwidth, $lower_range, $upper_range, $where, $reels_result_count, $gsm);
+                        $result = $this->reel_search_new_common_query('paper_hub_connection', $from, $userlength, $userwidth, $reel_lower_range, $reel_upper_range, $where, $reels_result_count, $gsm);
                         $reel_output = array_merge($reel_output, $result);
                     }
                 break;
@@ -262,7 +310,7 @@ class SearchSizeController extends Controller {
                     $result = $this->search_new_common_query('mysql', $from, $userlength, $userwidth, $lower_range, $upper_range, $where, $sheets_result_count);
                     $output = array_merge($output, $result);
                     if ($searchReel) {
-                        $result = $this->reel_search_new_common_query('mysql', $from, $userlength, $userwidth, $lower_range, $upper_range, $where, $reels_result_count, $gsm);
+                        $result = $this->reel_search_new_common_query('mysql', $from, $userlength, $userwidth, $reel_lower_range, $reel_upper_range, $where, $reels_result_count, $gsm);
                         $reel_output = array_merge($reel_output, $result);
                     }
                 break;
@@ -366,22 +414,31 @@ class SearchSizeController extends Controller {
 
     function reel_search_new_common_query($connection, $name, $userlength, $userwidth, $lower_range, $upper_range, $where, $reels_result_count, $gsm)
     {
-        return \DB::connection($connection)->select("SELECT '" . $name . "' as company, stock.quality, gsm, '100' as utilization, stock.id, stock.gwd,
+        $userwidth = number_format((float)$userwidth, 2, '.', '');
+        return \DB::connection($connection)->select("SELECT '" . $name . "' as company, stock.quality, gsm, dup.utiliz as utilization, stock.id, stock.gwd,
             CONCAT(size_inch_length,' X '," . $userwidth . ") as Size_INCH, size_inch_length ,size_inch_width,
             CONCAT(size_inch_length,' X '," . $userwidth . ") as size_inch,
             TRUNCATE(size_inch_length/" . $userlength . " ,0) AS LEN_UPS ,
             TRUNCATE(size_inch_width/" . $userwidth . " ,0) AS WID_UPS ,
-            '1' AS total_ups,
+            TRUNCATE(TRUNCATE(size_inch_length/" . $userlength . ",0),0) AS total_ups,
             ''  as  sheet_weight,
             TRUNCATE((stock.weight/((" . $userlength . "*" . $userwidth . "*" . $gsm . "/8.2/1307.25)/144)),-2)  as  total_sheet,
             '' as bundle
             
             FROM stock
             
-            " . $where . " AND size_inch_width = 0.00 AND size_inch_length = " . $userlength . "
+            INNER JOIN
+                (SELECT id, (ROUND(((" . $userlength . ")/(size_inch_length))*(TRUNCATE(TRUNCATE(size_inch_length/" . $userlength . ",0),0)) * 100)) as utiliz
+                FROM stock
+                WHERE stock.gsm BETWEEN " . $lower_range . " AND " . $upper_range . "
+                HAVING  utiliz >= (SELECT op.value FROM options_master op WHERE op.option='utilization_ups_admin') AND utiliz <= 100 
+                ORDER BY utiliz DESC, size_inch_length ASC) dup
+            ON stock.id = dup.id
+            
+            " . $where . " AND size_inch_width = 0.00
             
             group by quality, gsm, Size_INCH
-            ORDER BY gsm");
+            ORDER BY utilization DESC,gsm");
     }
 
 }
