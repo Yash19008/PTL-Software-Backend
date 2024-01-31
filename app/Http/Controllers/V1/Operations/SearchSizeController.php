@@ -38,10 +38,44 @@ class SearchSizeController extends Controller
         if ($quality) {
             $where = $where . " AND quality LIKE '%" . $quality . "%'";
         }
+
+        $data = $this->searchSizeCommon($company, $userlength, $userwidth, $lower_range, $upper_range, $where, $gsm);
+
+        
+        $option_result = OptionMaster::where('option', 'plus_minus_size_search')->first();
+        if ($option_result) {
+            $range = $option_result->value;
+
+            $userWidth = number_format((float)$request->get('width'), 2, '.', '') - $range;
+            $userLength = number_format((float)$request->get('length'), 2, '.', '') - $range;
+            $new_data = $this->searchSizeCommon($company, $userLength, $userWidth, $lower_range, $upper_range, $where, $gsm);
+
+            $data['list'] = array_merge($data['list'], $new_data['list']);
+            //$data['reel_list'] = array_merge($data['reel_list'], $new_data['reel_list']);
+
+            $data['list'] = $this->getUnique($data['list']);
+            //$data['reel_list'] = $this->getUnique($data['reel_list']);
+        }
+
+        usort($data['list'], function ($a, $b) {
+            return $b['utiliz'] <=> $a['utiliz'];
+        });
+
+        usort($data['reel_list'], function ($a, $b) {
+            return $b['utilization'] <=> $a['utilization'];
+        });
+
+        return $this->success('Search Size Responses List', $data, 200);
+    }
+
+    public function searchSizeCommon($company, $userlength, $userwidth, $lower_range, $upper_range, $where, $gsm)
+    {
         $output = [];
+        $reel_output = [];
 
         if ($company == '' || $company == 'PTL') {
             $output = $this->searchSizeQuery('mysql', 'PTL', $userlength, $userwidth, $lower_range, $upper_range, $where);
+            $reel_output = $this->searchSizeQueryReel('mysql', 'PTL', $userlength, $userwidth, $lower_range, $upper_range, $where, $gsm);
         }
 
         $admin_show_stocks_from = OptionMaster::where('option', 'admin_show_stocks_from')->first();
@@ -52,10 +86,14 @@ class SearchSizeController extends Controller
                     case 'Pap Tech':
                         $result = $this->searchSizeQuery('ptsc_connection', $from, $userlength, $userwidth, $lower_range, $upper_range, $where);
                         $output = array_merge($output, $result);
+                        $result = $this->searchSizeQueryReel('ptsc_connection', $from, $userlength, $userwidth, $lower_range, $upper_range, $where, $gsm);
+                        $reel_output = array_merge($reel_output, $result);
                         break;
                     case 'Paper Hub':
                         $result = $this->searchSizeQuery('paper_hub_connection', $from, $userlength, $userwidth, $lower_range, $upper_range, $where);
                         $output = array_merge($output, $result);
+                        $result = $this->searchSizeQueryReel('paper_hub_connection', $from, $userlength, $userwidth, $lower_range, $upper_range, $where, $gsm);
+                        $reel_output = array_merge($reel_output, $result);
                         break;
                 }
             }
@@ -92,7 +130,11 @@ class SearchSizeController extends Controller
         usort($output, function ($a, $b) {
             return $a->utiliz > $b->utiliz ? -1 : 1;
         });
-        return $this->success('Search Size Responses List', $output, 200);
+
+        $data_record['list'] = $output;
+        $data_record['reel_list'] = $reel_output;
+        $data_record = json_decode(json_encode($data_record), true);
+        return $data_record;
     }
 
 
@@ -125,6 +167,36 @@ class SearchSizeController extends Controller
                     group by quality, gsm, Size_INCH
                     ORDER BY utiliz DESC,gsm
                     ");
+    }
+
+    function searchSizeQueryReel($connection, $name, $userlength, $userwidth, $lower_range, $upper_range, $where, $gsm)
+    {
+        $userwidth = number_format((float)$userwidth, 2, '.', '');
+        return \DB::connection($connection)->select("SELECT '" . $name . "' as company, stock.product_group, stock.quality, gsm, dup.utiliz as utilization, stock.id, stock.gwd,
+        CONCAT(size_inch_length,' X '," . $userwidth . ") as Size_INCH, size_inch_length ,size_inch_width,
+        CONCAT(size_inch_length,' X '," . $userwidth . ") as size_inch,
+        TRUNCATE(size_inch_length/" . $userlength . " ,0) AS LEN_UPS ,
+        TRUNCATE(size_inch_width/" . $userwidth . " ,0) AS WID_UPS ,
+        TRUNCATE(TRUNCATE(size_inch_length/" . $userlength . ",0),0) AS total_ups,
+            ''  as  sheet_weight,
+            TRUNCATE((stock.weight/((" . $userlength . "*" . $userwidth . "*" . $gsm . "/8.2/1307.25)/144)),-2)  as  total_sheet,
+            '' as bundle
+            
+            FROM stock
+            
+            
+            INNER JOIN
+                (SELECT id, (ROUND(((" . $userlength . ")/(size_inch_length))*(TRUNCATE(TRUNCATE(size_inch_length/" . $userlength . ",0),0)) * 100)) as utiliz
+                FROM stock
+                WHERE stock.gsm BETWEEN " . $lower_range . " AND " . $upper_range . "
+                HAVING  utiliz >= (SELECT op.value FROM options_master op WHERE op.option='utilization_ups_admin') AND utiliz <= 100 
+                ORDER BY utiliz DESC, size_inch_length ASC) dup
+            ON stock.id = dup.id
+            
+            " . $where . " AND size_inch_width = 0.00
+            
+            group by quality, gsm, Size_INCH
+            ORDER BY utilization DESC,gsm");
     }
 
     public function getMasters()
@@ -194,10 +266,10 @@ class SearchSizeController extends Controller
             $userWidth = number_format((float)$request->get('width'), 2, '.', '') - $range;
             $userLength = number_format((float)$request->get('length'), 2, '.', '') - $range;
             $new_data = $this->search_new_common($request, $userLength, $userWidth, $searchReel, 'dynamic');
-    
+
             $data['list'] = array_merge($data['list'], $new_data['list']);
             //$data['reel_list'] = array_merge($data['reel_list'], $new_data['reel_list']);
-    
+
             $data['list'] = $this->getUnique($data['list']);
             //$data['reel_list'] = $this->getUnique($data['reel_list']);
         }
@@ -205,7 +277,7 @@ class SearchSizeController extends Controller
         usort($data['list'], function ($a, $b) {
             return $b['utilization'] <=> $a['utilization'];
         });
-            
+
         usort($data['reel_list'], function ($a, $b) {
             return $b['utilization'] <=> $a['utilization'];
         });
