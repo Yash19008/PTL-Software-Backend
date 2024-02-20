@@ -12,6 +12,7 @@ use App\Models\V1\Operations\OrderMasterView;
 use App\Models\V1\Operations\CustomerMaster;
 use App\Models\V1\Operations\SearchHistoryMaster;
 use App\Models\V1\Operations\StockMaster;
+use DB;
 
 class OrderMasterController extends Controller
 {
@@ -186,6 +187,60 @@ class OrderMasterController extends Controller
     {
         try {
             OrderMaster::whereIn('id', $request->order_ids)->update(['challan_number' => $request->challan_number, 'challan_id' => $request->challan_id, 'status' => 'B']);
+        } catch (\Exception $e) {
+            \Log::error($e);
+        }
+
+        $output['data'] = 1;
+        $output['message'] = 'Record updated successfully !!';
+        $output['status'] = 'success';
+        return response()->json($output, 200);
+    }
+
+    public function get_orders_list(Request $request)
+    {
+        $whr = " ";
+        $customerId = $request->get('customerId');
+        if ($customerId) {
+            $whr = " cust_id='" . $customerId . "'";
+        }
+        //fetch challan records from challan_list table with respect mobile no.
+        $data_record = DB::select("SELECT *, date_format(date(date),'%d-%m-%Y') as Date_order FROM order_master WHERE " . $whr . " ORDER BY date desc");
+        if (count($data_record) > 0) {
+            $output['data'] = $data_record;
+            $output['message'] = 'Orders List !!';
+            $output['status'] = 'success';
+        } else {
+            $output['message'] = 'No record found !!';
+            $output['status'] = 'error';
+        }
+        return response()->json($output, 200);
+    }
+
+    public function get_order(Request $request)
+    {
+        $whr = " ";
+        $id = $request->get('id');
+        if ($id) {
+            $whr = " id='" . $id . "'";
+        }
+        //fetch challan records from challan_list table with respect mobile no.
+        $data_record = DB::select("SELECT *, date_format(date(date),'%d-%m-%Y') as Date_order FROM order_master WHERE " . $whr . " ORDER BY date desc");
+        if (count($data_record) > 0) {
+            $output['data'] = $data_record;
+            $output['message'] = 'Order Details !!';
+            $output['status'] = 'success';
+        } else {
+            $output['message'] = 'No record found !!';
+            $output['status'] = 'error';
+        }
+        return response()->json($output, 200);
+    }
+
+    public function update_quantity(Request $request)
+    {
+        try {
+            OrderMaster::where('id', $request->order_id)->update(['qty' => $request->quantity]);
         } catch (\Exception $e) {
             \Log::error($e);
         }

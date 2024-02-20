@@ -146,10 +146,13 @@ Route::namespace('V1')->middleware(['cors'])->group(function() {
             Route::get('ios_version', 'OptionMasterController@ios_version');
             Route::post('get_challan_url', 'OptionMasterController@get_challan_url');
             Route::get('option_masters', 'OptionMasterController@allItems');
+            Route::get('get_orders_list', 'OrderMasterController@get_orders_list');
+            Route::get('get_order', 'OrderMasterController@get_order');
         });
         Route::prefix("API_addorder")->group(function () {
             Route::get('find_company_list', 'OrderMasterController@find_company_list');
             Route::post('add_order', 'OrderMasterController@add_order');
+            Route::post('update_quantity', 'OrderMasterController@update_quantity');
         });
     });
     
