@@ -143,6 +143,9 @@ class OrderMasterController extends Controller
                     case 'Paper Hub':
                         $stock = $this->getStock('paper_hub_connection', $request->get('stock_id'));
                         break;
+                    case 'Parekh':
+                        $stock = $this->getStock('parekh_connection', $request->get('stock_id'));
+                        break;
                     default:
                         $stock = $this->getStock('mysql', $request->get('stock_id'));
                 }
