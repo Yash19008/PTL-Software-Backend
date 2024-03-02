@@ -112,6 +112,7 @@ class OptionMasterController extends Controller
     {
         $result1 = OptionMaster::where('option', 'android_version')->first();
         $output['data'] = $result1;
+        $output['update_url'] = NULL;
         $output['message'] = 'Android Version !!';
         $output['status'] = 'success';
 
@@ -122,6 +123,7 @@ class OptionMasterController extends Controller
     {
         $result1 = OptionMaster::where('option', 'ios_version')->first();
         $output['data'] = $result1;
+        $output['update_url'] = "https://apps.apple.com/in/app/paper-trade-link-ptl/id1524424314";
         $output['message'] = 'IOS Version !!';
         $output['status'] = 'success';
 
