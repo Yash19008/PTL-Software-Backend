@@ -253,4 +253,18 @@ class OrderMasterController extends Controller
         $output['status'] = 'success';
         return response()->json($output, 200);
     }
+
+    public function cancel_order(Request $request)
+    {
+        try {
+            OrderMaster::where('id', $request->order_id)->update(['status' => 'C']);
+        } catch (\Exception $e) {
+            \Log::error($e);
+        }
+
+        $output['data'] = 1;
+        $output['message'] = 'Record updated successfully !!';
+        $output['status'] = 'success';
+        return response()->json($output, 200);
+    }
 }
