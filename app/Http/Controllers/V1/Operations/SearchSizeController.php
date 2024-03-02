@@ -93,6 +93,12 @@ class SearchSizeController extends Controller {
                         $result = $this->searchSizeQueryReel('paper_hub_connection', $from, $userlength, $userwidth, $lower_range, $upper_range, $where, $gsm);
                         $reel_output = array_merge($reel_output, $result);
                         break;
+                    case 'Parekh':
+                        $result = $this->searchSizeQuery('parekh_connection', $from, $userlength, $userwidth, $lower_range, $upper_range, $where);
+                        $output = array_merge($output, $result);
+                        $result = $this->searchSizeQueryReel('parekh_connection', $from, $userlength, $userwidth, $lower_range, $upper_range, $where, $gsm);
+                        $reel_output = array_merge($reel_output, $result);
+                        break;
                 }
             }
         }
@@ -385,6 +391,14 @@ class SearchSizeController extends Controller {
                     $output = array_merge($output, $result);
                     if ($searchReel) {
                         $result = $this->reel_search_new_common_query('mysql', $from, $userlength, $userwidth, $reel_lower_range, $reel_upper_range, $where, $reels_result_count, $gsm);
+                        $reel_output = array_merge($reel_output, $result);
+                    }
+                break;
+                case 'Parekh':
+                    $result = $this->search_new_common_query('parekh_connection', $from, $userlength, $userwidth, $lower_range, $upper_range, $where, $sheets_result_count);
+                    $output = array_merge($output, $result);
+                    if ($searchReel) {
+                        $result = $this->reel_search_new_common_query('parekh_connection', $from, $userlength, $userwidth, $reel_lower_range, $reel_upper_range, $where, $reels_result_count, $gsm);
                         $reel_output = array_merge($reel_output, $result);
                     }
                 break;

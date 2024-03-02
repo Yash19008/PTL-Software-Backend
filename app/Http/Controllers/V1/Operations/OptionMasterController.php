@@ -64,6 +64,7 @@ class OptionMasterController extends Controller {
     {
         $result1 = OptionMaster::where('option', 'android_version')->first();
         $output['data'] = $result1;
+        $output['update_url'] = NULL;
         $output['message'] = 'Android Version !!';
         $output['status'] = 'success';
         
@@ -74,6 +75,7 @@ class OptionMasterController extends Controller {
     {
         $result1 = OptionMaster::where('option', 'ios_version')->first();
         $output['data'] = $result1;
+        $output['update_url'] = "https://apps.apple.com/in/app/pap-tech-sales-corporation/id1546234478";
         $output['message'] = 'IOS Version !!';
         $output['status'] = 'success';
         
@@ -93,6 +95,9 @@ class OptionMasterController extends Controller {
                 break;
             case "Paper Hub":
                 $result1 = OptionMaster::where('option', 'challan_url_paperhub')->first();
+                break;
+            case "Parekh":
+                $result1 = OptionMaster::where('option', 'challan_url_parekh')->first();
                 break;
             default:
                 $result1 = OptionMaster::where('option', 'challan_url_test')->first();

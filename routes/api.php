@@ -153,6 +153,7 @@ Route::namespace('V1')->middleware(['cors'])->group(function() {
             Route::get('find_company_list', 'OrderMasterController@find_company_list');
             Route::post('add_order', 'OrderMasterController@add_order');
             Route::post('update_quantity', 'OrderMasterController@update_quantity');
+            Route::post('cancel_order', 'OrderMasterController@cancel_order');
         });
     });
     

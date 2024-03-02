@@ -14,7 +14,7 @@ class AddSearchCompany extends Migration
     public function up()
     {
         Schema::table('customer_master', function (Blueprint $table) {
-            $table->string('mobile_show_stocks_from')->default('PTL,Pap Tech,Paper Hub')->nullable()->after('stock_active');
+            $table->string('mobile_show_stocks_from')->default('PTL,Pap Tech,Paper Hub,Parekh')->nullable()->after('stock_active');
         });
     }
 

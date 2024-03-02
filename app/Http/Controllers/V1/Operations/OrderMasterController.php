@@ -143,6 +143,9 @@ class OrderMasterController extends Controller
                     case 'Paper Hub':
                         $stock = $this->getStock('paper_hub_connection', $request->get('stock_id'));
                         break;
+                    case 'Parekh':
+                        $stock = $this->getStock('parekh_connection', $request->get('stock_id'));
+                        break;
                     default:
                         $stock = $this->getStock('mysql', $request->get('stock_id'));
                 }
@@ -205,7 +208,7 @@ class OrderMasterController extends Controller
             $whr = " cust_id='" . $customerId . "'";
         }
         //fetch challan records from challan_list table with respect mobile no.
-        $data_record = DB::select("SELECT *, date_format(date(date),'%d-%m-%Y') as Date_order FROM order_master WHERE " . $whr . " ORDER BY date desc");
+        $data_record = DB::select("SELECT *, date_format(date(date),'%d-%m-%Y') as Date_order FROM order_master WHERE " . $whr . " ORDER BY date desc limit 25");
         if (count($data_record) > 0) {
             $output['data'] = $data_record;
             $output['message'] = 'Orders List !!';
@@ -241,6 +244,20 @@ class OrderMasterController extends Controller
     {
         try {
             OrderMaster::where('id', $request->order_id)->update(['qty' => $request->quantity]);
+        } catch (\Exception $e) {
+            \Log::error($e);
+        }
+
+        $output['data'] = 1;
+        $output['message'] = 'Record updated successfully !!';
+        $output['status'] = 'success';
+        return response()->json($output, 200);
+    }
+
+    public function cancel_order(Request $request)
+    {
+        try {
+            OrderMaster::where('id', $request->order_id)->update(['status' => 'C']);
         } catch (\Exception $e) {
             \Log::error($e);
         }

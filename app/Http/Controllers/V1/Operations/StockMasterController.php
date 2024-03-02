@@ -68,6 +68,13 @@ class StockMasterController extends Controller {
             if ($data_record2 && count($data_record2) > 0) {
                 $data = $data_record2[0];
             }
+        } else if ($company == 'Parekh') {
+            // search from Paptech Stock
+            $data_record2 = \DB::connection('parekh_connection')->select("Select * from stock where id=".$stock_id."");
+            // print_r($this->db->last_query());exit;
+            if ($data_record2 && count($data_record2) > 0) {
+                $data = $data_record2[0];
+            }
         } else {
             // search from Paptech Stock
             $data_record3 = StockVendor::where('id', $stock_id)->first();
