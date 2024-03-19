@@ -105,6 +105,7 @@ Route::namespace('V1')->middleware(['cors'])->group(function() {
             Route::get('fastest_selling_tile', 'DashboardController@fastest_selling_tile');
             Route::get('outstanding_tile', 'DashboardController@outstanding_tile');
             Route::get('customer_search_history_tile', 'DashboardController@customer_search_history_tile');
+            Route::get('get_total_weight_of_stocks', 'DashboardController@get_total_weight_of_stocks');
         });
     });
 
