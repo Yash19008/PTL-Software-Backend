@@ -31,6 +31,11 @@ class SearchSizeController extends Controller
         $upper_range = $gsm + $gsm_range;
         $lower_range = $gsm - $gsm_range;
 
+        $option_result = OptionMaster::where('option', 'reel_gsm_range')->first();
+        $gsm_range = $option_result->value;
+        $upper_range_reel = $gsm + $gsm_range;
+        $lower_range_reel = $gsm - $gsm_range;
+
         $where = " WHERE 1=1 AND weight > 0 ";
         if ($group_name) {
             $where = $where . " AND product_group = '" . $group_name . "'";
@@ -39,16 +44,16 @@ class SearchSizeController extends Controller
             $where = $where . " AND quality LIKE '%" . $quality . "%'";
         }
 
-        $data = $this->searchSizeCommon($company, $userlength, $userwidth, $lower_range, $upper_range, $where, $gsm);
+        $data = $this->searchSizeCommon($company, $userlength, $userwidth, $lower_range, $upper_range, $lower_range_reel, $upper_range_reel, $where, $gsm);
 
-        
+
         $option_result = OptionMaster::where('option', 'plus_minus_size_search')->first();
         if ($option_result) {
             $range = $option_result->value;
 
             $userWidth = number_format((float)$request->get('width'), 2, '.', '') - $range;
             $userLength = number_format((float)$request->get('length'), 2, '.', '') - $range;
-            $new_data = $this->searchSizeCommon($company, $userLength, $userWidth, $lower_range, $upper_range, $where, $gsm);
+            $new_data = $this->searchSizeCommon($company, $userLength, $userWidth, $lower_range, $upper_range, $lower_range_reel, $upper_range_reel, $where, $gsm);
 
             $data['list'] = array_merge($data['list'], $new_data['list']);
             //$data['reel_list'] = array_merge($data['reel_list'], $new_data['reel_list']);
@@ -68,14 +73,14 @@ class SearchSizeController extends Controller
         return $this->success('Search Size Responses List', $data, 200);
     }
 
-    public function searchSizeCommon($company, $userlength, $userwidth, $lower_range, $upper_range, $where, $gsm)
+    public function searchSizeCommon($company, $userlength, $userwidth, $lower_range, $upper_range, $lower_range_reel, $upper_range_reel, $where, $gsm)
     {
         $output = [];
         $reel_output = [];
 
         if ($company == '' || $company == 'PTL') {
             $output = $this->searchSizeQuery('mysql', 'PTL', $userlength, $userwidth, $lower_range, $upper_range, $where);
-            $reel_output = $this->searchSizeQueryReel('mysql', 'PTL', $userlength, $userwidth, $lower_range, $upper_range, $where, $gsm);
+            $reel_output = $this->searchSizeQueryReel('mysql', 'PTL', $userlength, $userwidth, $lower_range_reel, $upper_range_reel, $where, $gsm);
         }
 
         $admin_show_stocks_from = OptionMaster::where('option', 'admin_show_stocks_from')->first();
@@ -86,19 +91,19 @@ class SearchSizeController extends Controller
                     case 'Pap Tech':
                         $result = $this->searchSizeQuery('ptsc_connection', $from, $userlength, $userwidth, $lower_range, $upper_range, $where);
                         $output = array_merge($output, $result);
-                        $result = $this->searchSizeQueryReel('ptsc_connection', $from, $userlength, $userwidth, $lower_range, $upper_range, $where, $gsm);
+                        $result = $this->searchSizeQueryReel('ptsc_connection', $from, $userlength, $userwidth, $lower_range_reel, $upper_range_reel, $where, $gsm);
                         $reel_output = array_merge($reel_output, $result);
                         break;
                     case 'Paper Hub':
                         $result = $this->searchSizeQuery('paper_hub_connection', $from, $userlength, $userwidth, $lower_range, $upper_range, $where);
                         $output = array_merge($output, $result);
-                        $result = $this->searchSizeQueryReel('paper_hub_connection', $from, $userlength, $userwidth, $lower_range, $upper_range, $where, $gsm);
+                        $result = $this->searchSizeQueryReel('paper_hub_connection', $from, $userlength, $userwidth, $lower_range_reel, $upper_range_reel, $where, $gsm);
                         $reel_output = array_merge($reel_output, $result);
                         break;
                     case 'Parekh':
                         $result = $this->searchSizeQuery('parekh_connection', $from, $userlength, $userwidth, $lower_range, $upper_range, $where);
                         $output = array_merge($output, $result);
-                        $result = $this->searchSizeQueryReel('parekh_connection', $from, $userlength, $userwidth, $lower_range, $upper_range, $where, $gsm);
+                        $result = $this->searchSizeQueryReel('parekh_connection', $from, $userlength, $userwidth, $lower_range_reel, $upper_range_reel, $where, $gsm);
                         $reel_output = array_merge($reel_output, $result);
                         break;
                 }
@@ -363,10 +368,24 @@ class SearchSizeController extends Controller
 
         $output = [];
         $reel_output = [];
-        $mobile_show_stocks_from = [];
+        $mobile_show_stocks_from_customer = [];
         if ($result_cust->mobile_show_stocks_from && $result_cust->mobile_show_stocks_from != '') {
-            $mobile_show_stocks_from = explode(',', $result_cust->mobile_show_stocks_from);
+            $mobile_show_stocks_from_customer = array_map('trim', explode(',', $result_cust->mobile_show_stocks_from));
         }
+
+        $option_result = OptionMaster::where('option', 'mobile_show_stocks_from')->first();
+        $mobile_show_stocks_from_settings = [];
+        if ($option_result && $option_result->value && $option_result->value != '') {
+            $mobile_show_stocks_from_settings = array_map('trim', explode(',', $option_result->value));
+        }
+
+        $mobile_show_stocks_from = [];
+        foreach ($mobile_show_stocks_from_customer as $value) {
+            if (in_array($value, $mobile_show_stocks_from_settings)) {
+                $mobile_show_stocks_from[] = $value;
+            }
+        }
+
         foreach ($mobile_show_stocks_from as $from) {
             switch ($from) {
                 case 'PTL':
