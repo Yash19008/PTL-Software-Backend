@@ -537,7 +537,7 @@ class SearchSizeController extends Controller {
                 (SELECT id, (ROUND(((" . $userlength . ")/(size_inch_length))*(TRUNCATE(TRUNCATE(size_inch_length/" . $userlength . ",0),0)) * 100)) as utiliz
                 FROM stock
                 WHERE stock.gsm BETWEEN " . $lower_range . " AND " . $upper_range . "
-                HAVING  utiliz >= (SELECT op.value FROM options_master op WHERE op.option='utilization_ups_admin') AND utiliz <= 100 
+                HAVING  utiliz >= (SELECT op.value FROM options_master op WHERE op.option='utilization_ups_reel') AND utiliz <= 100 
                 ORDER BY utiliz DESC, size_inch_length ASC) dup
             ON stock.id = dup.id
             
