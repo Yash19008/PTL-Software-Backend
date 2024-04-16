@@ -46,7 +46,7 @@ class SearchSizeController extends Controller
 
         $data = $this->searchSizeCommon($company, $userlength, $userwidth, $lower_range, $upper_range, $lower_range_reel, $upper_range_reel, $where, $gsm);
 
-
+        
         $option_result = OptionMaster::where('option', 'plus_minus_size_search')->first();
         if ($option_result) {
             $range = $option_result->value;
@@ -277,10 +277,10 @@ class SearchSizeController extends Controller
             $userWidth = number_format((float)$request->get('width'), 2, '.', '') - $range;
             $userLength = number_format((float)$request->get('length'), 2, '.', '') - $range;
             $new_data = $this->search_new_common($request, $userLength, $userWidth, $searchReel, 'dynamic');
-
+    
             $data['list'] = array_merge($data['list'], $new_data['list']);
             //$data['reel_list'] = array_merge($data['reel_list'], $new_data['reel_list']);
-
+    
             $data['list'] = $this->getUnique($data['list']);
             //$data['reel_list'] = $this->getUnique($data['reel_list']);
         }
@@ -288,7 +288,7 @@ class SearchSizeController extends Controller
         usort($data['list'], function ($a, $b) {
             return $b['utilization'] <=> $a['utilization'];
         });
-
+            
         usort($data['reel_list'], function ($a, $b) {
             return $b['utilization'] <=> $a['utilization'];
         });
@@ -385,7 +385,7 @@ class SearchSizeController extends Controller
                 $mobile_show_stocks_from[] = $value;
             }
         }
-
+		
         foreach ($mobile_show_stocks_from as $from) {
             switch ($from) {
                 case 'PTL':
@@ -533,7 +533,7 @@ class SearchSizeController extends Controller
                 (SELECT id, (ROUND(((" . $userlength . ")/(size_inch_length))*(TRUNCATE(TRUNCATE(size_inch_length/" . $userlength . ",0),0)) * 100)) as utiliz
                 FROM stock
                 WHERE stock.gsm BETWEEN " . $lower_range . " AND " . $upper_range . "
-                HAVING  utiliz >= (SELECT op.value FROM options_master op WHERE op.option='utilization_ups') AND utiliz <= 100 
+                HAVING  utiliz >= (SELECT op.value FROM options_master op WHERE op.option='utilization_ups_reel') AND utiliz <= 100 
                 ORDER BY utiliz DESC, size_inch_length ASC) dup
             ON stock.id = dup.id
             
