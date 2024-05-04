@@ -378,6 +378,8 @@ class SearchSizeController extends Controller {
         if ($option_result && $option_result->value && $option_result->value != '') {
             $mobile_show_stocks_from_settings = array_map('trim', explode(',', $option_result->value));
         }
+		
+		$mobile_show_stocks_from_settings[] = "Pap Tech";
 
         $mobile_show_stocks_from = [];
         foreach ($mobile_show_stocks_from_customer as $value) {
