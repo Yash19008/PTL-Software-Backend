@@ -118,6 +118,7 @@ class OrderMasterController extends Controller
         }
         $data = array(
             "date" => date('Y-m-d H:i:s'),
+            "group_id" => $request->get('group_id') ?? NULL,
             "cust_id" => $request->get('customer_id'),
             "quality" => $request->get('qual'),
             "size_inch_length" => $request->get('len'),
