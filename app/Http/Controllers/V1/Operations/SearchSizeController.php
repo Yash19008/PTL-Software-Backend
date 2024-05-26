@@ -268,7 +268,13 @@ class SearchSizeController extends Controller
             if ($result) {
                 if ($result->quality == 'Yes')   $output1['reel_headers']['quality'] = 'Quality';
                 if ($result->gsm == 'Yes')   $output1['reel_headers']['gsm'] = 'GSM';
-                if ($result->size_inch == 'Yes')   $output1['reel_headers']['size_inch'] = 'Size in Inch';
+                if ($result->size_inch == 'Yes') {
+                    if ($searchSizeBy == 'CMS') {
+                        $output1['reel_headers']['size_CMS'] = 'Size in CMS';
+                    } else {
+                        $output1['reel_headers']['size_inch'] = 'Size in Inch';
+                    }
+                }
                 if ($result->total_ups == 'Yes')   $output1['reel_headers']['total_ups'] = 'Total No. of UPS';
                 if ($result->utilization == 'Yes')   $output1['reel_headers']['utilization'] = 'Utilization';
                 if ($result->sheet_weight == 'Yes')   $output1['reel_headers']['sheet_weight'] = '100 Sheet Weight';
@@ -311,10 +317,10 @@ class SearchSizeController extends Controller
         $new_output = [];
         foreach ($data['list'] as $item) {
 
-            $item['size_CMS'] = $item['size_cms_length'] . ' X ' .$item['size_cms_width'];
+            $item['size_CMS'] = $item['size_cms_length'] . ' X ' . $item['size_cms_width'];
 
             $qty_as_per_size = $item['bundle'];
-            while ($qty_as_per_size < ($qty / $item['total_ups'])) {
+            while ($qty_as_per_size < ($qty / $item['total_ups']) && $qty_as_per_size < $item['total_sheet']) {
                 $qty_as_per_size = $qty_as_per_size + $item['bundle'];
             }
             $item['qty_as_per_size'] = [];
@@ -326,7 +332,12 @@ class SearchSizeController extends Controller
 
             $new_output[] = $item;
         }
+        
+        foreach ($data['reel_list'] as $item) {
+            $item['size_CMS'] = $item['size_cms_length'] . ' X ' . $item['size_cms_width'];
+        }
         $data['list'] = $new_output;
+        $data['reel_search_threshold'] = OptionMaster::where('option', 'reel_search_threshold')->first();
 
         $output1['data'] = $data;
         return response()->json($output1, 200);
