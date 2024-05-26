@@ -337,7 +337,11 @@ class SearchSizeController extends Controller
             $item['size_CMS'] = $item['size_cms_length'] . ' X ' . $item['size_cms_width'];
         }
         $data['list'] = $new_output;
-        $data['reel_search_threshold'] = OptionMaster::where('option', 'reel_search_threshold')->first();
+        
+        $reel_search_threshold = OptionMaster::where('option', 'reel_search_threshold')->first();
+        if ($reel_search_threshold) {
+            $data['reel_search_threshold'] = OptionMaster::where('option', 'reel_search_threshold')->first()->value;
+        }
 
         $output1['data'] = $data;
         return response()->json($output1, 200);
