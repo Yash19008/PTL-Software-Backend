@@ -112,7 +112,7 @@ class SearchSizeController extends Controller
 
         $vendor_result = DB::select("
                 SELECT usermaster.employee_name as company, stock_vendors.product_group, stock_vendors.quality, gsm, dup.utiliz, dup.id, 
-                CONCAT(size_inch_length,' X ',size_inch_width) as Size_INCH,size_inch_length ,size_inch_width,size_cms_length,size_cms_width,
+                CONCAT(size_inch_length,' X ',size_inch_width) as Size_INCH,size_inch_length ,size_inch_width,size_cms_length,size_cms_width, gwd,
                 TRUNCATE(size_inch_length/" . $userlength . " ,0) AS LEN_UPS ,
                 TRUNCATE(size_inch_width/" . $userwidth . " ,0) AS WID_UPS ,
                 TRUNCATE(TRUNCATE(size_inch_length/" . $userlength . ",0)*TRUNCATE(size_inch_width/" . $userwidth . ",0),0) AS total_ups,
@@ -154,7 +154,7 @@ class SearchSizeController extends Controller
 
         return \DB::connection($connection)->select("
             SELECT '" . $name . "' as company, stock.product_group, stock.quality, gsm, dup.utiliz, dup.id, 
-                    CONCAT(size_inch_length,' X ',size_inch_width) as Size_INCH,size_inch_length ,size_inch_width,size_cms_length,size_cms_width,
+                    CONCAT(size_inch_length,' X ',size_inch_width) as Size_INCH,size_inch_length ,size_inch_width,size_cms_length,size_cms_width, stock.gwd,
                     TRUNCATE(size_inch_length/" . $userlength . " ,0) AS LEN_UPS ,
                     TRUNCATE(size_inch_width/" . $userwidth . " ,0) AS WID_UPS ,
                     TRUNCATE(TRUNCATE(size_inch_length/" . $userlength . ",0)*TRUNCATE(size_inch_width/" . $userwidth . ",0),0) AS total_ups,
