@@ -340,7 +340,7 @@ class SearchSizeController extends Controller
         
         $reel_search_threshold = OptionMaster::where('option', 'reel_search_threshold')->first();
         if ($reel_search_threshold) {
-            $data['reel_search_threshold'] = OptionMaster::where('option', 'reel_search_threshold')->first()->value;
+            $data['reel_search_threshold'] = $reel_search_threshold->value;
         }
 
         $output1['data'] = $data;
