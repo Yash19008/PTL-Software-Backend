@@ -241,6 +241,22 @@ class OrderMasterController extends Controller
         return response()->json($output, 200);
     }
 
+    public function get_search_history(Request $request)
+    {
+        $id = $request->get('id');
+        $data_record = SearchHistoryMaster::where("id", $id)->first();
+        if ($data_record) {
+            $output['data'] = $data_record;
+            $output['message'] = 'Order Details !!';
+            $output['status'] = 'success';
+        } else {
+            $output['data'] = null;
+            $output['message'] = 'No record found !!';
+            $output['status'] = 'error';
+        }
+        return response()->json($output, 200);
+    }
+
     public function update_quantity(Request $request)
     {
         try {
