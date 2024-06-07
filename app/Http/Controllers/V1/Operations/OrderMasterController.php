@@ -110,8 +110,14 @@ class OrderMasterController extends Controller
         try {
             $customer = CustomerMaster::where("id", $request->get('customer_id'))->where('active', "1")->first();
             $customer_ids = CustomerMaster::where("mobile", $customer->mobile)->pluck('id')->toArray();
-            $history = SearchHistoryMaster::whereIn("customer_id", $customer_ids)->orderBy('timestamp', 'DESC')->first();
-            $historyID = $history->id;
+
+            $search_history_id = $request->get('search_history_id');
+            if (isset($search_history_id)) {
+                $historyID = $request->get('search_history_id');
+            } else {
+                $history = SearchHistoryMaster::whereIn("customer_id", $customer_ids)->orderBy('timestamp', 'DESC')->first();
+                $historyID = $history->id;
+            }
         } catch (\Exception $e) {
             \Log::error("Fetch Search history issue for customer " . $request->get('customer_id'));
             \Log::error($e);

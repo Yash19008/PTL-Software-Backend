@@ -314,6 +314,10 @@ class SearchSizeController extends Controller
             return $b['utilization'] <=> $a['utilization'];
         });
 
+
+        $history = SearchHistoryMaster::where("customer_id", $customer_id)->orderBy('timestamp', 'DESC')->first();
+        $historyID = $history->id;
+
         $new_output = [];
         foreach ($data['list'] as $item) {
 
@@ -329,14 +333,18 @@ class SearchSizeController extends Controller
                 $item['qty_as_per_size'][] = $qty_as_per_size - $item['bundle'];
             }
             $item['qty_as_per_size'][] = $qty_as_per_size;
-
+            $item['search_history_id'] = $historyID;
             $new_output[] = $item;
         }
+        $data['list'] = $new_output;
         
+        $new_output = [];
         foreach ($data['reel_list'] as $item) {
             $item['size_CMS'] = $item['size_cms_length'] . ' X ' . $item['size_cms_width'];
+            $item['search_history_id'] = $historyID;
+            $new_output[] = $item;
         }
-        $data['list'] = $new_output;
+        $data['reel_list'] = $new_output;
         
         $reel_search_threshold = OptionMaster::where('option', 'reel_search_threshold')->first();
         if ($reel_search_threshold) {
@@ -370,6 +378,7 @@ class SearchSizeController extends Controller
         $gsm = $request->get('gsm');
         $customer_id = $request->get('customer_id');
         $product_group = $request->get('product_group');
+        $searched_qty = $request->get('qty');
 
         $size_in_inch = $userlength . ' X ' . $userwidth;
 
@@ -389,6 +398,7 @@ class SearchSizeController extends Controller
             "heigth" => $userlength,
             "size_in_inch" => $size_in_inch,
             "gsm" => $gsm,
+            "qty" => $searched_qty,
             "product_group" => $product_group,
             "timestamp" => date('Y-m-d H:i:s')
         );
