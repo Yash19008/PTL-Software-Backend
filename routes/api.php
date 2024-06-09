@@ -148,6 +148,7 @@ Route::namespace('V1')->middleware(['cors'])->group(function() {
             Route::get('option_masters', 'OptionMasterController@allItems');
             Route::get('get_orders_list', 'OrderMasterController@get_orders_list');
             Route::get('get_order', 'OrderMasterController@get_order');
+            Route::get('get_search_history', 'OrderMasterController@get_search_history');
         });
         Route::prefix("API_addorder")->group(function () {
             Route::get('find_company_list', 'OrderMasterController@find_company_list');

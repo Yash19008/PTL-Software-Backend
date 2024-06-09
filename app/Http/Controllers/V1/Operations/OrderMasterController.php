@@ -65,7 +65,7 @@ class OrderMasterController extends Controller
 
     public function getTableColumn()
     {
-        return array("id" => "id", "date" => "date", "company_name" => "company_name", "quality" => "quality", "size_inch_length" => "size_inch_length", "size_inch_width" => "size_inch_width", "gsm" => "gsm", "qty" => "qty", "delivery_at" => "delivery_at", "status" => "status", "challan_number" => "challan_number", "gwd" => "gwd", "company" => "company", "is_reel" => "is_reel");
+        return array("id" => "id", "date" => "date", "group_id" => "group_id", "company_name" => "company_name", "quality" => "quality", "size_inch_length" => "size_inch_length", "size_inch_width" => "size_inch_width", "gsm" => "gsm", "qty" => "qty", "delivery_at" => "delivery_at", "status" => "status", "challan_number" => "challan_number", "gwd" => "gwd", "company" => "company", "is_reel" => "is_reel");
     }
 
     public function find_company_list(Request $request)
@@ -110,14 +110,20 @@ class OrderMasterController extends Controller
         try {
             $customer = CustomerMaster::where("id", $request->get('customer_id'))->where('active', "1")->first();
             $customer_ids = CustomerMaster::where("mobile", $customer->mobile)->pluck('id')->toArray();
-            $history = SearchHistoryMaster::whereIn("customer_id", $customer_ids)->orderBy('timestamp', 'DESC')->first();
-            $historyID = $history->id;
+            $search_history_id = $request->get('search_history_id');
+            if (isset($search_history_id)) {
+                $historyID = $request->get('search_history_id');
+            } else {
+                $history = SearchHistoryMaster::whereIn("customer_id", $customer_ids)->orderBy('timestamp', 'DESC')->first();
+                $historyID = $history->id;
+            }
         } catch (\Exception $e) {
             \Log::error("Fetch Search history issue for customer " . $request->get('customer_id'));
             \Log::error($e);
         }
         $data = array(
-            "date" => date('Y-m-d H:i:s'),
+            "date" => date('Y-m-d H:i:s'),            
+            "group_id" => $request->get('group_id') ?? NULL,
             "cust_id" => $request->get('customer_id'),
             "quality" => $request->get('qual'),
             "size_inch_length" => $request->get('len'),
@@ -234,6 +240,22 @@ class OrderMasterController extends Controller
             $output['message'] = 'Order Details !!';
             $output['status'] = 'success';
         } else {
+            $output['message'] = 'No record found !!';
+            $output['status'] = 'error';
+        }
+        return response()->json($output, 200);
+    }
+
+    public function get_search_history(Request $request)
+    {
+        $id = $request->get('id');
+        $data_record = SearchHistoryMaster::where("id", $id)->first();
+        if ($data_record) {
+            $output['data'] = $data_record;
+            $output['message'] = 'Order Details !!';
+            $output['status'] = 'success';
+        } else {
+            $output['data'] = null;
             $output['message'] = 'No record found !!';
             $output['status'] = 'error';
         }

@@ -110,7 +110,7 @@ class SearchSizeController extends Controller {
 
         $vendor_result = DB::select("
                 SELECT usermaster.employee_name as company, stock_vendors.product_group, stock_vendors.quality, gsm, dup.utiliz, dup.id, 
-                CONCAT(size_inch_length,' X ',size_inch_width) as Size_INCH,size_inch_length ,size_inch_width,
+                CONCAT(size_inch_length,' X ',size_inch_width) as Size_INCH,size_inch_length ,size_inch_width,size_cms_length,size_cms_width, gwd,
                 TRUNCATE(size_inch_length/" . $userlength . " ,0) AS LEN_UPS ,
                 TRUNCATE(size_inch_width/" . $userwidth . " ,0) AS WID_UPS ,
                 TRUNCATE(TRUNCATE(size_inch_length/" . $userlength . ",0)*TRUNCATE(size_inch_width/" . $userwidth . ",0),0) AS total_ups,
@@ -150,7 +150,7 @@ class SearchSizeController extends Controller {
         
         return \DB::connection($connection)->select("
         SELECT '".$name."' as company, stock.product_group, stock.quality, gsm, dup.utiliz, dup.id, 
-                    CONCAT(size_inch_length,' X ',size_inch_width) as Size_INCH,size_inch_length ,size_inch_width,
+                    CONCAT(size_inch_length,' X ',size_inch_width) as Size_INCH,size_inch_length ,size_inch_width,size_cms_length,size_cms_width, stock.gwd,
                     TRUNCATE(size_inch_length/".$userlength." ,0) AS LEN_UPS ,
                     TRUNCATE(size_inch_width/".$userwidth." ,0) AS WID_UPS ,
                     TRUNCATE(TRUNCATE(size_inch_length/".$userlength.",0)*TRUNCATE(size_inch_width/".$userwidth.",0),0) AS total_ups,
@@ -182,7 +182,7 @@ class SearchSizeController extends Controller {
     {
         $userwidth = number_format((float)$userwidth, 2, '.', '');
         return \DB::connection($connection)->select("SELECT '" . $name . "' as company, stock.product_group, stock.quality, gsm, dup.utiliz as utilization, stock.id, stock.gwd,
-        CONCAT(size_inch_length,' X '," . $userwidth . ") as Size_INCH, size_inch_length ,size_inch_width,
+        CONCAT(size_inch_length,' X '," . $userwidth . ") as Size_INCH, size_inch_length ,size_inch_width,size_cms_length,size_cms_width,
         CONCAT(size_inch_length,' X '," . $userwidth . ") as size_inch,
         TRUNCATE(size_inch_length/" . $userlength . " ,0) AS LEN_UPS ,
         TRUNCATE(size_inch_width/" . $userwidth . " ,0) AS WID_UPS ,
@@ -228,6 +228,15 @@ class SearchSizeController extends Controller {
     }
     
     public function search_dynamic_column_wise(Request $request) {
+
+        $qty = $request->get('qty');
+        $searchSizeBy = $request->get('searchSizeBy');
+
+        if ($searchSizeBy == 'CMS') {
+            $request['length'] = $request['length'] / 2.54;
+            $request['width'] = $request['width'] / 2.54;
+        }
+
         $customer_id = $request->get('customer_id');
         $output1['message'] = 'Size in Inch Record List !!';
         $output1['status'] = 'success';
@@ -236,7 +245,13 @@ class SearchSizeController extends Controller {
         
         if($result->quality == 'Yes')   $output1['headers']['quality'] = 'Quality';
         if($result->gsm == 'Yes')   $output1['headers']['gsm'] = 'GSM';
-        if($result->size_inch == 'Yes')   $output1['headers']['size_inch'] = 'Size in Inch';
+        if ($result->size_inch == 'Yes') {
+            if ($searchSizeBy == 'CMS') {
+                $output1['headers']['size_CMS'] = 'Size in CMS';
+            } else {
+                $output1['headers']['size_inch'] = 'Size in Inch';
+            }
+        }
         if($result->total_ups == 'Yes')   $output1['headers']['total_ups'] = 'Total No. of UPS';
         if($result->utilization == 'Yes')   $output1['headers']['utilization'] = 'Utilization';
         if($result->sheet_weight == 'Yes')   $output1['headers']['sheet_weight'] = '100 Sheet Weight';
@@ -252,7 +267,13 @@ class SearchSizeController extends Controller {
             if ($result) {
                 if ($result->quality == 'Yes')   $output1['reel_headers']['quality'] = 'Quality';
                 if ($result->gsm == 'Yes')   $output1['reel_headers']['gsm'] = 'GSM';
-                if ($result->size_inch == 'Yes')   $output1['reel_headers']['size_inch'] = 'Size in Inch';
+                if ($result->size_inch == 'Yes') {
+                    if ($searchSizeBy == 'CMS') {
+                        $output1['reel_headers']['size_CMS'] = 'Size in CMS';
+                    } else {
+                        $output1['reel_headers']['size_inch'] = 'Size in Inch';
+                    }
+                }
                 if ($result->total_ups == 'Yes')   $output1['reel_headers']['total_ups'] = 'Total No. of UPS';
                 if ($result->utilization == 'Yes')   $output1['reel_headers']['utilization'] = 'Utilization';
                 if ($result->sheet_weight == 'Yes')   $output1['reel_headers']['sheet_weight'] = '100 Sheet Weight';
@@ -292,6 +313,43 @@ class SearchSizeController extends Controller {
             return $b['utilization'] <=> $a['utilization'];
         });
 
+        $history = SearchHistoryMaster::where("customer_id", $customer_id)->orderBy('timestamp', 'DESC')->first();
+        $historyID = $history->id;
+
+        $new_output = [];
+        foreach ($data['list'] as $item) {
+
+            $item['size_CMS'] = $item['size_cms_length'] . ' X ' .$item['size_cms_width'];
+
+            $qty_as_per_size = $item['bundle'];
+            while ($qty_as_per_size < ($qty / $item['total_ups']) && $qty_as_per_size < $item['total_sheet']) {
+                $qty_as_per_size = $qty_as_per_size + $item['bundle'];
+            }
+            $item['qty_as_per_size'] = [];
+            $val = $qty_as_per_size - $item['bundle'];
+            if ($val > 0) {
+                $item['qty_as_per_size'][] = $qty_as_per_size - $item['bundle'];
+            }
+            $item['qty_as_per_size'][] = $qty_as_per_size;
+            $item['search_history_id'] = $historyID;
+
+            $new_output[] = $item;
+        }
+        $data['list'] = $new_output;
+
+        $new_output = [];
+        foreach ($data['reel_list'] as $item) {
+            $item['size_CMS'] = $item['size_cms_length'] . ' X ' . $item['size_cms_width'];
+            $item['search_history_id'] = $historyID;
+            $new_output[] = $item;
+        }
+        $data['reel_list'] = $new_output;
+
+        $reel_search_threshold = OptionMaster::where('option', 'reel_search_threshold')->first();
+        if ($reel_search_threshold) {
+            $data['reel_search_threshold'] = $reel_search_threshold->value;
+        }
+
         $output1['data'] = $data;
         
         return response()->json($output1, 200);
@@ -320,6 +378,7 @@ class SearchSizeController extends Controller {
         $gsm = $request->get('gsm');
         $customer_id = $request->get('customer_id');
         $product_group = $request->get('product_group');
+        $searched_qty = $request->get('qty');
 
         $size_in_inch = $userlength.' X '.$userwidth;
         
@@ -339,6 +398,7 @@ class SearchSizeController extends Controller {
                     "heigth" => $userlength,
                     "size_in_inch" => $size_in_inch,
                     "gsm" => $gsm,
+                    "qty" => $searched_qty,
                     "product_group" => $product_group,
                     "timestamp" => date('Y-m-d H:i:s')
         );
@@ -426,7 +486,7 @@ class SearchSizeController extends Controller {
         }
         
         $stock_vendors_result = DB::select("SELECT usermaster.employee_name as company, stock_vendors.product_group, stock_vendors.quality, gsm, util.utilization, stock_vendors.id, stock_vendors.gwd,
-        CONCAT(size_inch_length,' X ',size_inch_width) as Size_INCH, size_inch_length, size_inch_width,
+        CONCAT(size_inch_length,' X ',size_inch_width) as Size_INCH, size_inch_length, size_inch_width,size_cms_length,size_cms_width,
         CONCAT(size_inch_length,' X ',size_inch_width) as size_inch,
         TRUNCATE(size_inch_length/".$userlength." ,0) AS LEN_UPS ,
         TRUNCATE(size_inch_width/".$userwidth." ,0) AS WID_UPS ,
@@ -485,7 +545,7 @@ class SearchSizeController extends Controller {
     function search_new_common_query($connection, $name, $userlength, $userwidth, $lower_range, $upper_range, $where, $sheets_result_count)
     {
         return \DB::connection($connection)->select("SELECT '".$name."' as company, stock.quality, gsm, util.utilization, stock.id, stock.gwd,
-            CONCAT(size_inch_length,' X ',size_inch_width) as Size_INCH, size_inch_length ,size_inch_width,
+            CONCAT(size_inch_length,' X ',size_inch_width) as Size_INCH, size_inch_length ,size_inch_width,size_cms_length,size_cms_width,
             CONCAT(size_inch_length,' X ',size_inch_width) as size_inch,
             TRUNCATE(size_inch_length/".$userlength." ,0) AS LEN_UPS ,
             TRUNCATE(size_inch_width/".$userwidth." ,0) AS WID_UPS ,
@@ -524,7 +584,7 @@ class SearchSizeController extends Controller {
     {
         $userwidth = number_format((float)$userwidth, 2, '.', '');
         return \DB::connection($connection)->select("SELECT '" . $name . "' as company, stock.quality, gsm, dup.utiliz as utilization, stock.id, stock.gwd,
-            CONCAT(size_inch_length,' X '," . $userwidth . ") as Size_INCH, size_inch_length ,size_inch_width,
+            CONCAT(size_inch_length,' X '," . $userwidth . ") as Size_INCH, size_inch_length ,size_inch_width,size_cms_length,size_cms_width,
             CONCAT(size_inch_length,' X '," . $userwidth . ") as size_inch,
             TRUNCATE(size_inch_length/" . $userlength . " ,0) AS LEN_UPS ,
             TRUNCATE(size_inch_width/" . $userwidth . " ,0) AS WID_UPS ,
