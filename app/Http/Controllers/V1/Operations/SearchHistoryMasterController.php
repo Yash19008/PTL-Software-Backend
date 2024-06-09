@@ -27,7 +27,7 @@ class SearchHistoryMasterController extends Controller {
 
     public function getTableColumn()
     {         
-        return array( "id" => "id", "company_name" => "company_name", "client_name" => "client_name" , "email" => "email", "mobile" => "mobile", "width" => "width", "heigth" => "heigth", "size_in_inch" => "size_in_inch", "gsm" => "gsm", "product_group" => "product_group", "timestamp" => "timestamp");
+        return array( "id" => "id", "company_name" => "company_name", "client_name" => "client_name" , "email" => "email", "mobile" => "mobile", "width" => "width", "heigth" => "heigth", "size_in_inch" => "size_in_inch", "gsm" => "gsm", "qty" => "qty", "product_group" => "product_group", "timestamp" => "timestamp");
     }
 
 }
