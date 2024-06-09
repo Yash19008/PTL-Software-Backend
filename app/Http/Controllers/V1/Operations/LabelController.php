@@ -18,9 +18,9 @@ class LabelController extends Controller {
         $data_record['bank_details']['bank_logo'] = 'Branch Logo';
         
         $data_record['contact_us']['logo'] = 'Bank Name';
-        $data_record['contact_us']['addess'] = 'Address: 208/5639, Anita Kutir, New Pant Nagar, Opp. R-odeon Garden, Ghatkopar(E), Mumbai-400075';
-        $data_record['contact_us']['mobile'] = 'Tel: 02249615770';
-        $data_record['contact_us']['email'] = 'paptechsalescorp@gmail.com';
+        $data_record['contact_us']['addess'] = 'Address: F-60 1ST Floor, Xth Central Mall, Near D-mart, Mahavir Nagar, Kandivali (West), Mumbai - 400 067';
+        $data_record['contact_us']['mobile'] = 'Tel: 022-49615770 / 7738463018 / 7738463016';
+        $data_record['contact_us']['email'] = 'accounts@paptechcorp.in';
         
         
         $data_record['order_status']['contact_number'] = '7400471233';
@@ -36,12 +36,12 @@ class LabelController extends Controller {
     public function bank_details() {
         $data=array(
                     [    
-                        "bank_name"=>'Axis Bank Ltd.',
-                        "account_name"=>'Pap Tech Sales Corporation',
-                        "account_number"=>'9200 200 662 398 03',
-                        "neft_code"=>'UTIB 000 00 29',
-                        "branch_location"=>'Ghatkopar East',
-                        "bank_logo"=>'http://admin.paptechsales.com/assets/global/custom/axis_bank_logo.png'
+                        "bank_name"=>'HDFC Bank Ltd.',
+                        "account_name"=>'PapTech Corp Pvt Ltd',
+                        "account_number"=>'502 00 091 400 010',
+                        "neft_code"=>'HDFC 00 00 667',
+                        "branch_location"=>'Thakur House, Akurli Road, Kandivali East',
+                        "bank_logo"=>'http://admin.paptechsales.com/image/hdfc_new.png'
                     ]
                     /*,
                     [    "bank_name"=>'ABC',
