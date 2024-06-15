@@ -12,6 +12,6 @@ class ProductGroup extends Model
     public $timestamps = false;
 
     protected $fillable = [
-        'id', 'group_name', 'is_reel', 'updated_on'
+        'id', 'group_name', 'is_reel', 'pkg_mode','updated_on'
     ];
 }
