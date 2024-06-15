@@ -14,6 +14,7 @@ class ProductGroupController extends Controller
     {
         $user_id = ProductGroup::create([
             "group_name" => $request->get('group_name'),
+            "pkg_mode" => $request->get('pkg_mode'),
             "is_reel" => $request->get('is_reel')
         ])->id;
         return $this->success('ProductGroup Response Submitted Successully !!', null, 200);
@@ -24,6 +25,7 @@ class ProductGroupController extends Controller
         $user = ProductGroup::findOrFail($id);
         $data = [
             "group_name" => $request->get('group_name'),
+            "pkg_mode" => $request->get('pkg_mode'),
             "is_reel" => $request->get('is_reel')
         ];
         $user->update($data);
@@ -67,6 +69,6 @@ class ProductGroupController extends Controller
 
     public function getTableColumn()
     {
-        return array("id" => "id", "group_name" => "group_name", "is_reel" => "is_reel", "updated_on" => "updated_on");
+        return array("id" => "id", "group_name" => "group_name", "is_reel" => "is_reel", "pkg_mode" => "pkg_mode", "updated_on" => "updated_on");
     }
 }

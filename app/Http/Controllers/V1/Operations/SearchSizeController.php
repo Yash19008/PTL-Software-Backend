@@ -115,7 +115,7 @@ class SearchSizeController extends Controller {
                 TRUNCATE(size_inch_width/" . $userwidth . " ,0) AS WID_UPS ,
                 TRUNCATE(TRUNCATE(size_inch_length/" . $userlength . ",0)*TRUNCATE(size_inch_width/" . $userwidth . ",0),0) AS total_ups,
                 TRUNCATE((pkt_grs_weight/sheet*100),1)  as  sheet_weight,
-                (sheet*pkg_mode) as bundle,
+                (sheet*pkg_mode) as bundle, sheet, pkg_mode,
                 
                 SUM(sheet*pkt_grs) as total_sheet
                 
@@ -155,7 +155,7 @@ class SearchSizeController extends Controller {
                     TRUNCATE(size_inch_width/".$userwidth." ,0) AS WID_UPS ,
                     TRUNCATE(TRUNCATE(size_inch_length/".$userlength.",0)*TRUNCATE(size_inch_width/".$userwidth.",0),0) AS total_ups,
                     TRUNCATE((pkt_grs_weight/sheet*100),1)  as  sheet_weight,
-                    (sheet*pkg_mode) as bundle,
+                    (sheet*pkg_mode) as bundle, sheet, pkg_mode,
                     
                     SUM(sheet*pkt_grs) as total_sheet
                     
@@ -316,23 +316,25 @@ class SearchSizeController extends Controller {
         $history = SearchHistoryMaster::where("customer_id", $customer_id)->orderBy('timestamp', 'DESC')->first();
         $historyID = $history->id;
 
+        $productGroup = ProductGroup::where('group_name', $product_group)->first();
         $new_output = [];
         foreach ($data['list'] as $item) {
+            $pkgMode = $productGroup->pkg_mode != 0 && $productGroup->pkg_mode != null ? $productGroup->pkg_mode : $item['pkg_mode'];
+            
+            $bundle = $pkgMode * $item['sheet'];
+            $item['size_CMS'] = $item['size_cms_length'] . ' X ' . $item['size_cms_width'];
 
-            $item['size_CMS'] = $item['size_cms_length'] . ' X ' .$item['size_cms_width'];
-
-            $qty_as_per_size = $item['bundle'];
+            $qty_as_per_size = $bundle;
             while ($qty_as_per_size < ($qty / $item['total_ups']) && $qty_as_per_size < $item['total_sheet']) {
-                $qty_as_per_size = $qty_as_per_size + $item['bundle'];
+                $qty_as_per_size = $qty_as_per_size + $bundle;
             }
             $item['qty_as_per_size'] = [];
-            $val = $qty_as_per_size - $item['bundle'];
+            $val = $qty_as_per_size - $bundle;
             if ($val > 0) {
-                $item['qty_as_per_size'][] = $qty_as_per_size - $item['bundle'];
+                $item['qty_as_per_size'][] = $qty_as_per_size - $bundle;
             }
             $item['qty_as_per_size'][] = $qty_as_per_size;
             $item['search_history_id'] = $historyID;
-
             $new_output[] = $item;
         }
         $data['list'] = $new_output;
@@ -492,7 +494,7 @@ class SearchSizeController extends Controller {
         TRUNCATE(size_inch_width/".$userwidth." ,0) AS WID_UPS ,
         TRUNCATE(TRUNCATE(size_inch_length/".$userlength.",0)*TRUNCATE(size_inch_width/".$userwidth.",0),0) AS total_ups,
         TRUNCATE((pkt_grs_weight/sheet*100),1)  as  sheet_weight,
-        (sheet*pkg_mode) as bundle,
+        (sheet*pkg_mode) as bundle, sheet, pkg_mode,
         
         SUM(sheet*pkt_grs) as total_sheet
         
@@ -551,7 +553,7 @@ class SearchSizeController extends Controller {
             TRUNCATE(size_inch_width/".$userwidth." ,0) AS WID_UPS ,
             TRUNCATE(TRUNCATE(size_inch_length/".$userlength.",0)*TRUNCATE(size_inch_width/".$userwidth.",0),0) AS total_ups,
             TRUNCATE((pkt_grs_weight/sheet*100),1)  as  sheet_weight,
-            (sheet*pkg_mode) as bundle,
+            (sheet*pkg_mode) as bundle, sheet, pkg_mode,
             
             SUM(sheet*pkt_grs) as total_sheet
             
