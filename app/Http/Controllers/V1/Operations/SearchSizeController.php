@@ -231,6 +231,7 @@ class SearchSizeController extends Controller
         $qty = $request->get('qty');
         $searchSizeBy = $request->get('searchSizeBy');
 
+        $widthBK = $request['width'];
         if ($searchSizeBy == 'CMS') {
             \Log::info($request['length']);
             $request['length'] = $request['length'] / 2.54;
@@ -343,7 +344,7 @@ class SearchSizeController extends Controller
         
         $new_output = [];
         foreach ($data['reel_list'] as $item) {
-            $item['size_CMS'] = $item['size_cms_length'] . ' X ' . $item['size_cms_width'];
+            $item['size_CMS'] = $item['size_cms_length'] . ' X ' . number_format($widthBK, 2, '.', '');
             $item['search_history_id'] = $historyID;
             $new_output[] = $item;
         }
