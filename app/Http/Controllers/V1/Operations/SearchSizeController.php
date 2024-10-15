@@ -136,7 +136,7 @@ class SearchSizeController extends Controller
                 " . $where . "
                 
                 group by quality, gsm, Size_INCH
-                ORDER BY utiliz DESC,gsm");
+                ORDER BY utiliz DESC, size_inch_width DESC");
         $output = array_merge($output, $vendor_result);
         usort($output, function ($a, $b) {
             return $a->utiliz > $b->utiliz ? -1 : 1;
@@ -176,7 +176,7 @@ class SearchSizeController extends Controller
                     " . $where . "
                     
                     group by quality, gsm, Size_INCH
-                    ORDER BY utiliz DESC,gsm
+                    ORDER BY utiliz DESC, size_inch_width DESC
                     ");
     }
 
@@ -207,7 +207,7 @@ class SearchSizeController extends Controller
             " . $where . " AND size_inch_width = 0.00
             
             group by quality, gsm, Size_INCH
-            ORDER BY utilization DESC,gsm");
+            ORDER BY utilization DESC, size_inch_width DESC");
     }
 
     public function getMasters()
@@ -308,10 +308,16 @@ class SearchSizeController extends Controller
         }
 
         usort($data['list'], function ($a, $b) {
+            if ($a['utilization'] == $b['utilization']) {
+                return $a['size_inch_width'] <=> $b['size_inch_width'];
+            }
             return $b['utilization'] <=> $a['utilization'];
         });
 
         usort($data['reel_list'], function ($a, $b) {
+            if ($a['utilization'] == $b['utilization']) {
+                return $a['size_inch_width'] <=> $b['size_inch_width'];
+            }
             return $b['utilization'] <=> $a['utilization'];
         });
 
@@ -516,7 +522,7 @@ class SearchSizeController extends Controller
             " . $where . " AND weight > 0 
             
             GROUP BY quality, gsm, Size_INCH
-            ORDER BY utilization DESC, gsm
+            ORDER BY utilization DESC, size_inch_width DESC
         
         ");
         $output = array_merge($output, $stock_vendors_result);
@@ -576,7 +582,7 @@ class SearchSizeController extends Controller
             
             group by quality, gsm, Size_INCH
             
-            ORDER BY utilization DESC,gsm");
+            ORDER BY utilization DESC, size_inch_width DESC");
     }
 
     function reel_search_new_common_query($connection, $name, $userlength, $userwidth, $lower_range, $upper_range, $where, $reels_result_count, $gsm)
@@ -606,6 +612,6 @@ class SearchSizeController extends Controller
             " . $where . " AND size_inch_width = 0.00
             
             group by quality, gsm, Size_INCH
-            ORDER BY utilization DESC,gsm");
+            ORDER BY utilization DESC, size_inch_width DESC");
     }
 }
