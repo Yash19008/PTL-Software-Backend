@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
 use App\Models\V1\Operations\ChallanList;
+use App\Models\V1\Operations\Outstanding;
 use DB;
 
 class ChallanController extends Controller {
@@ -83,6 +84,11 @@ class ChallanController extends Controller {
             $data_record = json_decode( json_encode($data_record), true);
             if(count($data_record) > 0)
             {
+                $data_record[0]['pdf_invoice'] = NULL;
+                $outstanding = Outstanding::select('pdf_url')->where('voucher_no', $challan_no)->first();
+                if ($outstanding) {
+                    $data_record[0]['pdf_invoice'] = $outstanding->pdf_url;
+                }
                 $output['data'] = $data_record;
                 $output['message'] = 'Challan Details !!';
                 $output['status'] = 'success';
@@ -159,6 +165,7 @@ class ChallanController extends Controller {
                                 "weight"=>$value['weight'],
                                 "delivery_at"=>$value['delivery_at'],
                                 "status"=>$value['status'],
+                                "pdf_url"=>$value['pdf_url'],
                                 "updated_on"=>Carbon::now(),
                             );    
                             ChallanList::create($insert_challan_array);
@@ -180,6 +187,7 @@ class ChallanController extends Controller {
                                     "weight"=>$value['weight'],
                                     "delivery_at"=>$value['delivery_at'],
                                     "status"=>$value['status'],
+                                	"pdf_url"=>$value['pdf_url'],
                                     "updated_on"=>Carbon::now(),
                                 );
                                 ChallanList::where('challan_no',$value['challan_no'])->update($update_challan_array);
@@ -202,6 +210,7 @@ class ChallanController extends Controller {
                                 "weight"=>$value['weight'],
                                 "delivery_at"=>$value['delivery_at'],
                                 "status"=>$value['status'],
+                                "pdf_url"=>$value['pdf_url'],
                                 "updated_on"=>Carbon::now(),
                             );
                             ChallanList::where('challan_no',$value['challan_no'])->update($update_challan_array);
@@ -246,6 +255,7 @@ class ChallanController extends Controller {
                                     "pkt_grs"=>$val['pkt_grs'],
                                     "sheets"=>$val['sheets'],
                                     "weight"=>$val['weight'],
+                                    "pdf_url"=>$value['pdf_url'],
                                     'updated_on'=>Carbon::now()
                                 ];
                                 ChallanList::create($input);
@@ -269,6 +279,7 @@ class ChallanController extends Controller {
                                     "pkt_grs"=>$val['pkt_grs'],
                                     "sheets"=>$val['sheets'],
                                     "weight"=>$val['weight'],
+                                    "pdf_url"=>$value['pdf_url'],
                                     "updated_on"=>Carbon::now()
                                 ];
                                 ChallanList::create($input);

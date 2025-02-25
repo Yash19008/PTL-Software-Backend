@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class AddQtyInHistoryTable extends Migration
+class AddPdfUrlChallanOutstandingTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,9 +13,11 @@ class AddQtyInHistoryTable extends Migration
      */
     public function up()
     {
-
-        Schema::table('search_history_master', function (Blueprint $table) {
-            $table->string('qty')->after('gsm')->nullable();
+        Schema::table('challan_list', function (Blueprint $table) {
+            $table->text('pdf_url')->after('status')->nullable();
+        });
+        Schema::table('outstanding', function (Blueprint $table) {
+            $table->text('pdf_url')->after('balance')->nullable();
         });
     }
 

@@ -29,7 +29,7 @@ class OutstandingController extends Controller {
             SELECT date_format(date(date),'%d-%m-%Y') AS Date_chall,voucher_type,voucher_no,credit_days,
             date_format(date(DATE_ADD(date, INTERVAL credit_days DAY)),'%d-%m-%Y') AS due_date,
             DATEDIFF(date_format(date(DATE_ADD(date, INTERVAL credit_days DAY)),'%Y-%m-%d'),CURDATE()) AS days,
-            over_dues, balance,
+            over_dues, balance, pdf_url,
             IF(CURDATE() > date_format(date(DATE_ADD(date, INTERVAL credit_days DAY)),'%Y-%m-%d'),'YES','NO') as red 
             FROM `outstanding` WHERE `customer_name` = '".$company_name."'  ORDER BY date asc");
         if(count($result) > 0) {
@@ -191,6 +191,7 @@ class OutstandingController extends Controller {
                                 "total_amount"=>$value['total_amount'],
                                 "part_paid"=>$value['part_paid'],
                                 "balance"=>$value['balance'],
+                                "pdf_url"=>$value['pdf_url'],
                                 "update_on"=>Carbon::now(),
                             );
                             Outstanding::create($insert_outstanding_array);
@@ -209,6 +210,7 @@ class OutstandingController extends Controller {
                                     "total_amount"=>$value['total_amount'],
                                     "part_paid"=>$value['part_paid'],
                                     "balance"=>$value['balance'],
+                                	"pdf_url"=>$value['pdf_url'],
                                     "update_on"=>Carbon::now(),
                                 );
                                 Outstanding::where('voucher_no',$value['voucher_no'])->update($update_outstanding_array);
@@ -246,6 +248,7 @@ class OutstandingController extends Controller {
                                 "total_amount"=>$val['total_amount'],
                                 "part_paid"=>$val['part_paid'],
                                 "balance"=>$val['balance'],
+                                "pdf_url"=>$val['pdf_url'],
                                 'updated_on'=>Carbon::now(),
                             ];
                             Outstanding::create($input);
@@ -266,6 +269,7 @@ class OutstandingController extends Controller {
                                     "total_amount"=>$val['total_amount'],
                                     "part_paid"=>$val['part_paid'],
                                     "balance"=>$val['balance'],
+                                    "pdf_url"=>$val['pdf_url'],
                                     'updated_on'=>Carbon::now(),
                                 ];
                                 Outstanding::create($input);

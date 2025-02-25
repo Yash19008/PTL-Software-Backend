@@ -70,6 +70,22 @@ class SearchSizeController extends Controller
             return $b['utilization'] <=> $a['utilization'];
         });
 
+        $new_output = [];
+        foreach ($data['list'] as $item) {
+            if ($item['total_sheet'] > 0) {
+                $new_output[] = $item;
+            }
+        }
+        $data['list'] = $new_output;
+        
+        $new_output = [];
+        foreach ($data['reel_list'] as $item) {
+            if ($item['total_sheet'] > 0) {
+                $new_output[] = $item;
+            }
+        }
+        $data['reel_list'] = $new_output;
+
         return $this->success('Search Size Responses List', $data, 200);
     }
 
@@ -342,9 +358,16 @@ class SearchSizeController extends Controller
             if ($val > 0) {
                 $item['qty_as_per_size'][] = $qty_as_per_size - $bundle;
             }
-            $item['qty_as_per_size'][] = $qty_as_per_size;
+            if ($qty_as_per_size <= $item['total_sheet']) {
+                $item['qty_as_per_size'][] = $qty_as_per_size;
+            } else if ($val <= +$item['total_sheet']) { // if in between last (which is greater than total_sheet) and second last
+                $item['qty_as_per_size'][] = +$item['total_sheet'];
+            }
+
             $item['search_history_id'] = $historyID;
-            $new_output[] = $item;
+            if ($item['total_sheet'] > 0) {
+                $new_output[] = $item;
+            }
         }
         $data['list'] = $new_output;
         
@@ -352,7 +375,10 @@ class SearchSizeController extends Controller
         foreach ($data['reel_list'] as $item) {
             $item['size_CMS'] = $item['size_cms_length'] . ' X ' . number_format($widthBK, 2, '.', '');
             $item['search_history_id'] = $historyID;
-            $new_output[] = $item;
+            $item['total_sheet'] = $item['total_sheet'] / $item['total_ups'];
+            if ($item['total_sheet'] > 0) {
+                $new_output[] = $item;
+            }
         }
         $data['reel_list'] = $new_output;
         
