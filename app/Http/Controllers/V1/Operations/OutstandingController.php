@@ -191,7 +191,7 @@ class OutstandingController extends Controller {
                                 "total_amount"=>$value['total_amount'],
                                 "part_paid"=>$value['part_paid'],
                                 "balance"=>$value['balance'],
-                                "pdf_url"=>$value['pdf_url'],
+                                "pdf_url"=> isset($val['pdf_url']) ? $val['pdf_url'] : null,
                                 "update_on"=>Carbon::now(),
                             );
                             Outstanding::create($insert_outstanding_array);
@@ -210,7 +210,7 @@ class OutstandingController extends Controller {
                                     "total_amount"=>$value['total_amount'],
                                     "part_paid"=>$value['part_paid'],
                                     "balance"=>$value['balance'],
-                                	"pdf_url"=>$value['pdf_url'],
+                                    "pdf_url"=> isset($val['pdf_url']) ? $val['pdf_url'] : null,
                                     "update_on"=>Carbon::now(),
                                 );
                                 Outstanding::where('voucher_no',$value['voucher_no'])->update($update_outstanding_array);
@@ -248,7 +248,7 @@ class OutstandingController extends Controller {
                                 "total_amount"=>$val['total_amount'],
                                 "part_paid"=>$val['part_paid'],
                                 "balance"=>$val['balance'],
-                                "pdf_url"=>$val['pdf_url'],
+                                "pdf_url"=> isset($val['pdf_url']) ? $val['pdf_url'] : null,
                                 'updated_on'=>Carbon::now(),
                             ];
                             Outstanding::create($input);
@@ -269,7 +269,7 @@ class OutstandingController extends Controller {
                                     "total_amount"=>$val['total_amount'],
                                     "part_paid"=>$val['part_paid'],
                                     "balance"=>$val['balance'],
-                                    "pdf_url"=>$val['pdf_url'],
+                                    "pdf_url"=> isset($val['pdf_url']) ? $val['pdf_url'] : null,
                                     'updated_on'=>Carbon::now(),
                                 ];
                                 Outstanding::create($input);
