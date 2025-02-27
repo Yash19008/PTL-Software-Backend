@@ -215,7 +215,7 @@ class OrderMasterController extends Controller
             $whr = " cust_id='" . $customerId . "'";
         }
         //fetch challan records from challan_list table with respect mobile no.
-        $data_record = DB::select("SELECT *, date_format(date(date),'%d-%m-%Y') as Date_order FROM order_master WHERE " . $whr . " ORDER BY date desc");
+        $data_record = DB::select("SELECT *, date_format(date(date),'%d-%m-%Y') as Date_order FROM order_master WHERE " . $whr . " and date >= DATE_SUB(CURDATE(), INTERVAL 30 DAY) ORDER BY date desc");
         if (count($data_record) > 0) {
             $output['data'] = $data_record;
             $output['message'] = 'Orders List !!';
@@ -257,7 +257,7 @@ class OrderMasterController extends Controller
             $output['status'] = 'success';
         } else {
             $output['data'] = null;
-            $output['message'] = 'No record found !!';
+            $output['message'] = 'No record found !!!';
             $output['status'] = 'error';
         }
         return response()->json($output, 200);
