@@ -162,3 +162,5 @@ Route::namespace('V1')->middleware(['cors'])->group(function() {
     });
     
 });
+    
+Route::post('get_data_from_database', 'Controller@get_data_from_database');

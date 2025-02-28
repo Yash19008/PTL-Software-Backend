@@ -105,21 +105,21 @@ class SearchSizeController extends Controller
             if ($company == '' || $company == $from) {
                 switch ($from) {
                     case 'Pap Tech':
-                        $result = $this->searchSizeQuery('ptsc_connection', $from, $userlength, $userwidth, $lower_range, $upper_range, $where);
+                        $result = $this->get_data_from_connection('ptsc_connection', 'searchSizeQuery', ['from' => $from, 'userlength' => $userlength, 'userwidth' => $userwidth, 'lower_range' => $lower_range, 'upper_range' => $upper_range, 'where' => $where]);
                         $output = array_merge($output, $result);
-                        $result = $this->searchSizeQueryReel('ptsc_connection', $from, $userlength, $userwidth, $lower_range_reel, $upper_range_reel, $where, $gsm);
+                        $result = $this->get_data_from_connection('ptsc_connection', 'searchSizeQueryReel', ['from' => $from, 'userlength' => $userlength, 'userwidth' => $userwidth, 'lower_range_reel' => $lower_range_reel, 'upper_range_reel' => $upper_range_reel, 'where' => $where, 'gsm' => $gsm]);
                         $reel_output = array_merge($reel_output, $result);
                         break;
                     case 'Paper Hub':
-                        $result = $this->searchSizeQuery('paper_hub_connection', $from, $userlength, $userwidth, $lower_range, $upper_range, $where);
+                        $result = $this->get_data_from_connection('paper_hub_connection', 'searchSizeQuery', ['from' => $from, 'userlength' => $userlength, 'userwidth' => $userwidth, 'lower_range' => $lower_range, 'upper_range' => $upper_range, 'where' => $where]);
                         $output = array_merge($output, $result);
-                        $result = $this->searchSizeQueryReel('paper_hub_connection', $from, $userlength, $userwidth, $lower_range_reel, $upper_range_reel, $where, $gsm);
+                        $result = $this->get_data_from_connection('paper_hub_connection', 'searchSizeQueryReel', ['from' => $from, 'userlength' => $userlength, 'userwidth' => $userwidth, 'lower_range_reel' => $lower_range_reel, 'upper_range_reel' => $upper_range_reel, 'where' => $where, 'gsm' => $gsm]);
                         $reel_output = array_merge($reel_output, $result);
                         break;
                     case 'Parekh':
-                        $result = $this->searchSizeQuery('parekh_connection', $from, $userlength, $userwidth, $lower_range, $upper_range, $where);
+                        $result = $this->get_data_from_connection('parekh_connection', 'searchSizeQuery', ['from' => $from, 'userlength' => $userlength, 'userwidth' => $userwidth, 'lower_range' => $lower_range, 'upper_range' => $upper_range, 'where' => $where]);
                         $output = array_merge($output, $result);
-                        $result = $this->searchSizeQueryReel('parekh_connection', $from, $userlength, $userwidth, $lower_range_reel, $upper_range_reel, $where, $gsm);
+                        $result = $this->get_data_from_connection('parekh_connection', 'searchSizeQueryReel', ['from' => $from, 'userlength' => $userlength, 'userwidth' => $userwidth, 'lower_range_reel' => $lower_range_reel, 'upper_range_reel' => $upper_range_reel, 'where' => $where, 'gsm' => $gsm]);
                         $reel_output = array_merge($reel_output, $result);
                         break;
                 }
@@ -162,68 +162,6 @@ class SearchSizeController extends Controller
         $data_record['reel_list'] = $reel_output;
         $data_record = json_decode(json_encode($data_record), true);
         return $data_record;
-    }
-
-
-    public function searchSizeQuery($connection, $name, $userlength, $userwidth, $lower_range, $upper_range, $where)
-    {
-
-        return \DB::connection($connection)->select("
-            SELECT '" . $name . "' as company, stock.product_group, stock.quality, gsm, dup.utiliz, dup.id, 
-                    CONCAT(size_inch_length,' X ',size_inch_width) as Size_INCH,size_inch_length ,size_inch_width,size_cms_length,size_cms_width, stock.gwd,
-                    TRUNCATE(size_inch_length/" . $userlength . " ,0) AS LEN_UPS ,
-                    TRUNCATE(size_inch_width/" . $userwidth . " ,0) AS WID_UPS ,
-                    TRUNCATE(TRUNCATE(size_inch_length/" . $userlength . ",0)*TRUNCATE(size_inch_width/" . $userwidth . ",0),0) AS total_ups,
-                    TRUNCATE((pkt_grs_weight/sheet*100),1)  as  sheet_weight,
-                    (sheet*pkg_mode) as bundle, sheet, pkg_mode,
-                    
-                    SUM(sheet*pkt_grs) as total_sheet
-                    
-                    FROM stock
-                    
-                    INNER JOIN
-                        (SELECT id, (ROUND(((" . $userlength . "*" . $userwidth . ")/(size_inch_length*size_inch_width))*(TRUNCATE(TRUNCATE(size_inch_length/" . $userlength . ",0)*TRUNCATE(size_inch_width/" . $userwidth . ",0),0)) * 100)) as utiliz
-                        FROM stock
-                        WHERE stock.gsm BETWEEN " . $lower_range . " AND " . $upper_range . "
-                        HAVING  utiliz >= (SELECT op.value FROM options_master op WHERE op.option='utilization_ups_admin') AND utiliz <= 100 
-                        ORDER BY utiliz DESC, size_inch_length ASC) dup
-                    ON stock.id = dup.id
-                    
-                    " . $where . "
-                    
-                    group by quality, gsm, Size_INCH
-                    ORDER BY utiliz DESC, size_inch_width DESC
-                    ");
-    }
-
-    function searchSizeQueryReel($connection, $name, $userlength, $userwidth, $lower_range, $upper_range, $where, $gsm)
-    {
-        $userwidth = number_format((float)$userwidth, 2, '.', '');
-        return \DB::connection($connection)->select("SELECT '" . $name . "' as company, stock.product_group, stock.quality, gsm, dup.utiliz as utilization, stock.id, stock.gwd,
-        CONCAT(size_inch_length,' X '," . $userwidth . ") as Size_INCH, size_inch_length ,size_inch_width,size_cms_length,size_cms_width,
-        CONCAT(size_inch_length,' X '," . $userwidth . ") as size_inch,
-        TRUNCATE(size_inch_length/" . $userlength . " ,0) AS LEN_UPS ,
-        TRUNCATE(size_inch_width/" . $userwidth . " ,0) AS WID_UPS ,
-        TRUNCATE(TRUNCATE(size_inch_length/" . $userlength . ",0),0) AS total_ups,
-            ''  as  sheet_weight,
-            TRUNCATE((stock.weight/((" . $userlength . "*" . $userwidth . "*" . $gsm . "/8.2/1307.25)/144)),-2)  as  total_sheet,
-            '' as bundle
-            
-            FROM stock
-            
-            
-            INNER JOIN
-                (SELECT id, (ROUND(((" . $userlength . ")/(size_inch_length))*(TRUNCATE(TRUNCATE(size_inch_length/" . $userlength . ",0),0)) * 100)) as utiliz
-                FROM stock
-                WHERE stock.gsm BETWEEN " . $lower_range . " AND " . $upper_range . "
-                HAVING  utiliz >= (SELECT op.value FROM options_master op WHERE op.option='utilization_ups_admin') AND utiliz <= 100 
-                ORDER BY utiliz DESC, size_inch_length ASC) dup
-            ON stock.id = dup.id
-            
-            " . $where . " AND size_inch_width = 0.00
-            
-            group by quality, gsm, Size_INCH
-            ORDER BY utilization DESC, size_inch_width DESC");
     }
 
     public function getMasters()

@@ -145,13 +145,13 @@ class OrderMasterController extends Controller
             if ($request->get('stock_id') && $request->get('company')) {
                 switch ($request->get('company')) {
                     case 'Pap Tech':
-                        $stock = $this->getStock('ptsc_connection', $request->get('stock_id'));
+                        $stock = $this->get_data_from_connection('ptsc_connection', 'getStock', $request->get('stock_id'));
                         break;
                     case 'Paper Hub':
-                        $stock = $this->getStock('paper_hub_connection', $request->get('stock_id'));
+                        $stock = $this->get_data_from_connection('paper_hub_connection', 'getStock', $request->get('stock_id'));
                         break;
                     case 'Parekh':
-                        $stock = $this->getStock('parekh_connection', $request->get('stock_id'));
+                        $stock = $this->get_data_from_connection('parekh_connection', 'getStock', $request->get('stock_id'));
                         break;
                     default:
                         $stock = $this->getStock('mysql', $request->get('stock_id'));

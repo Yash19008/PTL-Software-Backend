@@ -65,15 +65,10 @@ class DashboardController extends Controller
     {
         $data = [];
         $data['PTL']['total_weight'] = StockMaster::sum('weight');
-        $data['PTSC'] = $this->get_sum('ptsc_connection')[0];
-        $data['PAPER_HUB'] = $this->get_sum('paper_hub_connection')[0];
-        $data['PAREKH'] = $this->get_sum('parekh_connection')[0];
+        $data['PTSC'] = $this->get_data_from_connection('ptsc_connection', 'get_sum', null);
+        $data['PAPER_HUB'] = $this->get_data_from_connection('paper_hub_connection', 'get_sum', null);
+        $data['PAREKH'] = $this->get_data_from_connection('parekh_connection', 'get_sum', null);
 
         return response()->json($data, 200);
-    }
-
-    public function get_sum($connection)
-    {
-        return \DB::connection($connection)->select("SELECT ROUND(SUM(weight),2) AS total_weight FROM stock");
     }
 }
