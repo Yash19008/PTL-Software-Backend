@@ -491,8 +491,9 @@ class SearchSizeController extends Controller
         
         ");
         $output = array_merge($output, $stock_vendors_result);
+        $output = json_decode(json_encode($output), true);
         usort($output, function ($a, $b) {
-            return $a->utilization > $b->utilization ? -1 : 1;
+            return $a['utilization'] > $b['utilization'] ? -1 : 1;
         });
 
         $output = array_slice($output, 0, $sheets_result_count);
