@@ -144,6 +144,9 @@ class OrderMasterController extends Controller
         try {
             if ($request->get('stock_id') && $request->get('company')) {
                 switch ($request->get('company')) {
+                    case 'PTL':
+                        $stock = $this->getStock('ptl_connection', $request->get('stock_id'));
+                        break;
                     case 'Pap Tech':
                         $stock = $this->getStock('ptsc_connection', $request->get('stock_id'));
                         break;

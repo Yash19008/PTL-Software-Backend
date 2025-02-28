@@ -47,7 +47,7 @@ class StockMasterController extends Controller {
         $company = $request->get('company');
         $data = NULL;
 
-        if ($company == 'PTL') {
+        if ($company == 'Parekh') {
             // search from PTL Stock
             $data_record1 = StockMaster::where('id', $stock_id)->first();
             // print_r($this->db->last_query());exit;
@@ -69,9 +69,9 @@ class StockMasterController extends Controller {
             if ($data_record2 && count($data_record2) > 0) {
                 $data = $data_record2[0];
             }
-        } else if ($company == 'Parekh') {
+        } else if ($company == 'PTL') {
             // search from Paptech Stock
-            $data_record2 = \DB::connection('parekh_connection')->select("Select * from stock where id=".$stock_id."");
+            $data_record2 = \DB::connection('ptl_connection')->select("Select * from stock where id=".$stock_id."");
             // print_r($this->db->last_query());exit;
             if ($data_record2 && count($data_record2) > 0) {
                 $data = $data_record2[0];
@@ -232,6 +232,8 @@ class StockMasterController extends Controller {
             ]
          */
         try {
+            ini_set('max_execution_time', 600000);
+            ini_set('memory_limit', '2048M');
            // $stockArr = json_decode($request->stockObj, true);
            // echo '<pre>';print_r($request->all());echo '</pre>';exit();
          

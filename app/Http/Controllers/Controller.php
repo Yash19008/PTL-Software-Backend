@@ -46,4 +46,9 @@ class Controller extends BaseController
         }
 		return $query;       
     }
+
+    public function index()
+    {
+        return view('welcome');
+    }
 }

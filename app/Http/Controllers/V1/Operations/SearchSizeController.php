@@ -94,9 +94,9 @@ class SearchSizeController extends Controller
         $output = [];
         $reel_output = [];
 
-        if ($company == '' || $company == 'PTL') {
-            $output = $this->searchSizeQuery('mysql', 'PTL', $userlength, $userwidth, $lower_range, $upper_range, $where);
-            $reel_output = $this->searchSizeQueryReel('mysql', 'PTL', $userlength, $userwidth, $lower_range_reel, $upper_range_reel, $where, $gsm);
+        if ($company == '' || $company == 'Parekh') {
+            $output = $this->searchSizeQuery('mysql', 'Parekh', $userlength, $userwidth, $lower_range, $upper_range, $where);
+            $reel_output = $this->searchSizeQueryReel('mysql', 'Parekh', $userlength, $userwidth, $lower_range, $upper_range, $where, $gsm);
         }
 
         $admin_show_stocks_from = OptionMaster::where('option', 'admin_show_stocks_from')->first();
@@ -104,6 +104,12 @@ class SearchSizeController extends Controller
         foreach ($admin_show_stocks_from as $from) {
             if ($company == '' || $company == $from) {
                 switch ($from) {
+                    case 'PTL':
+                        $result = $this->searchSizeQuery('ptl_connection', $from, $userlength, $userwidth, $lower_range, $upper_range, $where);
+                        $output = array_merge($output, $result);
+                        $result = $this->searchSizeQueryReel('ptl_connection', $from, $userlength, $userwidth, $lower_range, $upper_range, $where, $gsm);
+                        $reel_output = array_merge($reel_output, $result);
+                        break;
                     case 'Pap Tech':
                         $result = $this->searchSizeQuery('ptsc_connection', $from, $userlength, $userwidth, $lower_range, $upper_range, $where);
                         $output = array_merge($output, $result);
@@ -486,11 +492,19 @@ class SearchSizeController extends Controller
 
         foreach ($mobile_show_stocks_from as $from) {
             switch ($from) {
-                case 'PTL':
+                case 'Parekh':
                     $result = $this->search_new_common_query('mysql', $from, $userlength, $userwidth, $lower_range, $upper_range, $where, $sheets_result_count);
                     $output = array_merge($output, $result);
                     if ($searchReel) {
                         $result = $this->reel_search_new_common_query('mysql', $from, $userlength, $userwidth, $reel_lower_range, $reel_upper_range, $where, $reels_result_count, $gsm);
+                        $reel_output = array_merge($reel_output, $result);
+                    }
+                    break;
+                case 'PTL':
+                    $result = $this->search_new_common_query('ptl_connection', $from, $userlength, $userwidth, $lower_range, $upper_range, $where, $sheets_result_count);
+                    $output = array_merge($output, $result);
+                    if ($searchReel) {
+                        $result = $this->reel_search_new_common_query('ptl_connection', $from, $userlength, $userwidth, $reel_lower_range, $reel_upper_range, $where, $reels_result_count, $gsm);
                         $reel_output = array_merge($reel_output, $result);
                     }
                     break;
