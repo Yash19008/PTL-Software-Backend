@@ -445,7 +445,7 @@ class SearchSizeController extends Controller
                     $result = $this->get_data_from_connection('paper_hub_connection', 'search_new_common_query', ['from' => $from, 'userlength' => $userlength, 'userwidth' => $userwidth, 'lower_range' => $lower_range, 'upper_range' => $upper_range, 'where' => $where, 'sheets_result_count' => $sheets_result_count]);
                     $output = array_merge($output, $result);
                     if ($searchReel) {
-                        $result = $this->get_data_from_connection('paper_hub_connection', 'reel_search_new_common_query', ['from' => $from, 'userlength' => $userlength, 'userwidth' => $userwidth, 'lower_range' => $lower_range, 'upper_range' => $upper_range, 'where' => $where, 'sheets_result_count' => $sheets_result_count]);
+                        $result = $this->get_data_from_connection('paper_hub_connection', 'reel_search_new_common_query', ['from' => $from, 'userlength' => $userlength, 'userwidth' => $userwidth, 'reel_lower_range' => $reel_lower_range, 'reel_upper_range' => $reel_upper_range, 'where' => $where, 'reels_result_count' => $reels_result_count, 'gsm' => $gsm]);
                         $reel_output = array_merge($reel_output, $result);
                     }
                     break;
@@ -453,7 +453,7 @@ class SearchSizeController extends Controller
                     $result = $this->get_data_from_connection('parekh_connection', 'search_new_common_query', ['from' => $from, 'userlength' => $userlength, 'userwidth' => $userwidth, 'lower_range' => $lower_range, 'upper_range' => $upper_range, 'where' => $where, 'sheets_result_count' => $sheets_result_count]);
                     $output = array_merge($output, $result);
                     if ($searchReel) {
-                        $result = $this->get_data_from_connection('parekh_connection', 'reel_search_new_common_query', ['from' => $from, 'userlength' => $userlength, 'userwidth' => $userwidth, 'lower_range' => $lower_range, 'upper_range' => $upper_range, 'where' => $where, 'sheets_result_count' => $sheets_result_count]);
+                        $result = $this->get_data_from_connection('parekh_connection', 'reel_search_new_common_query', ['from' => $from, 'userlength' => $userlength, 'userwidth' => $userwidth, 'reel_lower_range' => $reel_lower_range, 'reel_upper_range' => $reel_upper_range, 'where' => $where, 'reels_result_count' => $reels_result_count, 'gsm' => $gsm]);
                         $reel_output = array_merge($reel_output, $result);
                     }
                     break;
