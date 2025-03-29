@@ -18,7 +18,7 @@ class LabelController extends Controller {
         $data_record['bank_details']['bank_logo'] = 'Branch Logo';
         
         $data_record['contact_us']['logo'] = 'Bank Name';
-        $data_record['contact_us']['addess'] = 'Address: F-60 1ST Floor, Xth Central Mall, Near D-mart, Mahavir Nagar, Kandivali (West), Mumbai - 400 067';
+        $data_record['contact_us']['addess'] = 'Address: G5 GROUND FLOOR, RAGHULEELA MEGA MALL, BEHIND POISAR DEPOT, KANDIVALI (WEST), MUMBAI - 67';
         $data_record['contact_us']['mobile'] = 'Tel: 022-49615770 / 7738463018 / 7738463016';
         $data_record['contact_us']['email'] = 'accounts@paptechcorp.in';
         
