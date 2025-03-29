@@ -299,8 +299,8 @@ class SearchSizeController extends Controller
             }
             if ($qty_as_per_size <= $item['total_sheet']) {
                 $item['qty_as_per_size'][] = $qty_as_per_size;
-            } else if ($val <= +$qty) { // if in between last (which is greater than total_sheet) and second last
-                $item['qty_as_per_size'][] = +$qty;
+            } else {
+                $item['qty_as_per_size'][] = +$item['total_sheet'];
             }
 
             $item['search_history_id'] = $historyID;
