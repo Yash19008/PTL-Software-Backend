@@ -144,13 +144,13 @@ class OrderMasterController extends Controller
             if ($request->get('stock_id') && $request->get('company')) {
                 switch ($request->get('company')) {
                     case 'PTL':
-                        $stock = $this->getStock('ptl_connection', $request->get('stock_id'));
+                        $stock = $this->get_data_from_connection('ptl_connection', 'getStock', $request->get('stock_id'));
                         break;
                     case 'Paper Hub':
-                        $stock = $this->getStock('paper_hub_connection', $request->get('stock_id'));
+                        $stock = $this->get_data_from_connection('paper_hub_connection', 'getStock', $request->get('stock_id'));
                         break;
                     case 'Parekh':
-                        $stock = $this->getStock('parekh_connection', $request->get('stock_id'));
+                        $stock = $this->get_data_from_connection('parekh_connection', 'getStock', $request->get('stock_id'));
                         break;
                     default:
                         $stock = $this->getStock('mysql', $request->get('stock_id'));
@@ -214,13 +214,13 @@ class OrderMasterController extends Controller
             $whr = " cust_id='" . $customerId . "'";
         }
         //fetch challan records from challan_list table with respect mobile no.
-        $data_record = DB::select("SELECT *, date_format(date(date),'%d-%m-%Y') as Date_order FROM order_master WHERE " . $whr . " ORDER BY date desc limit 25");
+        $data_record = DB::select("SELECT *, date_format(date(date),'%d-%m-%Y') as Date_order FROM order_master WHERE " . $whr . " and date >= DATE_SUB(CURDATE(), INTERVAL 30 DAY) ORDER BY date desc");
         if (count($data_record) > 0) {
             $output['data'] = $data_record;
             $output['message'] = 'Orders List !!';
             $output['status'] = 'success';
         } else {
-            $output['message'] = 'No record found !!';
+            $output['message'] = 'No record found !!!';
             $output['status'] = 'error';
         }
         return response()->json($output, 200);

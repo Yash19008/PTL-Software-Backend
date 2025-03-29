@@ -12,6 +12,6 @@ class OptionMaster extends Model
     public $timestamps = false;
 
     protected $fillable = [
-        'id', 'option', 'detail', 'value', 'status', 'updated_dt' , 'updated_by'
+        'id', 'option', 'detail', 'value', 'status', 'updated_dt' , 'updated_by', 'menus'
     ];
 }

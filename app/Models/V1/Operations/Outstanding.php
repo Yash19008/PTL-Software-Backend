@@ -11,6 +11,6 @@ class Outstanding extends Model
     public $timestamps = false;
     
     protected $fillable = [
-        'id', 'date', 'customer_name' , 'person_name', 'mobile', 'email', 'voucher_type', 'voucher_no', 'credit_days', 'due_date', 'over_dues', 'total_amount', 'part_paid', 'balance'
+        'id', 'date', 'customer_name' , 'person_name', 'mobile', 'email', 'voucher_type', 'voucher_no', 'credit_days', 'due_date', 'over_dues', 'total_amount', 'part_paid', 'balance', 'pdf_url'
     ];
 }
