@@ -10,6 +10,9 @@ use App\Models\V1\Operations\OptionMaster;
 use App\Models\V1\Operations\ProductGroup;
 use App\Models\V1\Operations\StockColumns;
 use App\Models\V1\Operations\CustomerMaster;
+use App\Models\V1\Operations\CustomerProductLink;
+use App\Models\V1\Operations\CustomerQualityLink;
+use App\Models\V1\Operations\QualityMaster;
 use App\Models\V1\Operations\SearchHistoryMaster;
 
 class SearchSizeController extends Controller {
@@ -162,24 +165,26 @@ class SearchSizeController extends Controller {
         $data_record = json_decode(json_encode($data_record), true);
         return $data_record;
     }
-    
-    public function getMasters() {
-        $data_record = ProductGroup::all();
-        
-        if($data_record) 
-        { 
-            $output['data']['product_group'] = $data_record;
-            $output['message'] = 'Master Records !!';
-            $output['status'] = 'success';
+
+    public function getMasters(Request $request)
+    {
+        if ($request->has('mobile')) {
+            $customerIds = CustomerMaster::where('mobile', $request->mobile)->pluck('id')->toArray();
+            $productIds = CustomerProductLink::whereIn('customer_id', $customerIds)->pluck('product_group_id')->toArray();
+            $output['data']['product_group'] = ProductGroup::whereIn('id', $productIds)->get();
+            
+            $qualityIds = CustomerQualityLink::whereIn('customer_id', $customerIds)->pluck('quality_id')->toArray();
+            $output['data']['qualities'] = QualityMaster::whereIn('id', $qualityIds)->get();
+
+        } else {
+            $output['data']['product_group'] = ProductGroup::all();
+            $output['data']['qualities'] = QualityMaster::all();
         }
-        else
-        {
-           $output['message'] = 'Records not found !!';
-            $output['status'] = 'error';
-        }
-        
+
+        $output['message'] = 'Master Records !!';
+        $output['status'] = 'success';
+
         return response()->json($output, 200);
-    
     }
     
     public function search_dynamic_column_wise(Request $request) {
