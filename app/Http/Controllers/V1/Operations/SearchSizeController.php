@@ -283,6 +283,9 @@ class SearchSizeController extends Controller {
         $history = SearchHistoryMaster::where("customer_id", $customer_id)->orderBy('timestamp', 'DESC')->first();
         $historyID = $history->id;
 
+        $selectedQualityIds = CustomerQualityLink::where('customer_id', $customer_id)->pluck('quality_id')->toArray();
+        $selectedQualities = QualityMaster::whereIn('id', $selectedQualityIds)->pluck('name')->toArray();
+
         $productGroup = ProductGroup::where('group_name', $product_group)->first();
         $new_output = [];
         foreach ($data['list'] as $item) {
@@ -306,7 +309,7 @@ class SearchSizeController extends Controller {
                 $item['qty_as_per_size'][] = +$item['total_sheet'];
             }
             $item['search_history_id'] = $historyID;
-            if ($item['total_sheet'] > 0) {
+            if ($item['total_sheet'] > 0 && in_array($item['quality'], $selectedQualities)) {
                 $new_output[] = $item;
             }
         }
@@ -317,7 +320,7 @@ class SearchSizeController extends Controller {
             $item['size_CMS'] = $item['size_cms_length'] . ' X ' . number_format($widthBK, 2, '.', '');
             $item['search_history_id'] = $historyID;
             $item['total_sheet'] = $item['total_sheet'] / $item['total_ups'];
-            if ($item['total_sheet'] > 0) {
+            if ($item['total_sheet'] > 0 && in_array($item['quality'], $selectedQualities)) {
                 $new_output[] = $item;
             }
         }
