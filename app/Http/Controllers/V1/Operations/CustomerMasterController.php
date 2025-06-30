@@ -8,6 +8,8 @@ use Carbon\Carbon;
 
 use App\Http\Requests\Operations\CustomerMasterRequest;
 use App\Models\V1\Operations\CustomerMaster;
+use App\Models\V1\Operations\CustomerProductLink;
+use App\Models\V1\Operations\CustomerQualityLink;
 use App\Models\V1\Operations\StockColumns;
 
 class CustomerMasterController extends Controller
@@ -60,6 +62,26 @@ class CustomerMasterController extends Controller
             "password" => md5($request->get('password'))
         ];
         CustomerMaster::where('mobile', $request->get('mobile'))->update($data);
+
+        $selectedProducts = $request->get('selectedProducts');
+        if (isset($selectedProducts) && count($selectedProducts) > 0) {
+            foreach ($selectedProducts  as $product) {
+                CustomerProductLink::create([
+                    'customer_id' => $customer_id,
+                    "product_group_id" => $product,
+                ]);
+            }
+        }
+
+        $selectedQualities = $request->get('selectedQualities');
+        if (isset($selectedQualities) && count($selectedQualities) > 0) {
+            foreach ($selectedQualities  as $quality) {
+                CustomerQualityLink::create([
+                    'customer_id' => $customer_id,
+                    "quality_id" => $quality,
+                ]);
+            }
+        }
 
         return $this->success('CustomerMaster Response Submitted Successully !!', null, 200);
     }
@@ -124,6 +146,29 @@ class CustomerMasterController extends Controller
         }
         CustomerMaster::where('mobile', $request->get('mobile'))->update($data);
 
+        
+        CustomerProductLink::where('customer_id',$id)->delete();
+        $selectedProducts = $request->get('selectedProducts');
+        if (isset($selectedProducts) && count($selectedProducts) > 0) {
+            foreach ($selectedProducts  as $product) {
+                CustomerProductLink::create([
+                    'customer_id' => $id,
+                    "product_group_id" => $product,
+                ]);
+            }
+        }
+
+        CustomerQualityLink::where('customer_id',$id)->delete();
+        $selectedQualities = $request->get('selectedQualities');
+        if (isset($selectedQualities) && count($selectedQualities) > 0) {
+            foreach ($selectedQualities  as $quality) {
+                CustomerQualityLink::create([
+                    'customer_id' => $id,
+                    "quality_id" => $quality,
+                ]);
+            }
+        }
+
         return $this->success('CustomerMaster updated successfully', $user, 200);
     }
 
@@ -132,6 +177,8 @@ class CustomerMasterController extends Controller
         $user = CustomerMaster::where('id', $id)->first();
         $user->stock_columns = StockColumns::where('customer_id', $id)->where('is_reel', 'No')->first();
         $user->stock_columns_reel = StockColumns::where('customer_id', $id)->where('is_reel', 'Yes')->first();
+        $user->selectedProducts = CustomerProductLink::where('customer_id', $user->id)->pluck('product_group_id')->toArray();
+        $user->selectedQualities = CustomerQualityLink::where('customer_id', $user->id)->pluck('quality_id')->toArray();
         return $this->success('CustomerMaster Responses !!', $user, 200);
     }
 
