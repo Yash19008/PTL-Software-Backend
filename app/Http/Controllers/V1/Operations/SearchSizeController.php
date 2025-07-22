@@ -319,7 +319,7 @@ class SearchSizeController extends Controller
                 $new_output[] = $item;
             }
         }
-
+        
         $data['list'] = $new_output;
         
         $new_output = [];

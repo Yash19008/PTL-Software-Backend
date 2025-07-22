@@ -2,6 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\V1\Operations\CustomerMaster;
+use App\Models\V1\Operations\CustomerProductLink;
+use App\Models\V1\Operations\CustomerQualityLink;
+use App\Models\V1\Operations\ProductGroup;
+use App\Models\V1\Operations\QualityMaster;
+
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
