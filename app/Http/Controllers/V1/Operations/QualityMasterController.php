@@ -5,6 +5,7 @@ namespace App\Http\Controllers\V1\Operations;
 use App\Http\Controllers\Controller;
 use App\Models\V1\Operations\CustomerQualityLink;
 use App\Models\V1\Operations\QualityMaster;
+use App\Models\V1\Operations\CustomerMaster;
 use Illuminate\Http\Request;
 
 class QualityMasterController extends Controller
@@ -12,9 +13,17 @@ class QualityMasterController extends Controller
 
     public function store(Request $request)
     {
-        $user_id = QualityMaster::create([
+        $qualityId = QualityMaster::create([
             "name" => $request->get('name')
         ])->id;
+        
+        $customerIds = CustomerMaster::pluck('id')->toArray();
+        foreach ($customerIds as $customerId) {
+            CustomerQualityLink::create([
+                "customer_id" => $customerId,
+                "quality_id" => $qualityId
+            ]);
+        }
         return $this->success('QualityMaster Response Submitted Successully !!', null, 200);
     }
 
