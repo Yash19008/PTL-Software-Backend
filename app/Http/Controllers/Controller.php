@@ -2,6 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\V1\Operations\CustomerMaster;
+use App\Models\V1\Operations\CustomerProductLink;
+use App\Models\V1\Operations\CustomerQualityLink;
+use App\Models\V1\Operations\ProductGroup;
+use App\Models\V1\Operations\QualityMaster;
+
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
@@ -81,6 +87,8 @@ class Controller extends BaseController
                 return $this->search_new_common_query('mysql', $request->data['from'], $request->data['userlength'], $request->data['userwidth'], $request->data['lower_range'], $request->data['upper_range'], $request->data['where'], $request->data['sheets_result_count']);
             case 'reel_search_new_common_query':
                 return $this->reel_search_new_common_query('mysql', $request->data['from'], $request->data['userlength'], $request->data['userwidth'], $request->data['reel_lower_range'], $request->data['reel_upper_range'], $request->data['where'], $request->data['reels_result_count'], $request->data['gsm']);
+            case 'getUniqueQualitiesFromStock':
+                return $this->getUniqueQualitiesFromStock('mysql');
         }
     }
 
@@ -211,6 +219,10 @@ class Controller extends BaseController
             
             group by quality, gsm, Size_INCH
             ORDER BY utilization DESC, size_inch_width DESC");
+    }
+
+    function getUniqueQualitiesFromStock($connection) {
+        return \DB::connection($connection)->select("SELECT DISTINCT quality FROM stock");
     }
 
 

@@ -36,13 +36,13 @@ class LabelController extends Controller {
     
     public function bank_details() {
         $data=array(
-                    [    "bank_name"=>'HDFC Bank',
-                        "account_name"=>'Paper Trade Link',
-                        "account_number"=>'06672 00 00 00 750',
-                        "neft_code"=>'HDFC 0000 667',
-                        "branch_location"=>'Akruli Road, Kandivali East',
+                    [    "bank_name"=>'ICICI Bank',
+                        "account_name"=>'PAPER TRADE LINK',
+                        "account_number"=>'1209 05 00 4500',
+                        "neft_code"=>'ICIC 000 1209',
+                        "branch_location"=>'Mahavir Nagar, Kandivali (West)',
                         // "bank_logo"=>'http://papertradelink.com/old_code/assets/global/custom/hdfc_logo.png'
-                        "bank_logo"=>'http://papertradelink.com/image/hdfc_new.png'
+                        "bank_logo"=>'https://papertradelink.com/public/image/icici_bank.png'
                     ]
                     /*,
                     [    "bank_name"=>'ABC',
@@ -55,7 +55,7 @@ class LabelController extends Controller {
         );
                             
         $data_record['bank_details'] = $data;
-        $data_record['qr_code_details'] = "http://papertradelink.com/image/ptl_qr_code.jpeg";
+        $data_record['qr_code_details'] = "https://papertradelink.com/public/image/ptl_icici_qr.PNG";
         
         $output['data'] = $data_record;
         $output['message'] = 'Size in Inch Detail !!';

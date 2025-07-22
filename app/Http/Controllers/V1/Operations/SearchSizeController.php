@@ -10,6 +10,9 @@ use App\Models\V1\Operations\OptionMaster;
 use App\Models\V1\Operations\ProductGroup;
 use App\Models\V1\Operations\StockColumns;
 use App\Models\V1\Operations\CustomerMaster;
+use App\Models\V1\Operations\CustomerProductLink;
+use App\Models\V1\Operations\CustomerQualityLink;
+use App\Models\V1\Operations\QualityMaster;
 use App\Models\V1\Operations\SearchHistoryMaster;
 
 class SearchSizeController extends Controller
@@ -165,18 +168,23 @@ class SearchSizeController extends Controller
         return $data_record;
     }
 
-    public function getMasters()
+    public function getMasters(Request $request)
     {
-        $data_record = ProductGroup::all();
+        if ($request->has('mobile')) {
+            $customerIds = CustomerMaster::where('mobile', $request->mobile)->pluck('id')->toArray();
+            $productIds = CustomerProductLink::whereIn('customer_id', $customerIds)->pluck('product_group_id')->toArray();
+            $output['data']['product_group'] = ProductGroup::whereIn('id', $productIds)->get();
+            
+            $qualityIds = CustomerQualityLink::whereIn('customer_id', $customerIds)->pluck('quality_id')->toArray();
+            $output['data']['qualities'] = QualityMaster::whereIn('id', $qualityIds)->get();
 
-        if ($data_record) {
-            $output['data']['product_group'] = $data_record;
-            $output['message'] = 'Master Records !!';
-            $output['status'] = 'success';
         } else {
-            $output['message'] = 'Records not found !!';
-            $output['status'] = 'error';
+            $output['data']['product_group'] = ProductGroup::all();
+            $output['data']['qualities'] = QualityMaster::all();
         }
+
+        $output['message'] = 'Master Records !!';
+        $output['status'] = 'success';
 
         return response()->json($output, 200);
     }
@@ -280,6 +288,9 @@ class SearchSizeController extends Controller
         $history = SearchHistoryMaster::where("customer_id", $customer_id)->orderBy('timestamp', 'DESC')->first();
         $historyID = $history->id;
 
+        $selectedQualityIds = CustomerQualityLink::where('customer_id', $customer_id)->pluck('quality_id')->toArray();
+        $selectedQualities = QualityMaster::whereIn('id', $selectedQualityIds)->pluck('name')->toArray();
+
         $productGroup = ProductGroup::where('group_name', $product_group)->first();
         $new_output = [];
         foreach ($data['list'] as $item) {
@@ -304,10 +315,13 @@ class SearchSizeController extends Controller
             }
 
             $item['search_history_id'] = $historyID;
-            if ($item['total_sheet'] > 0) {
+            if ($item['total_sheet'] > 0 && in_array($item['quality'], $selectedQualities)) {
                 $new_output[] = $item;
             }
         }
+        
+        \Log::info('aaaaa');
+        \Log::info($new_output);
         $data['list'] = $new_output;
         
         $new_output = [];
@@ -315,7 +329,7 @@ class SearchSizeController extends Controller
             $item['size_CMS'] = $item['size_cms_length'] . ' X ' . number_format($widthBK, 2, '.', '');
             $item['search_history_id'] = $historyID;
             $item['total_sheet'] = $item['total_sheet'] / $item['total_ups'];
-            if ($item['total_sheet'] > 0) {
+            if ($item['total_sheet'] > 0 && in_array($item['quality'], $selectedQualities)) {
                 $new_output[] = $item;
             }
         }

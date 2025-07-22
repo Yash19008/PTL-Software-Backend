@@ -100,6 +100,12 @@ Route::namespace('V1')->middleware(['cors'])->group(function() {
             Route::post('product-group', 'ProductGroupController@store');
             Route::put('product-group/{id}', 'ProductGroupController@update');
             Route::delete('product-group/{id}', 'ProductGroupController@destroy');
+
+            Route::get('quality-master', 'QualityMasterController@index');
+            Route::get('quality-master/{id}', 'QualityMasterController@show');
+            Route::post('quality-master', 'QualityMasterController@store');
+            Route::put('quality-master/{id}', 'QualityMasterController@update');
+            Route::delete('quality-master/{id}', 'QualityMasterController@destroy');
             
             Route::get('sales_tile', 'DashboardController@sales_tile');
             Route::get('fastest_selling_tile', 'DashboardController@fastest_selling_tile');
