@@ -59,7 +59,7 @@ class StockMasterController extends Controller {
             if (isset($data_record2)) {
                 $data = $data_record2;
             }
-        } else if ($company == 'Paper Hub') {
+        } else if ($company == 'Paper Hub' || $company == 'Pap Tech - Ahmedabad') {
             $data_record2 = $this->get_data_from_connection('paper_hub_connection', 'getStock', $stock_id);
             if (isset($data_record2)) {
                 $data = $data_record2;

@@ -142,6 +142,7 @@ class OptionMasterController extends Controller
                 $result1 = OptionMaster::where('option', 'challan_url_paptech')->first();
                 break;
             case "Paper Hub":
+            case 'Pap Tech - Ahmedabad':
                 $result1 = OptionMaster::where('option', 'challan_url_paperhub')->first();
                 break;
             case "Parekh":
