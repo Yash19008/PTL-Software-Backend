@@ -147,6 +147,7 @@ class OrderMasterController extends Controller
                         $stock = $this->get_data_from_connection('ptl_connection', 'getStock', $request->get('stock_id'));
                         break;
                     case 'Paper Hub':
+                    case 'Pap Tech - Ahmedabad' : 
                         $stock = $this->get_data_from_connection('paper_hub_connection', 'getStock', $request->get('stock_id'));
                         break;
                     case 'Parekh':
