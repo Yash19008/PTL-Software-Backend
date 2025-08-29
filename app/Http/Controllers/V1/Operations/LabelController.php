@@ -41,7 +41,7 @@ class LabelController extends Controller {
                         "account_number"=>'502 00 091 400 010',
                         "neft_code"=>'HDFC 00 00 667',
                         "branch_location"=>'Thakur House, Akurli Road, Kandivali East',
-                        "bank_logo"=>'http://admin.paptechsales.com/image/hdfc_new.png'
+                        "bank_logo"=>'https://admin.paptechsales.com/public/storage/hdfc_new.png'
                     ]
                     /*,
                     [    "bank_name"=>'ABC',
