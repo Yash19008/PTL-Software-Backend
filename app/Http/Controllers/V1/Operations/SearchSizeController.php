@@ -112,6 +112,7 @@ class SearchSizeController extends Controller {
                         $reel_output = array_merge($reel_output, $result);
                         break;
                     case 'Paper Hub':
+                    case 'Pap Tech - Ahmedabad' : 
                         $result = $this->get_data_from_connection('paper_hub_connection', 'searchSizeQuery', ['from' => 'Pap Tech - Ahmedabad', 'userlength' => $userlength, 'userwidth' => $userwidth, 'lower_range' => $lower_range, 'upper_range' => $upper_range, 'where' => $where]);
                         $output = array_merge($output, $result);
                         $result = $this->get_data_from_connection('paper_hub_connection', 'searchSizeQueryReel', ['from' => 'Pap Tech - Ahmedabad', 'userlength' => $userlength, 'userwidth' => $userwidth, 'lower_range_reel' => $lower_range_reel, 'upper_range_reel' => $upper_range_reel, 'where' => $where, 'gsm' => $gsm]);
@@ -440,6 +441,7 @@ class SearchSizeController extends Controller {
                     }
                 break;
                 case 'Paper Hub':
+				case 'Pap Tech - Ahmedabad' : 
                     $result = $this->get_data_from_connection('paper_hub_connection', 'search_new_common_query', ['from' => 'Pap Tech - Ahmedabad', 'userlength' => $userlength, 'userwidth' => $userwidth, 'lower_range' => $lower_range, 'upper_range' => $upper_range, 'where' => $where, 'sheets_result_count' => $sheets_result_count]);
                     $output = array_merge($output, $result);
                     if ($searchReel) {

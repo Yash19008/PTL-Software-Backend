@@ -36,12 +36,12 @@ class LabelController extends Controller {
     public function bank_details() {
         $data=array(
                     [    
-                        "bank_name"=>'HDFC Bank Ltd.',
-                        "account_name"=>'PapTech Corp Pvt Ltd',
-                        "account_number"=>'502 00 091 400 010',
-                        "neft_code"=>'HDFC 00 00 667',
-                        "branch_location"=>'Thakur House, Akurli Road, Kandivali East',
-                        "bank_logo"=>'https://admin.paptechsales.com/public/storage/hdfc_new.png'
+                        "bank_name"=>'SARASWAT CO-OPERATIVE BANK LTD.',
+                        "account_name"=>'PAPTECH CORP PRIVATE LIMITED',
+                        "account_number"=>'81 0000 0000 20258',
+                        "neft_code"=>'SRCB 0000 341',
+                        "branch_location"=>'Thakur Village, Kandivali East',
+                        "bank_logo"=>'https://admin.paptechsales.com/public/image/saraswat.jpg'
                     ]
                     /*,
                     [    "bank_name"=>'ABC',
