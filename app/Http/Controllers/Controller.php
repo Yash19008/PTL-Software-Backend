@@ -111,7 +111,7 @@ class Controller extends BaseController
                     
                     " . $where . "
                     
-                    group by quality, gsm, Size_INCH
+                    group by quality, gsm, Size_INCH, pkg_mode
                     ORDER BY utiliz DESC, size_inch_width DESC
                     ");
     }
@@ -142,7 +142,7 @@ class Controller extends BaseController
             
             " . $where . " AND size_inch_width = 0.00
             
-            group by quality, gsm, Size_INCH
+            group by quality, gsm, Size_INCH, pkg_mode
             ORDER BY utilization DESC, size_inch_width DESC");
     }
 
@@ -179,7 +179,7 @@ class Controller extends BaseController
             
             " . $where . " AND weight > 0 
             
-            group by quality, gsm, Size_INCH
+            group by quality, gsm, Size_INCH, pkg_mode
             
             ORDER BY utilization DESC, size_inch_width DESC");
     }
@@ -210,7 +210,7 @@ class Controller extends BaseController
             
             " . $where . " AND size_inch_width = 0.00
             
-            group by quality, gsm, Size_INCH
+            group by quality, gsm, Size_INCH, pkg_mode
             ORDER BY utilization DESC, size_inch_width DESC");
     }
 
