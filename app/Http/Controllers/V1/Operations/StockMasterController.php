@@ -11,7 +11,8 @@ use App\Models\V1\Operations\Imports\VendorStocksImport;
 use App\Models\V1\Operations\StockVendor;
 use App\Models\V1\Operations\VendorHistory;
 
-class StockMasterController extends Controller {
+class StockMasterController extends Controller
+{
 
     public function query()
     {
@@ -30,15 +31,16 @@ class StockMasterController extends Controller {
         return $this->success('OrderMaster Responses List', $query, 200);
     }
 
-    public function totalWeight() {
+    public function totalWeight()
+    {
         $sum = StockMaster::sum('weight');
         return $this->success('Total sum of weights', $sum, 200);
     }
 
 
     public function getTableColumn()
-    {         
-        return array( "id" => "id", "product_group" => "product_group" , "gsm" => "gsm", "size_inch_length" => "size_inch_length", "size_inch_width" => "size_inch_width", "size_cms_length" => "size_cms_length", "size_cms_width" => "size_cms_width", "pkt_grs_weight" => "pkt_grs_weight", "sheet" => "sheet", "bdls" => "bdls", "pkt_grs" => "pkt_grs", "pkg_mode" => "pkg_mode", "weight" => "weight", "quality" => "quality", "gwd" => "gwd", "loc" => "loc", "updated_on" => "updated_on");
+    {
+        return array("id" => "id", "product_group" => "product_group", "gsm" => "gsm", "size_inch_length" => "size_inch_length", "size_inch_width" => "size_inch_width", "size_cms_length" => "size_cms_length", "size_cms_width" => "size_cms_width", "pkt_grs_weight" => "pkt_grs_weight", "sheet" => "sheet", "bdls" => "bdls", "pkt_grs" => "pkt_grs", "pkg_mode" => "pkg_mode", "weight" => "weight", "quality" => "quality", "gwd" => "gwd", "loc" => "loc", "updated_on" => "updated_on");
     }
 
     public function GetStockdetail(Request $request)
@@ -83,15 +85,12 @@ class StockMasterController extends Controller {
             $output['data'] = $data;
             $output['message'] = 'Size in Inch Detail !!';
             $output['status'] = 'success';
-        }
-        else
-        {
-           $output['message'] = 'Size not found !!';
+        } else {
+            $output['message'] = 'Size not found !!';
             $output['status'] = 'error';
         }
-        
+
         return response()->json($output, 200);
-    
     }
 
     public function import(Request $request)
@@ -115,22 +114,21 @@ class StockMasterController extends Controller {
                 }
 
                 if ($rowsCount > 2000) {
-                    return $this->failure('Please provide only 2000 records at a time in excel to import stocks','',500);
-                } else if($rowsCount == 0) {
-                    return $this->failure('Excel data is not in correct format.','',500);
+                    return $this->failure('Please provide only 2000 records at a time in excel to import stocks', '', 500);
+                } else if ($rowsCount == 0) {
+                    return $this->failure('Excel data is not in correct format.', '', 500);
                 } else {
                     $import = new VendorStocksImport($vendorId, false);
                     try {
                         \Excel::import($import, $request->file);
 
                         StockVendor::where("vendor_id", $vendorId)->where("temp_flag", 0)->delete();
-                        StockVendor::where("vendor_id", $vendorId)->where("temp_flag", 1)->update([ "temp_flag" => 0]);
+                        StockVendor::where("vendor_id", $vendorId)->where("temp_flag", 1)->update(["temp_flag" => 0]);
 
                         $history = [
                             'user_id'     => $vendorId
                         ];
                         VendorHistory::create($history);
-
                     } catch (\Maatwebsite\Excel\Validators\ValidationException $e) {
                         $failures = $e->failures();
                         $errorsArray = [];
@@ -153,14 +151,17 @@ class StockMasterController extends Controller {
             return $this->failure('Something Went Wrong !!', $e->getMessage(), 500);
         }
     }
-    
+
     function containsOnlyNull($input)
     {
-        return empty(array_filter($input, function ($a) { return $a !== null;}));
+        return empty(array_filter($input, function ($a) {
+            return $a !== null;
+        }));
     }
 
-    
-    public function ClearVendorStock(Request $request) {
+
+    public function ClearVendorStock(Request $request)
+    {
         try {
             StockVendor::where("vendor_id", $request->vendor_id)->delete();
             return $this->success('Vendor Stocks Deleted Successfully !!', null, 200);
@@ -168,7 +169,8 @@ class StockMasterController extends Controller {
             return $this->failure('Vendor Stocks Deleted Successfully !!', $e->getMessage(), 500);
         }
     }
-    public function import_stock_outside(Request $request){
+    public function import_stock_outside(Request $request)
+    {
         /*
             stockObj = [
                 {
@@ -225,69 +227,72 @@ class StockMasterController extends Controller {
             ]
          */
         try {
-           // $stockArr = json_decode($request->stockObj, true);
-           // echo '<pre>';print_r($request->all());echo '</pre>';exit();
-         
-            if(!empty($request->all())){
+            // $stockArr = json_decode($request->stockObj, true);
+            // echo '<pre>';print_r($request->all());echo '</pre>';exit();
+
+            if (!empty($request->all())) {
                 foreach ($request->all() as $key => $value) {
-                    $stock = StockMaster::where('gsm',$value['gsm'])->where('size_inch_length',$value['size_inch_length'])->where('size_inch_width',$value['size_inch_width'])->where('quality',$value['quality'])->where('pkg_mode',$value['pkg_mode'])->where('gwd',$value['godown'])->where('loc',$value['location'])->get();
-                    
-                    if(count($stock) == 0){
-                        $insert_stock_array=array(
-                            'product_group'=>$value['product_group'],
-                            'gsm'=>$value['gsm'],
-                            'size_inch_length'=>$value['size_inch_length'],
-                            'size_inch_width'=>$value['size_inch_width'],
-                            'size_cms_length'=>$value['size_cms_length'],
+                    $stock = StockMaster::where('gsm', $value['gsm'])->where('size_inch_length', $value['size_inch_length'])->where('size_inch_width', $value['size_inch_width'])->where('quality', $value['quality'])->where('pkg_mode', $value['pkg_mode'])->where('gwd', $value['godown'])->where('loc', $value['location'])->where('eta', $value['eta'])->get();
+
+                    if (count($stock) == 0) {
+                        $insert_stock_array = array(
+                            'product_group' => $value['product_group'],
+                            'gsm' => $value['gsm'],
+                            'size_inch_length' => $value['size_inch_length'],
+                            'size_inch_width' => $value['size_inch_width'],
+                            'size_cms_length' => $value['size_cms_length'],
                             'size_cms_width' => $value['size_cms_width'],
-                            'pkt_grs_weight'=>$value['pkt_grs_weight'],
-                            'sheet'=>$value['sheet'],
-                            'bdls'=>$value['bdls'],
-                            'pkg_mode'=>$value['pkg_mode'],
-                            'pkt_grs'=>$value['pkt_grs'],
-                            'weight'=>$value['weight'],
-                            'quality'=>$value['quality'],
-                            'gwd'=>$value['godown'],
-                            'loc'=>$value['location'],
-                            'updated_on'=>Carbon::now(),
+                            'pkt_grs_weight' => $value['pkt_grs_weight'],
+                            'sheet' => $value['sheet'],
+                            'bdls' => $value['bdls'],
+                            'pkg_mode' => $value['pkg_mode'],
+                            'pkt_grs' => $value['pkt_grs'],
+                            'weight' => $value['weight'],
+                            'quality' => $value['quality'],
+                            'gwd' => $value['godown'],
+                            'loc' => $value['location'],
+                            'eta' => $value['eta'],
+                            'updated_on' => Carbon::now(),
                         );
                         StockMaster::create($insert_stock_array);
-                    }else{
-                       // if($value['location_new'] != ''){
-                            foreach ($stock as $key => $val) {
-                                $update_stock_array=array(
-                                    'product_group'=>$value['product_group']  ,
-                                    'gsm'=>$value['gsm'] ,
-                                    'size_inch_length'=>$value['size_inch_length'] ,
-                                    'size_inch_width'=>$value['size_inch_width'],
-                                    'size_cms_length'=>$value['size_cms_length'],
-                                    'size_cms_width' => $value['size_cms_width'],
-                                    'pkt_grs_weight'=>$value['pkt_grs_weight'],
-                                    'sheet'=>$value['sheet'],
-                                    'bdls'=>$value['bdls'],
-                                    'pkg_mode'=>$value['pkg_mode'],
-                                    'pkt_grs'=>$value['pkt_grs'],
-                                    'weight'=>$value['weight'],
-                                    'quality'=>$value['quality'],
-                                    'gwd'=>$value['godown'] ,
-                                    'loc'=>$value['location_new'] != '' ? $value['location_new'] : $value['location'],
-                                    'updated_on'=>Carbon::now(),
-                                );
-                            
-                                StockMaster::where('gsm',$value['gsm'])->where('size_inch_length',$value['size_inch_length'])->where('size_inch_width',$value['size_inch_width'])->where('quality',$value['quality'])->where('pkg_mode',$value['pkg_mode'])->where('gwd',$value['godown'])->where('loc',$value['location'])->update($update_stock_array);
-                            }
-                       // }
+                    } else {
+                        // if($value['location_new'] != ''){
+                        foreach ($stock as $key => $val) {
+                            $update_stock_array = array(
+                                'product_group' => $value['product_group'],
+                                'gsm' => $value['gsm'],
+                                'size_inch_length' => $value['size_inch_length'],
+                                'size_inch_width' => $value['size_inch_width'],
+                                'size_cms_length' => $value['size_cms_length'],
+                                'size_cms_width' => $value['size_cms_width'],
+                                'pkt_grs_weight' => $value['pkt_grs_weight'],
+                                'sheet' => $value['sheet'],
+                                'bdls' => $value['bdls'],
+                                'pkg_mode' => $value['pkg_mode'],
+                                'pkt_grs' => $value['pkt_grs'],
+                                'weight' => $value['weight'],
+                                'quality' => $value['quality'],
+                                'gwd' => $value['godown'],
+                                'eta' => $value['eta'],
+                                'loc' => $value['location_new'] != '' ? $value['location_new'] : $value['location'],
+                                'updated_on' => Carbon::now(),
+                            );
+
+                            StockMaster::where('gsm', $value['gsm'])->where('size_inch_length', $value['size_inch_length'])->where('size_inch_width', $value['size_inch_width'])->where('quality', $value['quality'])->where('pkg_mode', $value['pkg_mode'])->where('gwd', $value['godown'])->where('loc', $value['location'])->update($update_stock_array);
+                        }
+                        // }
                     }
                 }
                 return $this->success('Import outside stock successfully !!', $request->all(), 200);
-            }else{
+            } else {
                 return $this->failure('Empty data found or Data not proper !!',  500);
             }
         } catch (\Exception $e) {
             return $this->failure('Something Went Wrong !!', $e->getMessage(), 500);
         }
     }
-    public function deleteAllStock(){
+    public function deleteAllStock()
+    {
         StockMaster::truncate();
         return $this->success('Stock table truncated successfully !!', 200);
     }
