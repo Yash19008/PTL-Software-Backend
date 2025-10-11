@@ -255,7 +255,7 @@ class StockMasterController extends Controller {
             //echo '<pre>';print_r($stockArr);echo '</pre>';exit();
             if(!empty($request->all())){
                 foreach ($request->all() as $key => $value) {
-                    $stock = StockMaster::where('gsm',$value['gsm'])->where('size_inch_length',$value['size_inch_length'])->where('size_inch_width',$value['size_inch_width'])->where('quality',$value['quality'])->where('pkg_mode',$value['pkg_mode'])->where('gwd',$value['godown'])->where('loc',$value['location'])->get();
+                    $stock = StockMaster::where('gsm',$value['gsm'])->where('size_inch_length',$value['size_inch_length'])->where('size_inch_width',$value['size_inch_width'])->where('quality',$value['quality'])->where('pkg_mode',$value['pkg_mode'])->where('gwd',$value['godown'])->where('eta',$value['eta'])->where('loc',$value['location'])->get();
                    
                     if(count($stock) == 0){
                         $insert_stock_array=array(
@@ -274,6 +274,7 @@ class StockMasterController extends Controller {
                             'quality'=>$value['quality'],
                             'gwd'=>$value['godown'],
                             'loc'=>$value['location'],
+                            'eta'=>$value['eta'],
                             'updated_on'=>Carbon::now(),
                         );
                         StockMaster::create($insert_stock_array);
@@ -295,6 +296,7 @@ class StockMasterController extends Controller {
                                 'quality'=>$value['quality'],
                                 'gwd'=>$value['godown'],
                                 'loc'=>$value['location_new'] != '' ? $value['location_new'] : $value['location'],
+                                'eta'=>$value['eta'],
                                 'updated_on'=>Carbon::now(),
                             );
                             
