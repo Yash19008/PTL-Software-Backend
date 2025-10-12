@@ -197,7 +197,6 @@ class SearchSizeController extends Controller
 
         $widthBK = $request['width'];
         if ($searchSizeBy == 'CMS') {
-            \Log::info($request['length']);
             $request['length'] = $request['length'] / 2.54;
             $request['width'] = $request['width'] / 2.54;
         }

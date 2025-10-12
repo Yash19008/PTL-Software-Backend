@@ -60,7 +60,6 @@ class VendorStocksImport implements ToModel, WithValidation, WithStartRow, Skips
             'vendor_id'     => $this->vendorId,
             'temp_flag'     => 1
         ];
-        // \Log::info($clientRowData);
         $clientId = StockVendor::create($clientRowData)->id;
     }
 

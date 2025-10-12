@@ -29,7 +29,6 @@ class LoginController extends Controller
         ];
         try {
             $token = $JWTAuth->attempt($credentials, $user_payload);
-            \Log::info($token);
             if (!$token) {
                 return $this->failure('Incorrect Email or Password !!', null, 500);
             }

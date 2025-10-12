@@ -171,8 +171,6 @@ class StockMasterController extends Controller
     }
     public function import_stock_outside(Request $request)
     {
-        \Log::info('import_stock_outside call');
-        \Log::info($request);
         /*
             stockObj = [
                 {
