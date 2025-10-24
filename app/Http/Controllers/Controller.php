@@ -126,7 +126,7 @@ class Controller extends BaseController
     function searchSizeQueryReel($connection, $name, $userlength, $userwidth, $lower_range, $upper_range, $where, $gsm)
     {
         $userwidth = number_format((float)$userwidth, 2, '.', '');
-        return \DB::connection($connection)->select("SELECT '" . $name . "' as company, stock.product_group, stock.quality, gsm, dup.utiliz as utilization, stock.id, stock.gwd,
+        return \DB::connection($connection)->select("SELECT '" . $name . "' as company, stock.product_group, stock.quality, gsm, dup.utiliz as utilization, stock.id, stock.gwd, stock.eta,
         CONCAT(size_inch_length,' X '," . $userwidth . ") as Size_INCH, size_inch_length ,size_inch_width,size_cms_length,size_cms_width,
         CONCAT(size_inch_length,' X '," . $userwidth . ") as size_inch,
         TRUNCATE(size_inch_length/" . $userlength . " ,0) AS LEN_UPS ,
@@ -155,7 +155,7 @@ class Controller extends BaseController
 
     function search_new_common_query($connection, $name, $userlength, $userwidth, $lower_range, $upper_range, $where, $sheets_result_count)
     {
-        return \DB::connection($connection)->select("SELECT '" . $name . "' as company, stock.quality, gsm, util.utilization, stock.id, stock.gwd,
+        return \DB::connection($connection)->select("SELECT '" . $name . "' as company, stock.quality, gsm, util.utilization, stock.id, stock.gwd, stock.eta,
             CONCAT(size_inch_length,' X ',size_inch_width) as Size_INCH, size_inch_length ,size_inch_width,size_cms_length,size_cms_width,
             CONCAT(size_inch_length,' X ',size_inch_width) as size_inch,
             TRUNCATE(size_inch_length/" . $userlength . " ,0) AS LEN_UPS ,
