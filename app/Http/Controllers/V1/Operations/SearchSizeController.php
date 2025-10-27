@@ -155,7 +155,7 @@ class SearchSizeController extends Controller
 
                 " . $where . "
                 
-                group by quality, gsm, Size_INCH, pkg_mode
+                group by quality, gsm, Size_INCH, pkg_mode, eta
                 ORDER BY utiliz DESC, size_inch_width DESC");
         $output = array_merge($output, $vendor_result);
         $output = json_decode(json_encode($output), true);
@@ -499,7 +499,7 @@ class SearchSizeController extends Controller
             
             " . $where . " AND weight > 0 
             
-            group by quality, gsm, Size_INCH, pkg_mode
+            group by quality, gsm, Size_INCH, pkg_mode, eta
             ORDER BY utilization DESC, size_inch_width DESC
         
         ");

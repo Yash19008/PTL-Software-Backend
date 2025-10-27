@@ -278,7 +278,7 @@ class StockMasterController extends Controller
                                 'updated_on' => Carbon::now(),
                             );
 
-                            StockMaster::where('gsm', $value['gsm'])->where('size_inch_length', $value['size_inch_length'])->where('size_inch_width', $value['size_inch_width'])->where('quality', $value['quality'])->where('pkg_mode', $value['pkg_mode'])->where('gwd', $value['godown'])->where('loc', $value['location'])->update($update_stock_array);
+                            StockMaster::where('gsm', $value['gsm'])->where('size_inch_length', $value['size_inch_length'])->where('size_inch_width', $value['size_inch_width'])->where('quality', $value['quality'])->where('pkg_mode', $value['pkg_mode'])->where('gwd', $value['godown'])->where('loc', $value['location'])->where('eta', $value['eta'])->update($update_stock_array);
                         }
                         // }
                     }
