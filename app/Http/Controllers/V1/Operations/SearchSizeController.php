@@ -139,7 +139,8 @@ class SearchSizeController extends Controller
                 TRUNCATE((pkt_grs_weight/sheet*100),1)  as  sheet_weight,
                 (sheet*pkg_mode) as bundle, sheet, pkg_mode,
                 
-                SUM(sheet*pkt_grs) as total_sheet
+                SUM(sheet*pkt_grs) as total_sheet,
+                IF(eta <= NOW(), 'Available', DATE_FORMAT(eta,'%d/%m/%Y')) as eta_display
                 
                 FROM stock_vendors
                 
@@ -155,7 +156,7 @@ class SearchSizeController extends Controller
 
                 " . $where . "
                 
-                group by quality, gsm, Size_INCH, pkg_mode, eta
+                group by quality, gsm, Size_INCH, pkg_mode, eta_display
                 ORDER BY utiliz DESC, size_inch_width DESC");
         $output = array_merge($output, $vendor_result);
         $output = json_decode(json_encode($output), true);
@@ -490,7 +491,8 @@ class SearchSizeController extends Controller
             TRUNCATE((pkt_grs_weight/sheet*100),1)  as  sheet_weight,
             (sheet*pkg_mode) as bundle, sheet, pkg_mode,
             
-            SUM(sheet*pkt_grs) as total_sheet
+            SUM(sheet*pkt_grs) as total_sheet,
+            IF(eta <= NOW(), 'Available', DATE_FORMAT(eta,'%d/%m/%Y')) as eta_display
             
             FROM stock_vendors 
             
@@ -507,7 +509,7 @@ class SearchSizeController extends Controller
             
             " . $where . " AND weight > 0 
             
-            group by quality, gsm, Size_INCH, pkg_mode, eta
+            group by quality, gsm, Size_INCH, pkg_mode, eta_display
             ORDER BY utilization DESC, size_inch_width DESC
         
         ");
