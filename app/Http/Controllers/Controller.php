@@ -105,7 +105,7 @@ class Controller extends BaseController
                     (sheet*pkg_mode) as bundle, sheet, pkg_mode,
                     
                     SUM(sheet*pkt_grs) as total_sheet,
-                    IF(eta <= NOW(), 'Available', DATE_FORMAT(eta,'%d/%m/%Y')) as eta_display
+                    IF(eta <= NOW(), -1, eta) as eta_group
                     
                     FROM stock
                     
@@ -119,7 +119,7 @@ class Controller extends BaseController
                     
                     " . $where . "
                     
-                    group by quality, gsm, Size_INCH, pkg_mode, eta_display
+                    group by quality, gsm, Size_INCH, pkg_mode, eta_group
                     ORDER BY utiliz DESC, size_inch_width DESC
                     ");
     }
@@ -136,7 +136,7 @@ class Controller extends BaseController
             ''  as  sheet_weight,
             TRUNCATE((stock.weight/((" . $userlength . "*" . $userwidth . "*" . $gsm . "/8.2/1307.25)/144)),-2)  as  total_sheet,
             '' as bundle,
-                    IF(eta <= NOW(), 'Available', DATE_FORMAT(eta,'%d/%m/%Y')) as eta_display
+                    IF(eta <= NOW(), -1, eta) as eta_group
             
             FROM stock
             
@@ -151,7 +151,7 @@ class Controller extends BaseController
             
             " . $where . " AND size_inch_width = 0.00
             
-            group by quality, gsm, Size_INCH, pkg_mode, eta_display
+            group by quality, gsm, Size_INCH, pkg_mode, eta_group
             ORDER BY utilization DESC, size_inch_width DESC");
     }
 
@@ -167,8 +167,8 @@ class Controller extends BaseController
             (sheet*pkg_mode) as bundle, sheet, pkg_mode,
             
             SUM(sheet*pkt_grs) as total_sheet,
-            IF(eta <= NOW(), 'Available', DATE_FORMAT(eta,'%d/%m/%Y')) as eta_display
-            
+            IF(eta <= NOW(), -1, eta) as eta_group
+
             FROM stock
             
             INNER JOIN
@@ -189,7 +189,7 @@ class Controller extends BaseController
             
             " . $where . " AND weight > 0 
             
-            group by quality, gsm, Size_INCH, pkg_mode, eta_display
+            group by quality, gsm, Size_INCH, pkg_mode, eta_group
             
             ORDER BY utilization DESC, size_inch_width DESC");
     }
@@ -206,7 +206,7 @@ class Controller extends BaseController
             ''  as  sheet_weight,
             TRUNCATE((stock.weight/((" . $userlength . "*" . $userwidth . "*" . $gsm . "/8.2/1307.25)/144)),-2)  as  total_sheet,
             '' as bundle,
-                    IF(eta <= NOW(), 'Available', DATE_FORMAT(eta,'%d/%m/%Y')) as eta_display
+                    IF(eta <= NOW(), -1, eta) as eta_group
             
             FROM stock
             
@@ -221,7 +221,7 @@ class Controller extends BaseController
             
             " . $where . " AND size_inch_width = 0.00
             
-            group by quality, gsm, Size_INCH, pkg_mode, eta_display
+            group by quality, gsm, Size_INCH, pkg_mode, eta_group
             ORDER BY utilization DESC, size_inch_width DESC");
     }
 
