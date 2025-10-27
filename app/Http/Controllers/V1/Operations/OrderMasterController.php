@@ -267,7 +267,7 @@ class OrderMasterController extends Controller
     public function update_quantity(Request $request)
     {
         try {
-            OrderMaster::where('id', $request->order_id)->update(['qty' => $request->quantity]);
+            OrderMaster::where('id', $request->order_id)->update(['qty' => $request->quantity, 'delivery_at' => $request->delivery_at]);
         } catch (\Exception $e) {
             \Log::error($e);
         }
