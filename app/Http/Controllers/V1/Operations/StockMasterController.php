@@ -232,9 +232,9 @@ class StockMasterController extends Controller
 
             if (!empty($request->all())) {
                 foreach ($request->all() as $key => $value) {
-                    $stock = StockMaster::where('gsm', $value['gsm'])->where('size_inch_length', $value['size_inch_length'])->where('size_inch_width', $value['size_inch_width'])->where('quality', $value['quality'])->where('pkg_mode', $value['pkg_mode'])->where('gwd', $value['godown'])->where('loc', $value['location'])->where('eta', $value['eta'])->get();
+                    $stock = StockMaster::where('gsm', $value['gsm'])->where('size_inch_length', $value['size_inch_length'])->where('size_inch_width', $value['size_inch_width'])->where('quality', $value['quality'])->where('pkg_mode', $value['pkg_mode'])->where('gwd', $value['godown'])->where('loc', $value['location'])->where('eta', $value['eta'])->first();
 
-                    if (count($stock) == 0) {
+                    if ($stock == null) {
                         $insert_stock_array = array(
                             'product_group' => $value['product_group'],
                             'gsm' => $value['gsm'],
@@ -270,7 +270,7 @@ class StockMasterController extends Controller
                                 'bdls' => $value['bdls'],
                                 'pkg_mode' => $value['pkg_mode'],
                                 'pkt_grs' => $value['pkt_grs'],
-                                'weight' => $value['weight'],
+                                'weight' => $stock->weight + $value['weight'],
                                 'quality' => $value['quality'],
                                 'gwd' => $value['godown'],
                                 'eta' => $value['eta'],
