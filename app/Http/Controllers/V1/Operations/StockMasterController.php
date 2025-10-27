@@ -40,7 +40,7 @@ class StockMasterController extends Controller
 
     public function getTableColumn()
     {
-        return array("id" => "id", "product_group" => "product_group", "gsm" => "gsm", "size_inch_length" => "size_inch_length", "size_inch_width" => "size_inch_width", "size_cms_length" => "size_cms_length", "size_cms_width" => "size_cms_width", "pkt_grs_weight" => "pkt_grs_weight", "sheet" => "sheet", "bdls" => "bdls", "pkt_grs" => "pkt_grs", "pkg_mode" => "pkg_mode", "weight" => "weight", "quality" => "quality", "gwd" => "gwd", "loc" => "loc", "updated_on" => "updated_on");
+        return array("id" => "id", "product_group" => "product_group", "gsm" => "gsm", "size_inch_length" => "size_inch_length", "size_inch_width" => "size_inch_width", "size_cms_length" => "size_cms_length", "size_cms_width" => "size_cms_width", "pkt_grs_weight" => "pkt_grs_weight", "sheet" => "sheet", "bdls" => "bdls", "pkt_grs" => "pkt_grs", "pkg_mode" => "pkg_mode", "weight" => "weight", "quality" => "quality", "gwd" => "gwd", "loc" => "loc", "eta" => "eta", "updated_on" => "updated_on");
     }
 
     public function GetStockdetail(Request $request)

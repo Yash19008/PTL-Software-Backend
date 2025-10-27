@@ -222,6 +222,7 @@ class SearchSizeController extends Controller
         if ($result->bundle == 'Yes')   $output1['headers']['bundle'] = 'Per Bundle No. of Sheet';
         if ($result->total_sheet == 'Yes')   $output1['headers']['total_sheet'] = 'Total Sheet';
         if ($result->gwd == 'Yes')   $output1['headers']['gwd'] = 'Godown';
+        if ($result->eta == 'Yes')   $output1['headers']['eta'] = 'ETA';
 
 
         $product_group = $request->get('product_group');
@@ -245,6 +246,7 @@ class SearchSizeController extends Controller
                 if ($result->bundle == 'Yes')   $output1['reel_headers']['bundle'] = 'Per Bundle No. of Sheet';
                 if ($result->total_sheet == 'Yes')   $output1['reel_headers']['total_sheet'] = 'Total Sheet';
                 if ($result->gwd == 'Yes')   $output1['reel_headers']['gwd'] = 'Godown';
+                if ($result->eta == 'Yes')   $output1['reel_headers']['eta'] = 'ETA';
 
                 $searchReel = isset($output1['reel_headers']);
             } else {
