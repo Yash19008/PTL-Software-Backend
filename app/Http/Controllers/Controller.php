@@ -97,7 +97,8 @@ class Controller extends BaseController
                     TRUNCATE((pkt_grs_weight/sheet*100),1)  as  sheet_weight,
                     (sheet*pkg_mode) as bundle, sheet, pkg_mode,
                     
-                    SUM(sheet*pkt_grs) as total_sheet
+                    SUM(sheet*pkt_grs) as total_sheet,
+                    IF(eta <= NOW(), -1, eta) as eta_group
                     
                     FROM stock
                     
@@ -111,7 +112,7 @@ class Controller extends BaseController
                     
                     " . $where . "
                     
-                    group by quality, gsm, Size_INCH, pkg_mode
+                    group by quality, gsm, Size_INCH, pkg_mode, eta_group
                     ORDER BY utiliz DESC, size_inch_width DESC
                     ");
     }
@@ -127,7 +128,8 @@ class Controller extends BaseController
         TRUNCATE(TRUNCATE(size_inch_length/" . $userlength . ",0),0) AS total_ups,
             ''  as  sheet_weight,
             TRUNCATE((stock.weight/((" . $userlength . "*" . $userwidth . "*" . $gsm . "/8.2/1307.25)/144)),-2)  as  total_sheet,
-            '' as bundle
+            '' as bundle,
+            IF(eta <= NOW(), -1, eta) as eta_group
             
             FROM stock
             
@@ -142,7 +144,7 @@ class Controller extends BaseController
             
             " . $where . " AND size_inch_width = 0.00
             
-            group by quality, gsm, Size_INCH, pkg_mode
+            group by quality, gsm, Size_INCH, pkg_mode, eta_group
             ORDER BY utilization DESC, size_inch_width DESC");
     }
 
@@ -157,7 +159,8 @@ class Controller extends BaseController
             TRUNCATE((pkt_grs_weight/sheet*100),1)  as  sheet_weight,
             (sheet*pkg_mode) as bundle, sheet, pkg_mode,
             
-            SUM(sheet*pkt_grs) as total_sheet
+            SUM(sheet*pkt_grs) as total_sheet,
+            IF(eta <= NOW(), -1, eta) as eta_group
             
             FROM stock
             
@@ -179,7 +182,7 @@ class Controller extends BaseController
             
             " . $where . " AND weight > 0 
             
-            group by quality, gsm, Size_INCH, pkg_mode
+            group by quality, gsm, Size_INCH, pkg_mode, eta_group
             
             ORDER BY utilization DESC, size_inch_width DESC");
     }
@@ -195,7 +198,8 @@ class Controller extends BaseController
         TRUNCATE(TRUNCATE(size_inch_length/" . $userlength . ",0),0) AS total_ups,
             ''  as  sheet_weight,
             TRUNCATE((stock.weight/((" . $userlength . "*" . $userwidth . "*" . $gsm . "/8.2/1307.25)/144)),-2)  as  total_sheet,
-            '' as bundle
+            '' as bundle,
+            IF(eta <= NOW(), -1, eta) as eta_group
             
             FROM stock
             
@@ -210,7 +214,7 @@ class Controller extends BaseController
             
             " . $where . " AND size_inch_width = 0.00
             
-            group by quality, gsm, Size_INCH, pkg_mode
+            group by quality, gsm, Size_INCH, pkg_mode, eta_group
             ORDER BY utilization DESC, size_inch_width DESC");
     }
 

@@ -40,6 +40,7 @@ class CustomerMasterController extends Controller
             "bundle" => $request->get('bundle') == 'true' ? 'Yes' : 'No',
             "total_sheet" => $request->get('total_sheet') == 'true' ? 'Yes' : 'No',
             "gwd" => $request->get('gwd') == 'true' ? 'Yes' : 'No',
+            "eta" => $request->get('eta') == 'true' ? 'Yes' : 'No',
             'is_reel' => 'No'
         ]);
 
@@ -54,6 +55,7 @@ class CustomerMasterController extends Controller
             "bundle" => $request->get('reel_bundle') == 'true' ? 'Yes' : 'No',
             "total_sheet" => $request->get('reel_total_sheet') == 'true' ? 'Yes' : 'No',
             "gwd" => $request->get('reel_gwd') == 'true' ? 'Yes' : 'No',
+            "eta" => $request->get('reel_eta') == 'true' ? 'Yes' : 'No',
             'is_reel' => 'Yes'
         ]);
 
@@ -117,6 +119,7 @@ class CustomerMasterController extends Controller
             "bundle" => $request->get('bundle') == 'true' ? 'Yes' : 'No',
             "total_sheet" => $request->get('total_sheet') == 'true' ? 'Yes' : 'No',
             "gwd" => $request->get('gwd') == 'true' ? 'Yes' : 'No',
+            "eta" => $request->get('eta') == 'true' ? 'Yes' : 'No',
             'is_reel' => 'No',
         ];
         $stockcolumns->update($data);
@@ -134,6 +137,7 @@ class CustomerMasterController extends Controller
                 "bundle" => $request->get('reel_bundle') == 'true' ? 'Yes' : 'No',
                 "total_sheet" => $request->get('reel_total_sheet') == 'true' ? 'Yes' : 'No',
                 "gwd" => $request->get('reel_gwd') == 'true' ? 'Yes' : 'No',
+            "eta" => $request->get('eta') == 'true' ? 'Yes' : 'No',
                 'is_reel' => 'Yes'
             ]
         );

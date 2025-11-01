@@ -137,7 +137,8 @@ class SearchSizeController extends Controller {
                 TRUNCATE((pkt_grs_weight/sheet*100),1)  as  sheet_weight,
                 (sheet*pkg_mode) as bundle, sheet, pkg_mode,
                 
-                SUM(sheet*pkt_grs) as total_sheet
+                SUM(sheet*pkt_grs) as total_sheet,
+                IF(eta <= NOW(), -1, eta) as eta_group
                 
                 FROM stock_vendors
                 
@@ -153,7 +154,7 @@ class SearchSizeController extends Controller {
 
                 " . $where . "
                 
-                group by quality, gsm, Size_INCH, pkg_mode
+                group by quality, gsm, Size_INCH, pkg_mode, eta_group
                 ORDER BY utiliz DESC, size_inch_width DESC");
         $output = array_merge($output, $vendor_result);        
         $output = json_decode(json_encode($output), true);
@@ -220,6 +221,7 @@ class SearchSizeController extends Controller {
         if($result->bundle == 'Yes')   $output1['headers']['bundle'] = 'Per Bundle No. of Sheet';
         if($result->total_sheet == 'Yes')   $output1['headers']['total_sheet'] = 'Total Sheet';
         if($result->gwd == 'Yes')   $output1['headers']['gwd'] = 'Godown';
+        if ($result->eta == 'Yes')   $output1['headers']['eta'] = 'ETA';
         
         $product_group = $request->get('product_group');
         $searchReel = ProductGroup::where('group_name', $product_group)->where('is_reel', 'Yes')->first();
@@ -242,6 +244,7 @@ class SearchSizeController extends Controller {
                 if ($result->bundle == 'Yes')   $output1['reel_headers']['bundle'] = 'Per Bundle No. of Sheet';
                 if ($result->total_sheet == 'Yes')   $output1['reel_headers']['total_sheet'] = 'Total Sheet';
                 if ($result->gwd == 'Yes')   $output1['reel_headers']['gwd'] = 'Godown';
+                if ($result->eta == 'Yes')   $output1['reel_headers']['eta'] = 'ETA';
 
                 $searchReel = isset($output1['reel_headers']);
             } else {
@@ -309,6 +312,13 @@ class SearchSizeController extends Controller {
             } else {                
                 $item['qty_as_per_size'][] = +$item['total_sheet'];
             }
+            
+            if ($item['eta'] == '' || $item['eta'] == null || ($item['eta'] != '' && $item['eta'] != null && $item['eta'] <= date('Y-m-d'))) {
+                $item['eta'] = 'Available';
+            } else {
+                $item['eta'] = date('d-m-Y', strtotime($item['eta']));
+            }
+
             $item['search_history_id'] = $historyID;
             if ($item['total_sheet'] > 0 && in_array($item['quality'], $selectedQualities)) {
                 $new_output[] = $item;
@@ -477,7 +487,8 @@ class SearchSizeController extends Controller {
         TRUNCATE((pkt_grs_weight/sheet*100),1)  as  sheet_weight,
         (sheet*pkg_mode) as bundle, sheet, pkg_mode,
         
-        SUM(sheet*pkt_grs) as total_sheet
+        SUM(sheet*pkt_grs) as total_sheet,
+        IF(eta <= NOW(), -1, eta) as eta_group
         
         FROM stock_vendors 
         
@@ -499,7 +510,7 @@ class SearchSizeController extends Controller {
 
         ".$where." AND weight > 0
         
-        group by quality, gsm, Size_INCH, pkg_mode
+        group by quality, gsm, Size_INCH, pkg_mode, eta_group
         ORDER BY utilization DESC, size_inch_width DESC");
         
         $output = array_merge($output, $stock_vendors_result);
