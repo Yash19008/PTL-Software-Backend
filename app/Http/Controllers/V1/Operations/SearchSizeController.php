@@ -317,7 +317,7 @@ class SearchSizeController extends Controller
                 $item['qty_as_per_size'][] = +$item['total_sheet'];
             }
             
-            if ($item['eta'] != '' && $item['eta'] != null && $item['eta'] <= date('Y-m-d')) {
+            if ($item['eta'] == '' || $item['eta'] == null || ($item['eta'] != '' && $item['eta'] != null && $item['eta'] <= date('Y-m-d'))) {
                 $item['eta'] = 'Available';
             } else {
                 $item['eta'] = date('d-m-Y', strtotime($item['eta']));
