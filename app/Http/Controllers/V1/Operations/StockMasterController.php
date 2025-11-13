@@ -232,7 +232,7 @@ class StockMasterController extends Controller
 
             if (!empty($request->all())) {
                 foreach ($request->all() as $key => $value) {
-                    $stockModel = StockMaster::where('gsm', $value['gsm'])->where('size_inch_length', $value['size_inch_length'])->where('size_inch_width', $value['size_inch_width'])->where('quality', $value['quality'])->where('pkg_mode', $value['pkg_mode'])->where('gwd', $value['godown'])->where('loc', $value['location'])->where('eta', $value['eta']);
+                    $stockModel = StockMaster::where('gsm', $value['gsm'])->where('size_inch_length', $value['size_inch_length'])->where('size_inch_width', $value['size_inch_width'])->where('quality', $value['quality'])->where('pkg_mode', $value['pkg_mode'])->where('gwd', $value['godown'])->where('loc', $value['location'])->where('eta', $value['eta'])->where('sheet', $value['sheet'])->where('product_group', $value['product_group']);
                     $stock = $stockModel->first();
 
                     if ($stock === null) {
