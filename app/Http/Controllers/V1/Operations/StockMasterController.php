@@ -257,6 +257,7 @@ class StockMasterController extends Controller
                         );
                         StockMaster::create($insert_stock_array);
                     } else {
+                        \Log::info('Updating existing stock id: ' . $stock->id);
                         $update_stock_array = array(
                             'product_group' => $value['product_group'],
                             'gsm' => $value['gsm'],
