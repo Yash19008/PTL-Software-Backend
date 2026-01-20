@@ -43,3 +43,10 @@ Commands mostly have same syntax as the original ones,
 - `php artisan migrate:tenant`
 - `php artisan passport:install:tenant`
 
+## QR Login Setup
+
+- After pulling the latest changes, run `composer dump-autoload` to install and register the QR package.
+
+- Run `php artisan migrate --path=/database/migrations/2026_01_18_201930_create_qr_sessions_table.php` to migrate the qr_sessions table.
+
+- Start the development server using `php artisan serve --host=127.0.0.1 --port=8000`.
