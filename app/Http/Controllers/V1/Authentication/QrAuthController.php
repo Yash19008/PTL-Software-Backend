@@ -24,7 +24,7 @@ class QrAuthController extends Controller
 
         \App\QrSession::create([
             'qr_token' => $qrToken,
-            'expires_at' => now()->addMinutes(5),
+            'expires_at' => now()->addSeconds(5),
         ]);
 
         $qrSvg = (string) \SimpleSoftwareIO\QrCode\Facades\QrCode::format('svg')
@@ -113,37 +113,32 @@ class QrAuthController extends Controller
         ], 200);
     }
 
-
-
-public function checkQrStatus(Request $request)
-{
-    $request->validate([
-        'qr_token' => 'required|string'
-    ]);
-
-    $qr = \App\QrSession::where('qr_token', $request->qr_token)->first();
-
-    if (!$qr) {
-        return $this->failure('Invalid QR', null, 404);
-    }
-
-    if (now()->gt($qr->expires_at)) {
-        return $this->failure('QR expired', null, 410);
-    }
-
-    // 🔑 LOGIN SUCCESS
-    if ($qr->is_used && $qr->login_token) {
-        return $this->success('Logged in', [
-            'logged_in' => true,
-            'token'     => $qr->login_token
+    public function checkQrStatus(Request $request)
+    {
+        $request->validate([
+            'qr_token' => 'required|string'
+        ]);
+    
+        $qr = \App\QrSession::where('qr_token', $request->qr_token)->first();
+    
+        if (!$qr) {
+            return $this->failure('Invalid QR', null, 404);
+        }
+    
+        if (now()->gt($qr->expires_at)) {
+            return $this->failure('QR expired', null, 410);
+        }
+    
+        // 🔑 LOGIN SUCCESS
+        if ($qr->is_used && $qr->login_token) {
+            return $this->success('Logged in', [
+                'logged_in' => true,
+                'token'     => $qr->login_token
+            ], 200);
+        }
+    
+        return $this->success('Waiting for scan', [
+            'logged_in' => false
         ], 200);
     }
-
-    return $this->success('Waiting for scan', [
-        'logged_in' => false
-    ], 200);
-}
-
-
-
 }

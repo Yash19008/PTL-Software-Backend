@@ -292,6 +292,7 @@ class SearchSizeController extends Controller {
 
         $productGroup = ProductGroup::where('group_name', $product_group)->first();
         $new_output = [];
+        
         foreach ($data['list'] as $item) {
             $pkgMode = $productGroup->pkg_mode != 0 && $productGroup->pkg_mode != null ? $productGroup->pkg_mode : $item['pkg_mode'];
             
