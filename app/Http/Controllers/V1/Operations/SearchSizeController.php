@@ -372,7 +372,7 @@ class SearchSizeController extends Controller {
         $customer_id = $request->get('customer_id');
         $product_group = $request->get('product_group');
         $searched_qty = $request->get('qty');
-
+        $platform = $request->get('platform');
         $size_in_inch = $userlength.' X '.$userwidth;
         
         //  print_r($this->uri->segment(5));exit;
@@ -393,6 +393,7 @@ class SearchSizeController extends Controller {
                     "gsm" => $gsm,
                     "qty" => $searched_qty,
                     "product_group" => $product_group,
+                    "platform" => $platform,
                     "timestamp" => date('Y-m-d H:i:s')
         );
         

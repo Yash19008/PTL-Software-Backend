@@ -12,7 +12,15 @@ class CustomerMaster extends Model
     public $timestamps = false;
 
     protected $fillable = [
-        'id', 'Company_code', 'company_name', 'client_name', 'email', 'mobile', 'password', 'otp', 'Access_stk', 'active', 'stock_active', 'oneSignalUserId', 'oneSignalTokenId', 'updated_on', 'mobile_show_stocks_from'
+        'id', 'Company_code', 'company_name', 'client_name', 'email', 'mobile', 'password', 'otp', 'Access_stk', 'active', 'stock_active', 'oneSignalUserId', 'oneSignalTokenId', 'updated_on', 'mobile_show_stocks_from',"device_info"
+    ];
+    /**
+     * The attributes that should be cast to native types.
+     *
+     * @var array
+     */
+    protected $casts = [
+        'device_info' => 'array'
     ];
 
     /**

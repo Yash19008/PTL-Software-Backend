@@ -12,6 +12,6 @@ class SearchHistoryMaster extends Model
     public $timestamps = false;
 
     protected $fillable = [
-        'id', 'customer_id', 'company_name', 'client_name', 'email', 'mobile' , 'width', 'heigth', 'size_in_inch', 'gsm', 'qty', 'product_group', 'timestamp'
+        'id', 'customer_id', 'company_name', 'client_name', 'email', 'mobile' , 'width', 'heigth', 'size_in_inch', 'gsm', 'qty', 'product_group', 'timestamp','platform'
     ];
 }

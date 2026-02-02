@@ -61,6 +61,8 @@ class LoginController extends Controller
         $mobile = $request->get('mobile');
         $password = $request->get('password');
         $mobile_info = $request->get('mobile_info');
+        $device_info = json_encode($request->get('device_info'));
+        echo "device_info: " . $device_info . "\n";
         
         try {
             $where=array(
@@ -78,10 +80,11 @@ class LoginController extends Controller
             );
             AuditTrail::create($data);
             
-            $onesignal = array(
+           $onesignal->update([
                 "oneSignalUserId" => $request->get('oneSignalUserId'),
                 "oneSignalTokenId" => $request->get('oneSignalTokenId'),
-            );
+                "device_info" => $device_info 
+            ]);
             $data_record->update($onesignal);
             
             $output['data'] = $data_record;
