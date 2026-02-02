@@ -16,6 +16,13 @@ class AddDeviceInfoAndPlatformColumns extends Migration
                 }
             });
         }
+        if (Schema::hasTable('customer_master')) {
+            Schema::table('customer_master', function (Blueprint $table) {
+                if (!Schema::hasColumn('customer_master', 'max_allowed_devices')) {
+                    $table->json('max_allowed_devices')->nullable()->after('mobile_show_stocks_from');
+                }
+            });
+        }
 
         // order_master
         if (Schema::hasTable('order_master')) {
@@ -24,6 +31,16 @@ class AddDeviceInfoAndPlatformColumns extends Migration
                     $table->enum('platform', ['mobile', 'web'])
                           ->default('mobile')
                           ->after('is_reel');
+                }
+            });
+        }
+        // search_history_master
+        if (Schema::hasTable('search_history_master')) {
+            Schema::table('search_history_master', function (Blueprint $table) {
+                if (!Schema::hasColumn('search_history_master', 'platform')) {
+                    $table->enum('platform', ['mobile', 'web'])
+                          ->default('mobile')
+                          ->after('product_group');
                 }
             });
         }
@@ -36,9 +53,19 @@ class AddDeviceInfoAndPlatformColumns extends Migration
                 $table->dropColumn('device_info');
             }
         });
+        Schema::table('customer_master', function (Blueprint $table) {
+            if (Schema::hasColumn('customer_master', 'max_allowed_devices')) {
+                $table->dropColumn('max_allowed_devices');
+            }
+        });
 
         Schema::table('order_master', function (Blueprint $table) {
             if (Schema::hasColumn('order_master', 'platform')) {
+                $table->dropColumn('platform');
+            }
+        });
+        Schema::table('search_history_master', function (Blueprint $table) {
+            if (Schema::hasColumn('search_history_master', 'platform')) {
                 $table->dropColumn('platform');
             }
         });
