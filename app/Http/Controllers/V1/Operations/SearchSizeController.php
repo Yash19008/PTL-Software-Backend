@@ -393,7 +393,7 @@ class SearchSizeController extends Controller {
                     "gsm" => $gsm,
                     "qty" => $searched_qty,
                     "product_group" => $product_group,
-                    "platform" => $platform,
+                    "platform" => isset($platform) ? $platform : 'mobile',
                     "timestamp" => date('Y-m-d H:i:s')
         );
         
