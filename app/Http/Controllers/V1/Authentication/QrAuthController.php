@@ -23,7 +23,7 @@ class QrAuthController extends Controller
 
         $data = DB::table('qr_sessions')->insert([
             'qr_token' => $qrToken,
-            'expires_at' => now()->addSeconds(500),
+            'expires_at' => now()->addSeconds(300),
             'created_at' => now(),
             'updated_at' => now(),
         ]);
@@ -77,6 +77,8 @@ class QrAuthController extends Controller
             ->where('is_used', true)
             ->where('expires_at', '>', now())
             ->exists();
+            // add now() to the query
+        \Log::info('alreadyLoggedIn: ' . json_encode($alreadyLoggedIn) . ' now(): ' . now());
 
         if ($alreadyLoggedIn) {
             return $this->failure(
@@ -128,6 +130,7 @@ class QrAuthController extends Controller
             return $this->failure('QR expired', null, 410);
         }
     
+        \Log::info('QR: ' . json_encode($qr));
         // 🔑 LOGIN SUCCESS
         if ($qr->is_used && $qr->login_token) {
             return $this->success('Logged in', [
