@@ -64,7 +64,7 @@ class LoginController extends Controller
         $password = $request->get('password');
         $mobile_info = $request->get('mobile_info');
         $device_info = json_encode($request->get('device_info'));
-        echo "device_info: " . $device_info . "\n";
+        // echo "device_info: " . $device_info . "\n";
         
         try {
             $where=array(
