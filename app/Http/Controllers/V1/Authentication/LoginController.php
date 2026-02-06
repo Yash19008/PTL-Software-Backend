@@ -3,6 +3,8 @@
 namespace App\Http\Controllers\V1\Authentication;
 
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Schema;
 use Tymon\JWTAuth\Exceptions\JWTException;
 use Tymon\JWTAuth\JWTAuth;
 
@@ -79,19 +81,25 @@ class LoginController extends Controller
                 "newvalue"=>$mobile_info,
             );
             AuditTrail::create($data);
-            
-           $onesignal->update([
-                "oneSignalUserId" => $request->get('oneSignalUserId'),
-                "oneSignalTokenId" => $request->get('oneSignalTokenId'),
-                "device_info" => $device_info 
-            ]);
+
+            $onesignal = [
+                'oneSignalUserId' => $request->get('oneSignalUserId'),
+                'oneSignalTokenId' => $request->get('oneSignalTokenId'),
+                'device_info' => $device_info
+            ];
+            if (Schema::hasColumn('customer_master', 'device_info')) {
+                $onesignal['device_info'] = $request->get('device_info');
+            }
             $data_record->update($onesignal);
-            
             $output['data'] = $data_record;
             $output['message'] = 'Login Successfully Done !!';
             $output['status'] = 'success';
             return response()->json($output, 200);
         } catch (\Exception $e) {
+            Log::error('LoginController@login_new failed', [
+                'message' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
+            ]);
             $output['message'] = 'Something is Wrong !!';
             $output['status'] = 'error';
             return response()->json($output, 200);
@@ -134,8 +142,8 @@ class LoginController extends Controller
     public function SendSMS(LoginRequest $request, $mobile_no) {
         $otp=$this->OTP();
         $data=array("otp"=>$otp,"active"=>"0","password"=>"");
-    	$customerMaster = CustomerMaster::where('mobile', $mobile_no);
-    	$customerMaster->update($data);
+        $customerMaster = CustomerMaster::where('mobile', $mobile_no);
+        $customerMaster->update($data);
         $date=date('d-M-Y h:i:s');
         //code sending SMS to register number
         //$msg1 = "Dear Customer,your OTP No. is ".$otp." to access your mobile app of PTL registered mobile no is ".$mobile_no." generated on ".$date;
@@ -174,3 +182,4 @@ class LoginController extends Controller
         }
     }
 }
+

@@ -4,10 +4,9 @@ namespace App\Http\Controllers\V1\Authentication;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use SimpleSoftwareIO\QrCode\Facades\QrCode;
-use App\QrSession;
-use App\QrLoginSession;
 use Carbon\Carbon;
 use Tymon\JWTAuth\Exceptions\JWTException;
 use Tymon\JWTAuth\JWTAuth;
@@ -22,9 +21,11 @@ class QrAuthController extends Controller
     {
         $qrToken = \Illuminate\Support\Str::uuid()->toString();
 
-        \App\QrSession::create([
+        $data = DB::table('qr_sessions')->insert([
             'qr_token' => $qrToken,
-            'expires_at' => now()->addSeconds(5),
+            'expires_at' => now()->addSeconds(500),
+            'created_at' => now(),
+            'updated_at' => now(),
         ]);
 
         $qrSvg = (string) \SimpleSoftwareIO\QrCode\Facades\QrCode::format('svg')
@@ -50,14 +51,12 @@ class QrAuthController extends Controller
             'user_id' => 'required|integer'
         ]);
 
-        // 1️⃣ Find QR
-        $qrSession = \App\QrSession::where('qr_token', $request->qr_token)->first();
+        $qrSession = DB::table('qr_sessions')->where('qr_token', $request->qr_token)->first();
 
         if (!$qrSession) {
             return $this->failure('Invalid QR Code', null, 400);
         }
 
-        // 2️⃣ Expiry check
         if (now()->gt($qrSession->expires_at)) {
             return $this->failure('QR Code Expired', null, 410);
         }
@@ -73,8 +72,8 @@ class QrAuthController extends Controller
             return $this->failure('User not found', null, 404);
         }
 
-        // 🔥 5️⃣ FINAL CRITICAL CHECK — USER ALREADY LOGGED IN
-        $alreadyLoggedIn = \App\QrSession::where('user_id', $user->id)
+        $alreadyLoggedIn = DB::table('qr_sessions')
+            ->where('user_id', $user->id)
             ->where('is_used', true)
             ->where('expires_at', '>', now())
             ->exists();
@@ -99,11 +98,11 @@ class QrAuthController extends Controller
             return $this->failure('Unable to login user', null, 500);
         }
 
-        // 7️⃣ Mark QR as used
-        $qrSession->update([
+        DB::table('qr_sessions')->where('id', $qrSession->id)->update([
             'is_used' => true,
             'user_id' => $user->id,
-            'login_token' => $token
+            'login_token' => $token,
+            'updated_at' => now(),
         ]);
 
         // 8️⃣ Success response
@@ -119,7 +118,7 @@ class QrAuthController extends Controller
             'qr_token' => 'required|string'
         ]);
     
-        $qr = \App\QrSession::where('qr_token', $request->qr_token)->first();
+        $qr = DB::table('qr_sessions')->where('qr_token', $request->qr_token)->first();
     
         if (!$qr) {
             return $this->failure('Invalid QR', null, 404);
@@ -142,3 +141,4 @@ class QrAuthController extends Controller
         ], 200);
     }
 }
+
