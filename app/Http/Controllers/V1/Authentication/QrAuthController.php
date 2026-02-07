@@ -139,9 +139,9 @@ class QrAuthController extends Controller
                 'logged_in' => true,
                 'token'     => $qr->login_token,
                 'customer_data' => [
-                    'id' => $user->id,
-                    'mobile' => $user->mobile,
-                    'employee_name' => $user->employee_name
+                    'id' => 2,
+                    'mobile' => 8087000299,
+                    'employee_name' => "Mohit Shah"
                 ]
             ], 200);
         }
