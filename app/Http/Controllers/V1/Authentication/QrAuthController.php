@@ -141,7 +141,7 @@ class QrAuthController extends Controller
                 'customer_data' => [
                     'id' => $user->id,
                     'mobile' => $user->mobile,
-                    'employee_name' => $user->employee_name
+                    'name' => $user->client_name
                 ]
             ], 200);
         }
