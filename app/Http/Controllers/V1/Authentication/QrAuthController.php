@@ -133,15 +133,15 @@ class QrAuthController extends Controller
         \Log::info('QR: ' . json_encode($qr));
         // 🔑 LOGIN SUCCESS
         if ($qr->is_used && $qr->login_token) {
-            $user = CustomerMaster::find($qr->user_id);
+            $user = UserMaster::find($qr->user_id);
             
             return $this->success('Logged in', [
                 'logged_in' => true,
                 'token'     => $qr->login_token,
                 'customer_data' => [
-                    'id' => 1,
-                    'mobile' => 8087000299,
-                    'employee_name' => "Mohit Shah"
+                    'id' => $user->id,
+                    'mobile' => $user->mobile,
+                    'employee_name' => $user->employee_name
                 ]
             ], 200);
         }
@@ -150,5 +150,6 @@ class QrAuthController extends Controller
             'logged_in' => false
         ], 200);
     }
+
 }
 
