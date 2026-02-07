@@ -2,9 +2,10 @@
 
 namespace App\Models\V1\Operations;
 
-use Illuminate\Database\Eloquent\Model;
+use Illuminate\Foundation\Auth\User as Authenticatable;
+use Tymon\JWTAuth\Contracts\JWTSubject;
 
-class CustomerMaster extends Model
+class CustomerMaster extends Authenticatable implements JWTSubject
 {
 
     protected $table = "customer_master";
@@ -14,21 +15,22 @@ class CustomerMaster extends Model
     protected $fillable = [
         'id', 'Company_code', 'company_name', 'client_name', 'email', 'mobile', 'password', 'otp', 'Access_stk', 'active', 'stock_active', 'oneSignalUserId', 'oneSignalTokenId', 'updated_on', 'mobile_show_stocks_from',"device_info"
     ];
-    /**
-     * The attributes that should be cast to native types.
-     *
-     * @var array
-     */
+    
     protected $casts = [
         'device_info' => 'array'
     ];
 
-    /**
-     * The attributes that should be hidden for arrays.
-     *
-     * @var array
-     */
     protected $hidden = [
         'password'
     ];
+
+    public function getJWTIdentifier()
+    {
+        return $this->getKey();
+    }
+
+    public function getJWTCustomClaims()
+    {
+        return [];
+    }
 }
