@@ -105,6 +105,52 @@ class LoginController extends Controller
             return response()->json($output, 200);
         }
     }
+
+    public function logout_new(LoginRequest $request)
+    {
+        $mobile = $request->get('mobile');
+        if (empty($mobile)) {
+            $output['message'] = 'Mobile is required';
+            $output['status'] = 'error';
+            return response()->json($output, 200);
+        }
+        try {
+            $data_record = CustomerMaster::where('mobile', $mobile)->first();
+            if (!$data_record) {
+                $output['message'] = 'Logged out successfully';
+                $output['status'] = 'success';
+                return response()->json($output, 200);
+            }
+            $data = [
+                'module' => 'Login',
+                'user' => $mobile,
+                'action' => 'Logout',
+                'ipaddress' => $request->get('REMOTE_ADDR'),
+                'newvalue' => $request->get('mobile_info', ''),
+            ];
+            AuditTrail::create($data);
+            $clear = [
+                'oneSignalUserId' => null,
+                'oneSignalTokenId' => null,
+            ];
+            if (Schema::hasColumn('customer_master', 'device_info')) {
+                $clear['device_info'] = null;
+            }
+            $data_record->update($clear);
+            $output['data'] = $data_record;
+            $output['message'] = 'Logged out successfully';
+            $output['status'] = 'success';
+            return response()->json($output, 200);
+        } catch (\Exception $e) {
+            Log::error('LoginController@logout_new failed', [
+                'message' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
+            ]);
+            $output['message'] = 'Something is Wrong !!';
+            $output['status'] = 'error';
+            return response()->json($output, 200);
+        }
+    }
     
     public function verify_no_new(LoginRequest $request) {
         
