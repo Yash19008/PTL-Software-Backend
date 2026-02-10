@@ -137,7 +137,7 @@ class OrderMasterController extends Controller
             "updated_dt" => date('Y-m-d H:i:s'),
             "update_by" => $request->get('customer_id'),
             "is_reel" => $request->get('is_reel') ?? 'No',
-            "platform" => $request->get('platform')
+            "platform" => $request->get('platform') ?? 'mobile'
         );
 
 
