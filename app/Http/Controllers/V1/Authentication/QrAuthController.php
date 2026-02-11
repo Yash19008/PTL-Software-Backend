@@ -67,7 +67,7 @@ class QrAuthController extends Controller
         }
 
         // 4️⃣ Fetch user
-        $user = UserMaster::find($request->user_id);
+        $user = CustomerMaster::find($request->user_id);
         if (!$user) {
             return $this->failure('User not found', null, 404);
         }
