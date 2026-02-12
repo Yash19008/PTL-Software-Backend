@@ -9,6 +9,7 @@ use Carbon\Carbon;
 use App\Http\Requests\Operations\UserMasterRequest;
 use App\Models\V1\Operations\UserMaster;
 use DB;
+use App\Models\V1\Operations\CustomerMaster;
 
 
 class UserMasterController extends Controller {
