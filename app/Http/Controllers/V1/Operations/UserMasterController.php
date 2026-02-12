@@ -94,6 +94,7 @@ class UserMasterController extends Controller {
             if ($user->user_status == 1) {
                 return $this->failure('User not active', null, 500);
             }
+            $user->is_Customer = true;
             return $this->success('Vendor History Last Uploaded', $user, 200);
         }
         return $this->failure('User not found', null, 500);
