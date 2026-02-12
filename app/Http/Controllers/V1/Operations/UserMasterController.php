@@ -89,7 +89,7 @@ class UserMasterController extends Controller {
     
     public function details()
     {
-        $user = \App\Models\V1\Operations\CustomerMaster::where("id", \Auth::user()->id)->first();
+        $user = UserMaster::where("id", \Auth::user()->id)->first();
         if ($user) {
             if ($user->user_status == 1) {
                 return $this->failure('User not active', null, 500);
