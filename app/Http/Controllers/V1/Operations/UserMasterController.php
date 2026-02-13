@@ -87,15 +87,21 @@ class UserMasterController extends Controller {
         return array( "employee_name" => "employee_name", "email_id" => "email_id" , "userlevel" => "userlevel", "updated_dt" => "updated_dt", "updated_by" => "updated_by", "user_status" => "user_status", "last_stock_upload" => "last_stock_upload");
     }
     
-    public function details()
+    public function details(Request $request)
     {
-        $user = UserMaster::where("id", \Auth::user()->id)->first();
-        if ($user) {
-            if ($user->user_status == 1) {
-                return $this->failure('User not active', null, 500);
+        if ($request->boolean('is_admin')) {
+            $user = UserMaster::where("id", \Auth::user()->id)->first();
+            $user->is_admin_menu = true;
+            if ($user) {
+                if ($user->user_status == 1) {
+                    return $this->failure('User not active', null, 500);
+                }
+                return $this->success('Vendor History Last Uploaded' . $user->id, $user, 200);
             }
-            $user->is_Customer = true;
-            return $this->success('Vendor History Last Uploaded', $user, 200);
+        } else {
+            $user = CustomerMaster::where("id", \Auth::user()->id)->first();
+            $user->is_admin_menu = false;
+            return $this->success('Customer Details', $user, 200);
         }
         return $this->failure('User not found', null, 500);
     }

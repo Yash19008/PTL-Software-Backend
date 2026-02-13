@@ -106,7 +106,7 @@ class QrAuthController extends Controller
             'login_token' => $token,
             'updated_at' => now(),
         ]);
-
+        $user->is_admin = false;
         // 8️⃣ Success response
         return $this->success('Login Successful via QR', [
             'token' => $token,
