@@ -190,7 +190,7 @@ class SearchSizeController extends Controller {
     }
     
     public function search_dynamic_column_wise(Request $request) {
-
+        // eta
         $qty = $request->get('qty');
         $searchSizeBy = $request->get('searchSizeBy');
 
@@ -332,6 +332,12 @@ class SearchSizeController extends Controller {
             $item['size_CMS'] = $item['size_cms_length'] . ' X ' . number_format($widthBK, 2, '.', '');
             $item['search_history_id'] = $historyID;
             $item['total_sheet'] = $item['total_sheet'] / $item['total_ups'];
+            $eta = $item['eta'] ?? '';
+            if ($eta == '' || $eta === null || strtotime($eta) <= strtotime(date('Y-m-d'))) {
+                $item['eta'] = 'Available';
+            } else {
+                $item['eta'] = date('d-m-Y', strtotime($eta));
+            }
             if ($item['total_sheet'] > 0 && in_array($item['quality'], $selectedQualities)) {
                 $new_output[] = $item;
             }
