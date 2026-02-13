@@ -39,7 +39,11 @@ class LoginController extends Controller
         } catch (JWTException $e) {
             return $this->failure('Something is Wrong !!', null, 500);
         }
-
+        if($user->userlevel == '1' && $user->username == 'admin')  {
+            $user->is_admin_menu = true;
+        } else {
+            $user->is_admin_menu = false;
+        }
         $user_payload['token'] = $token;
         $user_payload['userDetails'] = $user;
         return $this->success('Login Successully !!', $user_payload, 200);
