@@ -99,6 +99,9 @@ class CustomerMasterController extends Controller
             "active" => $request->get('active'),
             "stock_active" => $request->get('stock_active'),
             "mobile_show_stocks_from" => $request->get('mobile_show_stocks_from'),
+            "max_allowed_devices" => $request->has('max_allowed_devices')
+            ? (int) $request->get('max_allowed_devices')
+            : $user->max_allowed_devices,
             "updated_dt" => Carbon::now()
         ];
 
@@ -143,7 +146,10 @@ class CustomerMasterController extends Controller
         );
 
         $data = [
-            "stock_active" => $request->get('stock_active')
+            "stock_active" => $request->get('stock_active'),
+            "max_allowed_devices" => $request->has('max_allowed_devices')
+            ? (int) $request->get('max_allowed_devices')
+            : $user->max_allowed_devices,
         ];
         if ($request->get('password')) {
             $data['password'] = md5($request->get('password'));

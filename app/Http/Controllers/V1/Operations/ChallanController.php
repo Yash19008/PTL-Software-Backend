@@ -89,6 +89,7 @@ class ChallanController extends Controller {
                 if ($outstanding) {
                     $data_record[0]['pdf_invoice'] = $outstanding->pdf_url;
                 }
+
                 $output['data'] = $data_record;
                 $output['message'] = 'Challan Details !!';
                 $output['status'] = 'success';
@@ -226,6 +227,10 @@ class ChallanController extends Controller {
             return $this->failure('Something Went Wrong !!', $e->getMessage(), 500);
         }
     }
+    public function deleteAllChallan(){
+        ChallanList::truncate();
+        return $this->success('Challan table truncated successfully !!', 200);
+    }
     public function import_challan_outside_nested(Request $request){
        
         //ADD STATUS AS "PENDING"/"DELIVERED"
@@ -319,10 +324,8 @@ class ChallanController extends Controller {
             return $this->failure('Something Went Wrong !!', $e->getMessage(), 500);
         }
     }
-    public function deleteAllChallan(){
-        ChallanList::truncate();
-        return $this->success('Challan table truncated successfully !!', 200);
-    }
+
+
     public function deleteChallan(Request $request){
         // VALIDATION RULE
         $validation_array = array(

@@ -115,7 +115,6 @@ class OptionMasterController extends Controller
         $output['update_url'] = NULL;
         $output['message'] = 'Android Version !!';
         $output['status'] = 'success';
-
         return response()->json($output, 200);
     }
 

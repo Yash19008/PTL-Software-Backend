@@ -13,9 +13,11 @@ class AddUserMenus extends Migration
      */
     public function up()
     {
-        Schema::table('usermaster', function (Blueprint $table) {
-            $table->text('menus')->after('comment')->nullable();
-        });
+        if (!Schema::hasColumn('usermaster', 'menus')) {
+            Schema::table('usermaster', function (Blueprint $table) {
+                $table->text('menus')->after('comment')->nullable();
+            });
+        }
     }
 
     /**
@@ -25,8 +27,11 @@ class AddUserMenus extends Migration
      */
     public function down()
     {
-        Schema::table('usermaster', function (Blueprint $table) {
-            $table->dropColumn('menus');
-        });
+        if (Schema::hasColumn('usermaster', 'menus')) {
+            Schema::table('usermaster', function (Blueprint $table) {
+                $table->dropColumn('menus');
+            });
+        }
     }
 }
+

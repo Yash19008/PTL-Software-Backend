@@ -5,7 +5,6 @@ namespace App\Http\Controllers\V1\Operations;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
-
 use App\Models\V1\Operations\OutstandingView;
 use App\Models\V1\Operations\Outstanding;
 use DB;
@@ -170,7 +169,22 @@ class OutstandingController extends Controller {
 
     }
     public function import_outstanding_outside(Request $request){
-       
+        /*
+            outstandingObj = [
+                {
+                    "date" : "2023-03-29",
+                    "customer_name": "A S PACKAGING (DHUMAL NAGAR)",
+                    "mobile":"9699814688",
+                    "email":"aspackaging2017@gmail.com",
+                    "voucher_type":"SB",
+                    "voucher_no":"G-7501",
+                    "credit_days": 30,
+                    "total_amount":15000,
+                    "part_paid":5000,
+                    "balance":10000
+                }
+            ]
+         */
         try {
             //$outstandingArr = json_decode($request->outstandingObj, true);
             if(!empty($request->all())){

@@ -3,9 +3,10 @@
 namespace App\Http\Controllers\V1\Authentication;
 
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Schema;
 use Tymon\JWTAuth\Exceptions\JWTException;
 use Tymon\JWTAuth\JWTAuth;
-
 use App\Models\V1\Operations\UserMaster;
 use App\Models\V1\Operations\CustomerMaster;
 use App\Models\V1\Operations\AuditTrail;
@@ -29,6 +30,7 @@ class LoginController extends Controller
         ];
         try {
             $token = $JWTAuth->attempt($credentials, $user_payload);
+            \Log::info($token);
             if (!$token) {
                 return $this->failure('Incorrect Email or Password !!', null, 500);
             }
@@ -37,6 +39,11 @@ class LoginController extends Controller
             return $this->failure('Something is Wrong !!', null, 500);
         }
 
+        if($user->userlevel == '1' && $user->username == 'admin')  {
+            $user->is_admin_menu = true;
+        } else {
+            $user->is_admin_menu = false;
+        }
         $user_payload['token'] = $token;
         $user_payload['userDetails'] = $user;
         return $this->success('Login Successully !!', $user_payload, 200);
@@ -60,6 +67,8 @@ class LoginController extends Controller
         $mobile = $request->get('mobile');
         $password = $request->get('password');
         $mobile_info = $request->get('mobile_info');
+        $device_info = json_encode($request->get('device_info'));
+        // echo "device_info: " . $device_info . "\n";
         
         try {
             $where=array(
@@ -76,18 +85,71 @@ class LoginController extends Controller
                 "newvalue"=>$mobile_info,
             );
             AuditTrail::create($data);
-            
-            $onesignal = array(
-                "oneSignalUserId" => $request->get('oneSignalUserId'),
-                "oneSignalTokenId" => $request->get('oneSignalTokenId'),
-            );
+
+            $onesignal = [
+                'oneSignalUserId' => $request->get('oneSignalUserId'),
+                'oneSignalTokenId' => $request->get('oneSignalTokenId'),
+                'device_info' => $device_info
+            ];
+            if (Schema::hasColumn('customer_master', 'device_info')) {
+                $onesignal['device_info'] = $request->get('device_info');
+            }
             $data_record->update($onesignal);
-            
             $output['data'] = $data_record;
             $output['message'] = 'Login Successfully Done !!';
             $output['status'] = 'success';
             return response()->json($output, 200);
         } catch (\Exception $e) {
+            Log::error('LoginController@login_new failed', [
+                'message' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
+            ]);
+            $output['message'] = 'Something is Wrong !!';
+            $output['status'] = 'error';
+            return response()->json($output, 200);
+        }
+    }
+
+    public function logout_new(LoginRequest $request)
+    {
+        $mobile = $request->get('mobile');
+        if (empty($mobile)) {
+            $output['message'] = 'Mobile is required';
+            $output['status'] = 'error';
+            return response()->json($output, 200);
+        }
+        try {
+            $data_record = CustomerMaster::where('mobile', $mobile)->first();
+            if (!$data_record) {
+                $output['message'] = 'Logged out successfully';
+                $output['status'] = 'success';
+                return response()->json($output, 200);
+            }
+            $data = [
+                'module' => 'Login',
+                'user' => $mobile,
+                'action' => 'Logout',
+                'ipaddress' => $request->get('REMOTE_ADDR'),
+                'newvalue' => $request->get('mobile_info', ''),
+            ];
+            AuditTrail::create($data);
+            $clear = [
+                'oneSignalUserId' => null,
+                'oneSignalTokenId' => null,
+            ];
+            if (Schema::hasColumn('customer_master', 'device_info')) {
+                $clear['device_info'] = null;
+            }
+            $data_record->update($clear);
+            $output['data'] = $data_record;
+            $output['message'] = 'Logged out successfully';
+            $output['status'] = 'success';
+            return response()->json($output, 200);
+        } catch (\Exception $e) {
+            Log::error('LoginController@logout_new failed', [
+                'message' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
+            ]);
             $output['message'] = 'Something is Wrong !!';
             $output['status'] = 'error';
             return response()->json($output, 200);
@@ -170,3 +232,4 @@ class LoginController extends Controller
         }
     }
 }
+

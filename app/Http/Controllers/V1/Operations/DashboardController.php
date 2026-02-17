@@ -1,7 +1,6 @@
 <?php
 
 namespace App\Http\Controllers\V1\Operations;
-
 use Illuminate\Http\Request;
 use DB;
 
@@ -20,28 +19,25 @@ class DashboardController extends Controller
         $end = $request->get('end');
 
         $query = ChallanList::selectRaw("*, SUM(weight) as total_weight, DATE_FORMAT(date, '%d/%m/%Y') AS formatted_date")->whereRaw(
-            "(date >= ? AND date <= ?)",
-            [
-                $start . " 00:00:00",
-                $end . " 23:59:59"
-            ]
-        )->groupBy(DB::raw('DATE(date)'))->orderBy('date', 'DESC')->get();
-
+        "(date >= ? AND date <= ?)", 
+        [
+            $start ." 00:00:00", 
+            $end ." 23:59:59"
+        ])->groupBy(DB::raw('DATE(date)'))->orderBy('date', 'DESC')->get();
+        
         return response()->json($query, 200);
     }
-
-    public function fastest_selling_tile(Request $request)
-    {
+    
+    public function fastest_selling_tile(Request $request) {
         $query = DB::select("SELECT `quality`, gsm, SUM(`weight`) as total_weight, `size_inch_length`, `size_inch_width`
         FROM `challan_list`
         GROUP BY `quality`, `gsm`, `size_inch_length`, `size_inch_width`
         ORDER BY total_weight DESC");
-
+        
         return response()->json($query, 200);
     }
-
-    public function outstanding_tile(Request $request)
-    {
+    
+    public function outstanding_tile(Request $request) {
         $start = $request->get('start');
         $end = $request->get('end');
 

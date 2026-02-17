@@ -7,7 +7,6 @@ use App\Models\V1\Operations\CustomerProductLink;
 use App\Models\V1\Operations\CustomerQualityLink;
 use App\Models\V1\Operations\ProductGroup;
 use App\Models\V1\Operations\QualityMaster;
-
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
@@ -92,7 +91,6 @@ class Controller extends BaseController
         }
     }
 
-
     public function searchSizeQuery($connection, $name, $userlength, $userwidth, $lower_range, $upper_range, $where)
     {
         return \DB::connection($connection)->select("
@@ -168,7 +166,6 @@ class Controller extends BaseController
             
             SUM(sheet*pkt_grs) as total_sheet,
             IF(eta <= NOW(), -1, eta) as eta_group
-
             FROM stock
             
             INNER JOIN
@@ -207,7 +204,6 @@ class Controller extends BaseController
             TRUNCATE((stock.weight/((" . $userlength . "*" . $userwidth . "*" . $gsm . "/8.2/1307.25)/144)),-2)  as  total_sheet,
             '' as bundle,
                     IF(eta <= NOW(), -1, eta) as eta_group
-            
             FROM stock
             
             

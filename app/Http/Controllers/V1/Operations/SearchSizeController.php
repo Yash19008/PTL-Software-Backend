@@ -49,7 +49,6 @@ class SearchSizeController extends Controller
 
         $data = $this->searchSizeCommon($company, $userlength, $userwidth, $lower_range, $upper_range, $lower_range_reel, $upper_range_reel, $where, $gsm);
 
-
         $option_result = OptionMaster::where('option', 'plus_minus_size_search')->first();
         if ($option_result) {
             $range = $option_result->value;
@@ -279,14 +278,12 @@ class SearchSizeController extends Controller
             }
             return $b['utilization'] <=> $a['utilization'];
         });
-
         usort($data['reel_list'], function ($a, $b) {
             if ($a['utilization'] == $b['utilization']) {
                 return $a['size_inch_width'] <=> $b['size_inch_width'];
             }
             return $b['utilization'] <=> $a['utilization'];
         });
-
 
         $history = SearchHistoryMaster::where("customer_id", $customer_id)->orderBy('timestamp', 'DESC')->first();
         $historyID = $history->id;
@@ -336,6 +333,12 @@ class SearchSizeController extends Controller
             $item['size_CMS'] = $item['size_cms_length'] . ' X ' . number_format($widthBK, 2, '.', '');
             $item['search_history_id'] = $historyID;
             $item['total_sheet'] = $item['total_sheet'] / $item['total_ups'];
+            $eta = $item['eta'] ?? '';
+            if ($eta == '' || $eta === null || strtotime($eta) <= strtotime(date('Y-m-d'))) {
+                $item['eta'] = 'Available';
+            } else {
+                $item['eta'] = date('d-m-Y', strtotime($eta));
+            }
             if ($item['total_sheet'] > 0 && in_array($item['quality'], $selectedQualities)) {
                 $new_output[] = $item;
             }
@@ -518,7 +521,6 @@ class SearchSizeController extends Controller
         usort($output, function ($a, $b) {
             return $a['utilization'] > $b['utilization'] ? -1 : 1;
         });
-
         $output = array_slice($output, 0, $sheets_result_count);
         $data_record['list'] = $output;
         $reel_output = array_slice($reel_output, 0, $reels_result_count);

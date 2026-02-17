@@ -110,7 +110,6 @@ class OrderMasterController extends Controller
         try {
             $customer = CustomerMaster::where("id", $request->get('customer_id'))->where('active', "1")->first();
             $customer_ids = CustomerMaster::where("mobile", $customer->mobile)->pluck('id')->toArray();
-
             $search_history_id = $request->get('search_history_id');
             if (isset($search_history_id)) {
                 $historyID = $request->get('search_history_id');
@@ -138,6 +137,7 @@ class OrderMasterController extends Controller
             "updated_dt" => date('Y-m-d H:i:s'),
             "update_by" => $request->get('customer_id'),
             "is_reel" => $request->get('is_reel') ?? 'No',
+            "platform" => $request->get('platform') ?? 'mobile'
         );
 
 

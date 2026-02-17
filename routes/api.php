@@ -16,12 +16,14 @@ use Illuminate\Support\Facades\Route;
 */
 
 //Routes which does not for specific tenant
-
 Route::namespace('V1')->middleware(['cors'])->group(function() {
     Route::prefix("auth")->group(function () {
         Route::namespace('Authentication')->group(function() {
             Route::post('login', 'LoginController@login');
             Route::post('register', 'RegisterController@register');
+            Route::get('/generate-qr', 'QrAuthController@generateQr');
+            Route::post('/scan-qr-login', 'QrAuthController@scanQrLogin');
+            Route::post('/check-qr-status', 'QrAuthController@checkQrStatus');
         });
     });
 
@@ -120,6 +122,7 @@ Route::namespace('V1')->middleware(['cors'])->group(function() {
         Route::prefix("API_login")->group(function () {
             Route::get('get_details', 'LoginController@get_details');
             Route::post('login_new', 'LoginController@login_new');
+            Route::post('logout_new', 'LoginController@logout_new');
             Route::get('verify_no_new', 'LoginController@verify_no_new');
             Route::get('SendSMS/{mobile_no}', 'LoginController@SendSMS');
             Route::get('verify_otp', 'LoginController@verify_otp');
@@ -140,6 +143,8 @@ Route::namespace('V1')->middleware(['cors'])->group(function() {
             Route::get('getMasters', 'SearchSizeController@getMasters');
             Route::post('search_dynamic_column_wise', 'SearchSizeController@search_dynamic_column_wise');
             Route::get('GetStockdetail', 'StockMasterController@GetStockdetail');
+            Route::post('full_stock', 'StockMasterController@full_stock');
+            Route::get('all-unique-qualities', 'StockMasterController@unique_quality');
         });
         Route::prefix("API_bank")->group(function () {
             Route::get('bank_details', 'LabelController@bank_details');

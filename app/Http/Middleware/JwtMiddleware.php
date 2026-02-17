@@ -22,6 +22,11 @@ class JwtMiddleware extends BaseMiddleware
         try {
             $user = JWTAuth::parseToken()->authenticate();
         } catch (Exception $e) {
+            \Log::channel('single')->warning('JWT auth failed', [
+                'exception' => get_class($e),
+                'message' => $e->getMessage(),
+            ]);
+
             $data = [
                 'responseCode' => [
                     'code' => 'EC201',
@@ -32,16 +37,20 @@ class JwtMiddleware extends BaseMiddleware
                 'errSeverity' => 1
             ];
 
-            if ($e instanceof \Tymon\JWTAuth\Exceptions\TokenInvalidException){
+            if ($e instanceof \Tymon\JWTAuth\Exceptions\TokenInvalidException) {
                 $data['responseCode']['message'] = 'Token is Invalid';
                 return response()->json($data);
-            }else if ($e instanceof \Tymon\JWTAuth\Exceptions\TokenExpiredException){
+            }
+            if ($e instanceof \Tymon\JWTAuth\Exceptions\TokenExpiredException) {
                 $data['responseCode']['message'] = 'Token is Expired';
                 return response()->json($data);
-            }else{
-                $data['responseCode']['message'] = 'Authorization Token not found';
+            }
+            if ($e instanceof \Tymon\JWTAuth\Exceptions\TokenBlacklistedException) {
+                $data['responseCode']['message'] = 'Token has been invalidated';
                 return response()->json($data);
             }
+            $data['responseCode']['message'] = 'Authorization Token not found';
+            return response()->json($data);
         }
         return $next($request);
     }

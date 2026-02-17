@@ -37,7 +37,6 @@ class StockMasterController extends Controller
         return $this->success('Total sum of weights', $sum, 200);
     }
 
-
     public function getTableColumn()
     {
         return array("id" => "id", "product_group" => "product_group", "gsm" => "gsm", "size_inch_length" => "size_inch_length", "size_inch_width" => "size_inch_width", "size_cms_length" => "size_cms_length", "size_cms_width" => "size_cms_width", "pkt_grs_weight" => "pkt_grs_weight", "sheet" => "sheet", "bdls" => "bdls", "pkt_grs" => "pkt_grs", "pkg_mode" => "pkg_mode", "weight" => "weight", "quality" => "quality", "gwd" => "gwd", "loc" => "loc", "eta" => "eta", "updated_on" => "updated_on");
@@ -91,6 +90,30 @@ class StockMasterController extends Controller
         }
 
         return response()->json($output, 200);
+    }
+
+    public function full_stock()
+    {
+        $where = '';
+        if (isset($_REQUEST['quality'])) {
+            $quality = $_REQUEST['quality'];
+            $where = explode(";", $quality);
+            array_shift($where);
+            $query =  StockMaster::select("*");
+            foreach ($where as $value) {
+                $query->orWhere('quality', $value);
+            }
+            $data_record = $query->get();
+        } else {
+            $data_record = StockMaster::all();
+        }
+        return response()->json($data_record, 200);
+    }
+
+    public function unique_quality()
+    {
+        $data_record = StockMaster::distinct('quality')->pluck('quality');
+        return response()->json($data_record, 200);
     }
 
     public function import(Request $request)
