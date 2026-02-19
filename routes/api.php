@@ -24,6 +24,7 @@ Route::namespace('V1')->middleware(['cors'])->group(function() {
             Route::get('/generate-qr', 'QrAuthController@generateQr');
             Route::post('/scan-qr-login', 'QrAuthController@scanQrLogin');
             Route::post('/check-qr-status', 'QrAuthController@checkQrStatus');
+            Route::post('/web-logout', 'QrAuthController@webLogout');
         });
     });
 
@@ -55,6 +56,7 @@ Route::namespace('V1')->middleware(['cors'])->group(function() {
             Route::post('user-master', 'UserMasterController@store');
             Route::put('user-master/{id}', 'UserMasterController@update');
             Route::get('user-details', 'UserMasterController@details');
+            Route::get('customer-details/{id}', 'UserMasterController@customerDetails');
             Route::get('all-vendors', 'UserMasterController@getAllVendors');
 
             Route::get('customer-master', 'CustomerMasterController@index');
@@ -123,6 +125,8 @@ Route::namespace('V1')->middleware(['cors'])->group(function() {
             Route::get('get_details', 'LoginController@get_details');
             Route::post('login_new', 'LoginController@login_new');
             Route::post('logout_new', 'LoginController@logout_new');
+            Route::post('mobile-logout', 'LoginController@mobileLogout');
+            Route::post('logout-all-devices', 'LoginController@logoutAllDevices');
             Route::get('verify_no_new', 'LoginController@verify_no_new');
             Route::get('SendSMS/{mobile_no}', 'LoginController@SendSMS');
             Route::get('verify_otp', 'LoginController@verify_otp');

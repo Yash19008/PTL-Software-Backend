@@ -38,7 +38,6 @@ class SearchSizeController extends Controller
         $gsm_range = $option_result->value;
         $upper_range_reel = $gsm + $gsm_range;
         $lower_range_reel = $gsm - $gsm_range;
-
         $where = " WHERE 1=1 AND weight > 0 ";
         if ($group_name) {
             $where = $where . " AND product_group = '" . $group_name . "'";
@@ -224,7 +223,6 @@ class SearchSizeController extends Controller
         if ($result->gwd == 'Yes')   $output1['headers']['gwd'] = 'Godown';
         if ($result->eta == 'Yes')   $output1['headers']['eta'] = 'ETA';
 
-
         $product_group = $request->get('product_group');
         $searchReel = ProductGroup::where('group_name', $product_group)->where('is_reel', 'Yes')->first();
         if ($searchReel) {
@@ -325,9 +323,8 @@ class SearchSizeController extends Controller
                 $new_output[] = $item;
             }
         }
-        
         $data['list'] = $new_output;
-        
+
         $new_output = [];
         foreach ($data['reel_list'] as $item) {
             $item['size_CMS'] = $item['size_cms_length'] . ' X ' . number_format($widthBK, 2, '.', '');
@@ -344,7 +341,7 @@ class SearchSizeController extends Controller
             }
         }
         $data['reel_list'] = $new_output;
-        
+
         $reel_search_threshold = OptionMaster::where('option', 'reel_search_threshold')->first();
         if ($reel_search_threshold) {
             $data['reel_search_threshold'] = $reel_search_threshold->value;
@@ -381,11 +378,7 @@ class SearchSizeController extends Controller
 
         $size_in_inch = $userlength . ' X ' . $userwidth;
 
-        //  print_r($this->uri->segment(5));exit;
-
         $result_cust = CustomerMaster::where('id', $customer_id)->first();
-
-        // insert query for maintaining history for how search made by particular person
 
         $data = array(
             "customer_id" => $result_cust->id,
@@ -402,7 +395,6 @@ class SearchSizeController extends Controller
             "timestamp" => date('Y-m-d H:i:s')
         );
 
-        // insert into search history
         SearchHistoryMaster::create($data);
 
         $option_result = OptionMaster::where('option', 'gsm_range')->first();

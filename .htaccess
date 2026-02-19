@@ -2,5 +2,4 @@
 RewriteEngine On
 RewriteRule ^(.*)$ public/admin/$1 [L]
 
-
 </IfModule>

@@ -87,23 +87,56 @@ class UserMasterController extends Controller {
         return array( "employee_name" => "employee_name", "email_id" => "email_id" , "userlevel" => "userlevel", "updated_dt" => "updated_dt", "updated_by" => "updated_by", "user_status" => "user_status", "last_stock_upload" => "last_stock_upload");
     }
     
+    private function getCustomerDetailsData($id)
+    {
+        $customer = DB::table('customer_master')->where('id', $id)->first();
+        if (!$customer) {
+            return null;
+        }
+        $customer = (array) $customer;
+        unset($customer['password']);
+        $customer['stock_columns'] = DB::table('stock_columns')->where('customer_id', $id)->where('is_reel', 'No')->first();
+        $customer['stock_columns_reel'] = DB::table('stock_columns')->where('customer_id', $id)->where('is_reel', 'Yes')->first();
+        $customer['selectedProducts'] = DB::table('customer_product_link')->where('customer_id', $id)->pluck('product_group_id')->toArray();
+        $customer['selectedQualities'] = DB::table('customer_quality_link')->where('customer_id', $id)->pluck('quality_id')->toArray();
+        $devices = DB::table('user_devices')->where('user_id', $id)->select('id', 'user_id', 'device_type', 'device_id', 'device_info', 'ip_address', 'user_agent', 'last_active_at', 'created_at','token')->get();
+        $customer['devices'] = $devices->map(function ($row) {
+            $item = (array) $row;
+            if (!empty($item['device_info']) && is_string($item['device_info'])) {
+                $item['device_info'] = json_decode($item['device_info'], true) ?? $item['device_info'];
+            }
+            return $item;
+        })->toArray();
+        return $customer;
+    }
+
     public function details(Request $request)
     {
-        if ($request->boolean('is_admin')) {
-            $user = UserMaster::where("id", \Auth::user()->id)->first();
-            $user->is_admin_menu = true;
-            if ($user) {
-                if ($user->user_status == 1) {
-                    return $this->failure('User not active', null, 500);
-                }
-                return $this->success('Vendor History Last Uploaded' . $user->id, $user, 200);
-            }
-        } else {
-            $user = CustomerMaster::where("id", \Auth::user()->id)->first();
-            $user->is_admin_menu = false;
-            return $this->success('Customer Details', $user, 200);
+        $user = \Auth::user();
+        
+        if (!$user) {
+            return $this->failure('User not found', null, 401);
         }
-        return $this->failure('User not found', null, 500);
+
+        $isAdmin = ($user instanceof UserMaster);
+        
+        if ($isAdmin && $user->user_status == 1) {
+            return $this->failure('User not active', null, 500);
+        }
+
+        $user->is_admin_menu = $isAdmin;
+        $message = $isAdmin ? 'Vendor History Last Uploaded' . $user->id : 'Customer Details';
+        return $this->success($message, $user, 200);
+    }
+
+    public function customerDetails($id)
+    {
+        $customer = $this->getCustomerDetailsData($id);
+        if (!$customer) {
+            return $this->failure('Customer not found', null, 404);
+        }
+        $customer['is_admin_menu'] = false;
+        return $this->success('Customer Details', $customer, 200);
     }
 
     public function getAllVendors()

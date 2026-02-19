@@ -225,5 +225,4 @@ class Controller extends BaseController
         return \DB::connection($connection)->select("SELECT DISTINCT quality FROM stock");
     }
 
-
 }

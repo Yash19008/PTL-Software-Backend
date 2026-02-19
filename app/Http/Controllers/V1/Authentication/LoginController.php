@@ -38,7 +38,6 @@ class LoginController extends Controller
         } catch (JWTException $e) {
             return $this->failure('Something is Wrong !!', null, 500);
         }
-
         if($user->userlevel == '1' && $user->username == 'admin')  {
             $user->is_admin_menu = true;
         } else {
@@ -67,16 +66,35 @@ class LoginController extends Controller
         $mobile = $request->get('mobile');
         $password = $request->get('password');
         $mobile_info = $request->get('mobile_info');
-        $device_info = json_encode($request->get('device_info'));
-        // echo "device_info: " . $device_info . "\n";
+        $device_info = $request->get('device_info');
+        $unique_device_id = $request->get('unique_device_id');
+        $device_type = $request->get('device_type', 'android');
         
         try {
             $where=array(
                 "mobile"=>$mobile,
-                "password"=>md5($password),
-                "active"=>'1'
+                "password"=>md5($password)
             );
             $data_record = CustomerMaster::where($where)->firstOrFail();
+
+            $deviceId = $unique_device_id ? hash('sha256', $unique_device_id) : hash('sha256', $request->userAgent() . $request->ip() . time());
+            $existingDevice = \App\Models\UserDevice::where('user_id', $data_record->id)->where('device_id', $deviceId)->exists();
+
+            if (!$existingDevice) {
+                $activeDevicesCount = $data_record->devices()->where('active', 1)->count();
+                $maxDevices = $data_record->getMaxAllowedDevices();
+                if (!$data_record->hasUnlimitedDevices() && $activeDevicesCount >= $maxDevices) {
+                    $output['message'] = "Device limit exceeded! Maximum {$maxDevices} device(s) allowed. Please logout from another device first.";
+                    $output['status'] = 'error';
+                    $output['code'] = 'DEVICE_LIMIT_EXCEEDED';
+                    $output['data'] = [
+                        'max_devices' => $maxDevices,
+                        'active_devices' => $activeDevicesCount
+                    ];
+                    return response()->json($output, 403);
+                }
+            }
+
             $data=array(
                 "module"=>'Login',
                 "user"=>$mobile,
@@ -86,17 +104,50 @@ class LoginController extends Controller
             );
             AuditTrail::create($data);
 
+            $token = bin2hex(random_bytes(32));
+
+            $deviceManager = app(\App\Services\DeviceManager::class);
+            $deviceResult = $deviceManager->registerDevice(
+                $data_record,
+                $device_type,
+                $token,
+                [
+                    'unique_device_id' => $unique_device_id,
+                    'device_info' => $device_info,
+                    'oneSignalUserId' => $request->get('oneSignalUserId'),
+                    'oneSignalTokenId' => $request->get('oneSignalTokenId'),
+                ]
+            );
+
+            if (!$deviceResult['success']) {
+                $output['message'] = $deviceResult['message'] ?? 'Failed to register device';
+                $output['status'] = 'error';
+                $output['code'] = $deviceResult['code'] ?? null;
+                return response()->json($output, 403);
+            }
+
             $onesignal = [
+                'active' => '1',
                 'oneSignalUserId' => $request->get('oneSignalUserId'),
                 'oneSignalTokenId' => $request->get('oneSignalTokenId'),
-                'device_info' => $device_info
             ];
             if (Schema::hasColumn('customer_master', 'device_info')) {
                 $onesignal['device_info'] = $request->get('device_info');
             }
             $data_record->update($onesignal);
-            $output['data'] = $data_record;
-            $output['message'] = 'Login Successfully Done !!';
+            $data_record->refresh();
+
+            $userData = $data_record->toArray();
+            $userData['token'] = $token;
+            $userData['device_id'] = $deviceResult['device']->device_id;
+            $userData['device_limit_info'] = [
+                'max_devices' => $data_record->getMaxAllowedDevices(),
+                'unlimited' => $data_record->hasUnlimitedDevices(),
+                'active_devices' => $data_record->devices()->where('active', 1)->count()
+            ];
+
+            $output['data'] = $userData;
+            $output['message'] = $deviceResult['message'];
             $output['status'] = 'success';
             return response()->json($output, 200);
         } catch (\Exception $e) {
@@ -112,36 +163,38 @@ class LoginController extends Controller
 
     public function logout_new(LoginRequest $request)
     {
-        $mobile = $request->get('mobile');
-        if (empty($mobile)) {
-            $output['message'] = 'Mobile is required';
+        $token = $request->get('token');
+
+        if (empty($token)) {
+            $output['message'] = 'Token is required';
             $output['status'] = 'error';
             return response()->json($output, 200);
         }
+
         try {
-            $data_record = CustomerMaster::where('mobile', $mobile)->first();
-            if (!$data_record) {
+            $device = \App\Models\UserDevice::where('token', $token)->first();
+
+            if (!$device) {
                 $output['message'] = 'Logged out successfully';
                 $output['status'] = 'success';
                 return response()->json($output, 200);
             }
-            $data = [
-                'module' => 'Login',
-                'user' => $mobile,
-                'action' => 'Logout',
-                'ipaddress' => $request->get('REMOTE_ADDR'),
-                'newvalue' => $request->get('mobile_info', ''),
-            ];
-            AuditTrail::create($data);
-            $clear = [
-                'oneSignalUserId' => null,
-                'oneSignalTokenId' => null,
-            ];
-            if (Schema::hasColumn('customer_master', 'device_info')) {
-                $clear['device_info'] = null;
+
+            $user = CustomerMaster::find($device->user_id);
+            if ($user) {
+                $user->update(['active' => '0']);
+                $data = [
+                    'module' => 'Login',
+                    'user' => $user->mobile,
+                    'action' => 'Logout',
+                    'ipaddress' => $request->ip(),
+                    'newvalue' => $request->get('mobile_info', ''),
+                ];
+                AuditTrail::create($data);
             }
-            $data_record->update($clear);
-            $output['data'] = $data_record;
+
+            $device->update(['active' => 0]);
+
             $output['message'] = 'Logged out successfully';
             $output['status'] = 'success';
             return response()->json($output, 200);

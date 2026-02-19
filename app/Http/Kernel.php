@@ -69,6 +69,7 @@ class Kernel extends HttpKernel
         'jwt.refresh' => \Tymon\JWTAuth\Http\Middleware\RefreshToken::class,
         'jwt.verify' => \App\Http\Middleware\JwtMiddleware::class,
         'cors' => \App\Http\Middleware\ModifyHeadersMiddleware::class,
+        'device.validate' => \App\Http\Middleware\ValidateDeviceToken::class,
     ];
 
     protected $middlewarePriority = [

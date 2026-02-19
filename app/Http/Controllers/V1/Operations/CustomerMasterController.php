@@ -5,6 +5,7 @@ namespace App\Http\Controllers\V1\Operations;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
+use DB;
 
 use App\Http\Requests\Operations\CustomerMasterRequest;
 use App\Models\V1\Operations\CustomerMaster;
@@ -190,6 +191,23 @@ class CustomerMasterController extends Controller
         $user->selectedProducts = CustomerProductLink::where('customer_id', $user->id)->pluck('product_group_id')->toArray();
         $user->selectedQualities = CustomerQualityLink::where('customer_id', $user->id)->pluck('quality_id')->toArray();
         return $this->success('CustomerMaster Responses !!', $user, 200);
+    }
+
+    public function details($id)
+    {
+        $customer = DB::table('customer_master')->where('id', $id)->first();
+        if (!$customer) {
+            return $this->failure('Customer not found', null, 404);
+        }
+        $customer = (array) $customer;
+        unset($customer['password']);
+        $customer['stock_columns'] = DB::table('stock_columns')->where('customer_id', $id)->where('is_reel', 'No')->first();
+        $customer['stock_columns_reel'] = DB::table('stock_columns')->where('customer_id', $id)->where('is_reel', 'Yes')->first();
+        $customer['selectedProducts'] = DB::table('customer_product_link')->where('customer_id', $id)->pluck('product_group_id')->toArray();
+        $customer['selectedQualities'] = DB::table('customer_quality_link')->where('customer_id', $id)->pluck('quality_id')->toArray();
+        $devices = DB::table('user_devices')->where('user_id', $id)->get(['id', 'user_id', 'device_type', 'device_id', 'device_info', 'ip_address', 'user_agent', 'last_active_at', 'created_at']);
+        $customer['devices'] = $devices;
+        return $this->success('Customer Details with Devices', $customer, 200);
     }
 
     public function query()

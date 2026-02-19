@@ -13,7 +13,7 @@ class CustomerMaster extends Authenticatable implements JWTSubject
     public $timestamps = false;
 
     protected $fillable = [
-        'id', 'Company_code', 'company_name', 'client_name', 'email', 'mobile', 'password', 'otp', 'Access_stk', 'active', 'stock_active', 'oneSignalUserId', 'oneSignalTokenId', 'updated_on', 'mobile_show_stocks_from',"device_info"
+        'id', 'Company_code', 'company_name', 'client_name', 'email', 'mobile', 'password', 'otp', 'Access_stk', 'active', 'stock_active', 'oneSignalUserId', 'oneSignalTokenId', 'updated_on', 'mobile_show_stocks_from', 'device_info', 'max_allowed_devices', 'maximum_allowed_device'
     ];
     
     protected $casts = [
@@ -31,6 +31,25 @@ class CustomerMaster extends Authenticatable implements JWTSubject
 
     public function getJWTCustomClaims()
     {
-        return [];
+        return [
+            'guard' => 'customer'
+        ];
+    }
+
+    public function devices()
+    {
+        return $this->hasMany(\App\Models\UserDevice::class, 'user_id')->where('active', 1);
+    }
+
+    public function getMaxAllowedDevices(): int
+    {
+        $value = $this->max_allowed_devices ?? $this->maximum_allowed_device ?? 0;
+        return (int) $value;
+    }
+
+    public function hasUnlimitedDevices(): bool
+    {
+        $max = $this->max_allowed_devices ?? $this->maximum_allowed_device;
+        return $max === null;
     }
 }
