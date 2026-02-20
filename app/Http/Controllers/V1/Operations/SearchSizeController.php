@@ -96,8 +96,8 @@ class SearchSizeController extends Controller
         $reel_output = [];
 
         if ($company == '' || $company == 'PTL') {
-            $output = $this->searchSizeQuery('mysql', 'PTL', $userlength, $userwidth, $lower_range, $upper_range, $where);
-            $reel_output = $this->searchSizeQueryReel('mysql', 'PTL', $userlength, $userwidth, $lower_range_reel, $upper_range_reel, $where, $gsm);
+            $output = $this->searchSizeQuery('mysql', 'PTL', $userlength, $userwidth, $lower_range, $upper_range, $where) ?? [];
+            $reel_output = $this->searchSizeQueryReel('mysql', 'PTL', $userlength, $userwidth, $lower_range_reel, $upper_range_reel, $where, $gsm) ?? [];
         }
 
         $admin_show_stocks_from = OptionMaster::where('option', 'admin_show_stocks_from')->first();
@@ -107,22 +107,22 @@ class SearchSizeController extends Controller
                 switch ($from) {
                     case 'Pap Tech':
                         $result = $this->get_data_from_connection('ptsc_connection', 'searchSizeQuery', ['from' => $from, 'userlength' => $userlength, 'userwidth' => $userwidth, 'lower_range' => $lower_range, 'upper_range' => $upper_range, 'where' => $where]);
-                        $output = array_merge($output, $result);
+                        $output = array_merge($output ?? [], $result ?? []);
                         $result = $this->get_data_from_connection('ptsc_connection', 'searchSizeQueryReel', ['from' => $from, 'userlength' => $userlength, 'userwidth' => $userwidth, 'lower_range_reel' => $lower_range_reel, 'upper_range_reel' => $upper_range_reel, 'where' => $where, 'gsm' => $gsm]);
-                        $reel_output = array_merge($reel_output, $result);
+                        $reel_output = array_merge($reel_output ?? [], $result ?? []);
                         break;
                     case 'Paper Hub':
                     case 'Pap Tech - Ahmedabad':
                         $result = $this->get_data_from_connection('paper_hub_connection', 'searchSizeQuery', ['from' => 'Pap Tech - Ahmedabad', 'userlength' => $userlength, 'userwidth' => $userwidth, 'lower_range' => $lower_range, 'upper_range' => $upper_range, 'where' => $where]);
-                        $output = array_merge($output, $result);
+                        $output = array_merge($output ?? [], $result ?? []);
                         $result = $this->get_data_from_connection('paper_hub_connection', 'searchSizeQueryReel', ['from' => 'Pap Tech - Ahmedabad', 'userlength' => $userlength, 'userwidth' => $userwidth, 'lower_range_reel' => $lower_range_reel, 'upper_range_reel' => $upper_range_reel, 'where' => $where, 'gsm' => $gsm]);
-                        $reel_output = array_merge($reel_output, $result);
+                        $reel_output = array_merge($reel_output ?? [], $result ?? []);
                         break;
                     case 'Parekh':
                         $result = $this->get_data_from_connection('parekh_connection', 'searchSizeQuery', ['from' => $from, 'userlength' => $userlength, 'userwidth' => $userwidth, 'lower_range' => $lower_range, 'upper_range' => $upper_range, 'where' => $where]);
-                        $output = array_merge($output, $result);
+                        $output = array_merge($output ?? [], $result ?? []);
                         $result = $this->get_data_from_connection('parekh_connection', 'searchSizeQueryReel', ['from' => $from, 'userlength' => $userlength, 'userwidth' => $userwidth, 'lower_range_reel' => $lower_range_reel, 'upper_range_reel' => $upper_range_reel, 'where' => $where, 'gsm' => $gsm]);
-                        $reel_output = array_merge($reel_output, $result);
+                        $reel_output = array_merge($reel_output ?? [], $result ?? []);
                         break;
                 }
             }
@@ -156,7 +156,7 @@ class SearchSizeController extends Controller
                 
                 group by quality, gsm, Size_INCH, pkg_mode, eta_group
                 ORDER BY utiliz DESC, size_inch_width DESC");
-        $output = array_merge($output, $vendor_result);
+        $output = array_merge($output ?? [], $vendor_result ?? []);
         $output = json_decode(json_encode($output), true);
         usort($output, function ($a, $b) {
             return $a['utiliz'] > $b['utiliz'] ? -1 : 1;
