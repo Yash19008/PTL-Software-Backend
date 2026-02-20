@@ -76,25 +76,21 @@ class SearchSizeController extends Controller
         $new_output = [];
         foreach ($data['list'] as $item) {
             if ($item['total_sheet'] > 0) {
+                $item['eta'] = ($item['eta'] && strtotime($item['eta']) !== false && $item['eta'] > date('Y-m-d'))
+                    ? date('d-m-Y', strtotime($item['eta']))
+                    : 'Available';
                 $new_output[] = $item;
-            }
-            if ($item['eta'] == '' || $item['eta'] == null || ($item['eta'] != '' && $item['eta'] != null && $item['eta'] <= date('Y-m-d'))) {
-                $item['eta'] = 'Available';
-            } else {
-                $item['eta'] = date('d-m-Y', strtotime($item['eta']));
             }
         }
         $data['list'] = $new_output;
-        
+
         $new_output = [];
         foreach ($data['reel_list'] as $item) {
             if ($item['total_sheet'] > 0) {
+                $item['eta'] = ($item['eta'] && strtotime($item['eta']) !== false && $item['eta'] > date('Y-m-d'))
+                    ? date('d-m-Y', strtotime($item['eta']))
+                    : 'Available';
                 $new_output[] = $item;
-            }
-            if ($item['eta'] == '' || $item['eta'] == null || ($item['eta'] != '' && $item['eta'] != null && $item['eta'] <= date('Y-m-d'))) {
-                $item['eta'] = 'Available';
-            } else {
-                $item['eta'] = date('d-m-Y', strtotime($item['eta']));
             }
         }
         $data['reel_list'] = $new_output;
