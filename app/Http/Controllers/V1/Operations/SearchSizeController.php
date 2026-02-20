@@ -38,6 +38,7 @@ class SearchSizeController extends Controller
         $gsm_range = $option_result->value;
         $upper_range_reel = $gsm + $gsm_range;
         $lower_range_reel = $gsm - $gsm_range;
+
         $where = " WHERE 1=1 AND weight > 0 ";
         if ($group_name) {
             $where = $where . " AND product_group = '" . $group_name . "'";
@@ -47,6 +48,7 @@ class SearchSizeController extends Controller
         }
 
         $data = $this->searchSizeCommon($company, $userlength, $userwidth, $lower_range, $upper_range, $lower_range_reel, $upper_range_reel, $where, $gsm);
+
 
         $option_result = OptionMaster::where('option', 'plus_minus_size_search')->first();
         if ($option_result) {
@@ -96,8 +98,8 @@ class SearchSizeController extends Controller
         $reel_output = [];
 
         if ($company == '' || $company == 'PTL') {
-            $output = $this->searchSizeQuery('mysql', 'PTL', $userlength, $userwidth, $lower_range, $upper_range, $where) ?? [];
-            $reel_output = $this->searchSizeQueryReel('mysql', 'PTL', $userlength, $userwidth, $lower_range_reel, $upper_range_reel, $where, $gsm) ?? [];
+            $output = $this->searchSizeQuery('mysql', 'PTL', $userlength, $userwidth, $lower_range, $upper_range, $where);
+            $reel_output = $this->searchSizeQueryReel('mysql', 'PTL', $userlength, $userwidth, $lower_range_reel, $upper_range_reel, $where, $gsm);
         }
 
         $admin_show_stocks_from = OptionMaster::where('option', 'admin_show_stocks_from')->first();
@@ -107,22 +109,22 @@ class SearchSizeController extends Controller
                 switch ($from) {
                     case 'Pap Tech':
                         $result = $this->get_data_from_connection('ptsc_connection', 'searchSizeQuery', ['from' => $from, 'userlength' => $userlength, 'userwidth' => $userwidth, 'lower_range' => $lower_range, 'upper_range' => $upper_range, 'where' => $where]);
-                        $output = array_merge($output ?? [], $result ?? []);
+                        $output = array_merge($output, $result);
                         $result = $this->get_data_from_connection('ptsc_connection', 'searchSizeQueryReel', ['from' => $from, 'userlength' => $userlength, 'userwidth' => $userwidth, 'lower_range_reel' => $lower_range_reel, 'upper_range_reel' => $upper_range_reel, 'where' => $where, 'gsm' => $gsm]);
-                        $reel_output = array_merge($reel_output ?? [], $result ?? []);
+                        $reel_output = array_merge($reel_output, $result);
                         break;
                     case 'Paper Hub':
                     case 'Pap Tech - Ahmedabad':
                         $result = $this->get_data_from_connection('paper_hub_connection', 'searchSizeQuery', ['from' => 'Pap Tech - Ahmedabad', 'userlength' => $userlength, 'userwidth' => $userwidth, 'lower_range' => $lower_range, 'upper_range' => $upper_range, 'where' => $where]);
-                        $output = array_merge($output ?? [], $result ?? []);
+                        $output = array_merge($output, $result);
                         $result = $this->get_data_from_connection('paper_hub_connection', 'searchSizeQueryReel', ['from' => 'Pap Tech - Ahmedabad', 'userlength' => $userlength, 'userwidth' => $userwidth, 'lower_range_reel' => $lower_range_reel, 'upper_range_reel' => $upper_range_reel, 'where' => $where, 'gsm' => $gsm]);
-                        $reel_output = array_merge($reel_output ?? [], $result ?? []);
+                        $reel_output = array_merge($reel_output, $result);
                         break;
                     case 'Parekh':
                         $result = $this->get_data_from_connection('parekh_connection', 'searchSizeQuery', ['from' => $from, 'userlength' => $userlength, 'userwidth' => $userwidth, 'lower_range' => $lower_range, 'upper_range' => $upper_range, 'where' => $where]);
-                        $output = array_merge($output ?? [], $result ?? []);
+                        $output = array_merge($output, $result);
                         $result = $this->get_data_from_connection('parekh_connection', 'searchSizeQueryReel', ['from' => $from, 'userlength' => $userlength, 'userwidth' => $userwidth, 'lower_range_reel' => $lower_range_reel, 'upper_range_reel' => $upper_range_reel, 'where' => $where, 'gsm' => $gsm]);
-                        $reel_output = array_merge($reel_output ?? [], $result ?? []);
+                        $reel_output = array_merge($reel_output, $result);
                         break;
                 }
             }
@@ -156,7 +158,7 @@ class SearchSizeController extends Controller
                 
                 group by quality, gsm, Size_INCH, pkg_mode, eta_group
                 ORDER BY utiliz DESC, size_inch_width DESC");
-        $output = array_merge($output ?? [], $vendor_result ?? []);
+        $output = array_merge($output, $vendor_result);
         $output = json_decode(json_encode($output), true);
         usort($output, function ($a, $b) {
             return $a['utiliz'] > $b['utiliz'] ? -1 : 1;
@@ -223,6 +225,7 @@ class SearchSizeController extends Controller
         if ($result->gwd == 'Yes')   $output1['headers']['gwd'] = 'Godown';
         if ($result->eta == 'Yes')   $output1['headers']['eta'] = 'ETA';
 
+
         $product_group = $request->get('product_group');
         $searchReel = ProductGroup::where('group_name', $product_group)->where('is_reel', 'Yes')->first();
         if ($searchReel) {
@@ -276,12 +279,14 @@ class SearchSizeController extends Controller
             }
             return $b['utilization'] <=> $a['utilization'];
         });
+
         usort($data['reel_list'], function ($a, $b) {
             if ($a['utilization'] == $b['utilization']) {
                 return $a['size_inch_width'] <=> $b['size_inch_width'];
             }
             return $b['utilization'] <=> $a['utilization'];
         });
+
 
         $history = SearchHistoryMaster::where("customer_id", $customer_id)->orderBy('timestamp', 'DESC')->first();
         $historyID = $history->id;
@@ -323,25 +328,20 @@ class SearchSizeController extends Controller
                 $new_output[] = $item;
             }
         }
+        
         $data['list'] = $new_output;
-
+        
         $new_output = [];
         foreach ($data['reel_list'] as $item) {
             $item['size_CMS'] = $item['size_cms_length'] . ' X ' . number_format($widthBK, 2, '.', '');
             $item['search_history_id'] = $historyID;
             $item['total_sheet'] = $item['total_sheet'] / $item['total_ups'];
-            $eta = $item['eta'] ?? '';
-            if ($eta == '' || $eta === null || strtotime($eta) <= strtotime(date('Y-m-d'))) {
-                $item['eta'] = 'Available';
-            } else {
-                $item['eta'] = date('d-m-Y', strtotime($eta));
-            }
             if ($item['total_sheet'] > 0 && in_array($item['quality'], $selectedQualities)) {
                 $new_output[] = $item;
             }
         }
         $data['reel_list'] = $new_output;
-
+        
         $reel_search_threshold = OptionMaster::where('option', 'reel_search_threshold')->first();
         if ($reel_search_threshold) {
             $data['reel_search_threshold'] = $reel_search_threshold->value;
@@ -378,7 +378,11 @@ class SearchSizeController extends Controller
 
         $size_in_inch = $userlength . ' X ' . $userwidth;
 
+        //  print_r($this->uri->segment(5));exit;
+
         $result_cust = CustomerMaster::where('id', $customer_id)->first();
+
+        // insert query for maintaining history for how search made by particular person
 
         $data = array(
             "customer_id" => $result_cust->id,
@@ -395,6 +399,7 @@ class SearchSizeController extends Controller
             "timestamp" => date('Y-m-d H:i:s')
         );
 
+        // insert into search history
         SearchHistoryMaster::create($data);
 
         $option_result = OptionMaster::where('option', 'gsm_range')->first();
@@ -513,6 +518,7 @@ class SearchSizeController extends Controller
         usort($output, function ($a, $b) {
             return $a['utilization'] > $b['utilization'] ? -1 : 1;
         });
+
         $output = array_slice($output, 0, $sheets_result_count);
         $data_record['list'] = $output;
         $reel_output = array_slice($reel_output, 0, $reels_result_count);
