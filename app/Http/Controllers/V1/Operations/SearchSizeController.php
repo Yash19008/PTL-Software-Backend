@@ -342,6 +342,11 @@ class SearchSizeController extends Controller
             $item['size_CMS'] = $item['size_cms_length'] . ' X ' . number_format($widthBK, 2, '.', '');
             $item['search_history_id'] = $historyID;
             $item['total_sheet'] = $item['total_sheet'] / $item['total_ups'];
+            if ($item['eta'] == '' || $item['eta'] == null || ($item['eta'] != '' && $item['eta'] != null && $item['eta'] <= date('Y-m-d'))) {
+                $item['eta'] = 'Available';
+            } else {
+                $item['eta'] = date('d-m-Y', strtotime($item['eta']));
+            }
             if ($item['total_sheet'] > 0 && in_array($item['quality'], $selectedQualities)) {
                 $new_output[] = $item;
             }
