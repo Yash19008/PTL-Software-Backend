@@ -58,6 +58,7 @@ Route::namespace('V1')->middleware(['cors'])->group(function() {
             Route::get('user-details', 'UserMasterController@details');
             Route::get('customer-details/{id}', 'UserMasterController@customerDetails');
             Route::get('all-vendors', 'UserMasterController@getAllVendors');
+            Route::get('user-device-counts', 'UserMasterController@deviceLoginCounts');
 
             Route::get('customer-master', 'CustomerMasterController@index');
             Route::get('customer-master/{id}', 'CustomerMasterController@show');
@@ -97,6 +98,7 @@ Route::namespace('V1')->middleware(['cors'])->group(function() {
             Route::post('push-notification-message', 'PushNotificationController@sendmessage');
 
             Route::post('search-size', 'SearchSizeController@searchSize');
+            Route::post('search-size-by-customer', 'SearchSizeController@search_dynamic_column_wise');
 
             Route::get('all-product-group', 'ProductGroupController@all_list');
             Route::get('product-group', 'ProductGroupController@index');

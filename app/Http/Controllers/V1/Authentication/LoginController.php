@@ -29,6 +29,10 @@ class LoginController extends Controller
             'name' => $user->employee_name
         ];
         try {
+            $adminTtl = (int) env('ADMIN_JWT_TTL', 43200);
+            if ($adminTtl > 0) {
+                $JWTAuth->factory()->setTTL($adminTtl);
+            }
             $token = $JWTAuth->attempt($credentials, $user_payload);
             \Log::info($token);
             if (!$token) {

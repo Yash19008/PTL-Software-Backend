@@ -107,6 +107,10 @@ class QrAuthController extends Controller
         ];
 
         try {
+            $webTtl = (int) env('WEB_JWT_TTL', 43200);
+            if ($webTtl > 0) {
+                $JWTAuth->factory()->setTTL($webTtl);
+            }
             $token = $JWTAuth->customClaims($customClaims)->fromUser($user);
         } catch (\Exception $e) {
             \Log::error('QR Login Token Generation Failed', [
