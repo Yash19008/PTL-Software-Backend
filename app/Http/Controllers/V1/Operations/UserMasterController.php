@@ -152,12 +152,13 @@ class UserMasterController extends Controller {
     {
         $counts = DB::table('user_devices')
             ->where('active', 1)
-            ->selectRaw("COUNT(*) as total, SUM(CASE WHEN device_type = 'android' THEN 1 ELSE 0 END) as android_count, SUM(CASE WHEN device_type = 'ios' THEN 1 ELSE 0 END) as ios_count")
+            ->selectRaw("COUNT(*) as total, SUM(CASE WHEN device_type = 'android' THEN 1 ELSE 0 END) as android_count, SUM(CASE WHEN device_type = 'ios' THEN 1 ELSE 0 END) as ios_count, SUM(CASE WHEN device_type = 'web' THEN 1 ELSE 0 END) as web_count")
             ->first();
         $data = [
             'total_devices' => (int) $counts->total,
             'android_login' => (int) $counts->android_count,
             'ios_login' => (int) $counts->ios_count,
+            'web_login' => (int) $counts->web_count,
         ];
         return $this->success('Device login counts', $data, 200);
     }
