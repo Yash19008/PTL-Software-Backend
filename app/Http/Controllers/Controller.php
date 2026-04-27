@@ -63,13 +63,18 @@ class Controller extends BaseController
 
             \Log::info('External API Call to : '.$external_url);
             $response = Http::post($external_url, ['type' => $type, 'data' => $data]);
-    
+
             \Log::info('Status Code is : '. $response->status());
-            return $response->json();
+            if ($response->successful()) {
+                $json = $response->json();
+                return is_array($json) ? $json : [];
+            }
+            \Log::warning('External API Call failed for ' . $connection . ' with status: ' . $response->status());
+            return [];
         } else {
             \Log::info('No config url for connection : '. $connection);
         }
-        return null;
+        return [];
     }
 
     public function get_data_from_database(Request $request) {
