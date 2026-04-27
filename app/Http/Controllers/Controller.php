@@ -66,15 +66,14 @@ class Controller extends BaseController
 
             \Log::info('Status Code is : '. $response->status());
             if ($response->successful()) {
-                $json = $response->json();
-                return is_array($json) ? $json : [];
+                return $response->json();
             }
             \Log::warning('External API Call failed for ' . $connection . ' with status: ' . $response->status());
-            return [];
+            return null;
         } else {
             \Log::info('No config url for connection : '. $connection);
         }
-        return [];
+        return null;
     }
 
     public function get_data_from_database(Request $request) {

@@ -61,10 +61,21 @@ class DashboardController extends Controller
     {
         $data = [];
         $data['PTL']['total_weight'] = StockMaster::sum('weight');
-        $data['PTSC']['total_weight'] = $this->get_data_from_connection('ptsc_connection', 'get_sum', null);
-        $data['PAPER_HUB']['total_weight'] = $this->get_data_from_connection('paper_hub_connection', 'get_sum', null);
-        $data['PAREKH']['total_weight'] = $this->get_data_from_connection('parekh_connection', 'get_sum', null);
+        $data['PTSC']['total_weight'] = $this->normalize_weight($this->get_data_from_connection('ptsc_connection', 'get_sum', null));
+        $data['PAPER_HUB']['total_weight'] = $this->normalize_weight($this->get_data_from_connection('paper_hub_connection', 'get_sum', null));
+        $data['PAREKH']['total_weight'] = $this->normalize_weight($this->get_data_from_connection('parekh_connection', 'get_sum', null));
 
         return response()->json($data, 200);
+    }
+
+    private function normalize_weight($value)
+    {
+        if (is_numeric($value)) {
+            return $value;
+        }
+        if (is_string($value) && is_numeric(trim($value))) {
+            return trim($value);
+        }
+        return 0;
     }
 }

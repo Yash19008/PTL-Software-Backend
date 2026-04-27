@@ -115,22 +115,22 @@ class SearchSizeController extends Controller
                 switch ($from) {
                     case 'Pap Tech':
                         $result = $this->get_data_from_connection('ptsc_connection', 'searchSizeQuery', ['from' => $from, 'userlength' => $userlength, 'userwidth' => $userwidth, 'lower_range' => $lower_range, 'upper_range' => $upper_range, 'where' => $where]);
-                        $output = array_merge($output, $result);
+                        $output = array_merge($output, is_array($result) ? $result : []);
                         $result = $this->get_data_from_connection('ptsc_connection', 'searchSizeQueryReel', ['from' => $from, 'userlength' => $userlength, 'userwidth' => $userwidth, 'lower_range_reel' => $lower_range_reel, 'upper_range_reel' => $upper_range_reel, 'where' => $where, 'gsm' => $gsm]);
-                        $reel_output = array_merge($reel_output, $result);
+                        $reel_output = array_merge($reel_output, is_array($result) ? $result : []);
                         break;
                     case 'Paper Hub':
                     case 'Pap Tech - Ahmedabad':
                         $result = $this->get_data_from_connection('paper_hub_connection', 'searchSizeQuery', ['from' => 'Pap Tech - Ahmedabad', 'userlength' => $userlength, 'userwidth' => $userwidth, 'lower_range' => $lower_range, 'upper_range' => $upper_range, 'where' => $where]);
-                        $output = array_merge($output, $result);
+                        $output = array_merge($output, is_array($result) ? $result : []);
                         $result = $this->get_data_from_connection('paper_hub_connection', 'searchSizeQueryReel', ['from' => 'Pap Tech - Ahmedabad', 'userlength' => $userlength, 'userwidth' => $userwidth, 'lower_range_reel' => $lower_range_reel, 'upper_range_reel' => $upper_range_reel, 'where' => $where, 'gsm' => $gsm]);
-                        $reel_output = array_merge($reel_output, $result);
+                        $reel_output = array_merge($reel_output, is_array($result) ? $result : []);
                         break;
                     case 'Parekh':
                         $result = $this->get_data_from_connection('parekh_connection', 'searchSizeQuery', ['from' => $from, 'userlength' => $userlength, 'userwidth' => $userwidth, 'lower_range' => $lower_range, 'upper_range' => $upper_range, 'where' => $where]);
-                        $output = array_merge($output, $result);
+                        $output = array_merge($output, is_array($result) ? $result : []);
                         $result = $this->get_data_from_connection('parekh_connection', 'searchSizeQueryReel', ['from' => $from, 'userlength' => $userlength, 'userwidth' => $userwidth, 'lower_range_reel' => $lower_range_reel, 'upper_range_reel' => $upper_range_reel, 'where' => $where, 'gsm' => $gsm]);
-                        $reel_output = array_merge($reel_output, $result);
+                        $reel_output = array_merge($reel_output, is_array($result) ? $result : []);
                         break;
                 }
             }
@@ -467,27 +467,27 @@ class SearchSizeController extends Controller
                     break;
                 case 'Pap Tech':
                     $result = $this->get_data_from_connection('ptsc_connection', 'search_new_common_query', ['from' => $from, 'userlength' => $userlength, 'userwidth' => $userwidth, 'lower_range' => $lower_range, 'upper_range' => $upper_range, 'where' => $where, 'sheets_result_count' => $sheets_result_count]);
-                    $output = array_merge($output, $result);
+                    $output = array_merge($output, is_array($result) ? $result : []);
                     if ($searchReel) {
                         $result = $this->get_data_from_connection('ptsc_connection', 'reel_search_new_common_query', ['from' => $from, 'userlength' => $userlength, 'userwidth' => $userwidth, 'reel_lower_range' => $reel_lower_range, 'reel_upper_range' => $reel_upper_range, 'where' => $where, 'reels_result_count' => $reels_result_count, 'gsm' => $gsm]);
-                        $reel_output = array_merge($reel_output, $result);
+                        $reel_output = array_merge($reel_output, is_array($result) ? $result : []);
                     }
                     break;
                 case 'Paper Hub':
                 case 'Pap Tech - Ahmedabad':
                     $result = $this->get_data_from_connection('paper_hub_connection', 'search_new_common_query', ['from' => 'Pap Tech - Ahmedabad', 'userlength' => $userlength, 'userwidth' => $userwidth, 'lower_range' => $lower_range, 'upper_range' => $upper_range, 'where' => $where, 'sheets_result_count' => $sheets_result_count]);
-                    $output = array_merge($output, $result);
+                    $output = array_merge($output, is_array($result) ? $result : []);
                     if ($searchReel) {
                         $result = $this->get_data_from_connection('paper_hub_connection', 'reel_search_new_common_query', ['from' => 'Pap Tech - Ahmedabad', 'userlength' => $userlength, 'userwidth' => $userwidth, 'reel_lower_range' => $reel_lower_range, 'reel_upper_range' => $reel_upper_range, 'where' => $where, 'reels_result_count' => $reels_result_count, 'gsm' => $gsm]);
-                        $reel_output = array_merge($reel_output, $result);
+                        $reel_output = array_merge($reel_output, is_array($result) ? $result : []);
                     }
                     break;
                 case 'Parekh':
                     $result = $this->get_data_from_connection('parekh_connection', 'search_new_common_query', ['from' => $from, 'userlength' => $userlength, 'userwidth' => $userwidth, 'lower_range' => $lower_range, 'upper_range' => $upper_range, 'where' => $where, 'sheets_result_count' => $sheets_result_count]);
-                    $output = array_merge($output, $result);
+                    $output = array_merge($output, is_array($result) ? $result : []);
                     if ($searchReel) {
                         $result = $this->get_data_from_connection('parekh_connection', 'reel_search_new_common_query', ['from' => $from, 'userlength' => $userlength, 'userwidth' => $userwidth, 'reel_lower_range' => $reel_lower_range, 'reel_upper_range' => $reel_upper_range, 'where' => $where, 'reels_result_count' => $reels_result_count, 'gsm' => $gsm]);
-                        $reel_output = array_merge($reel_output, $result);
+                        $reel_output = array_merge($reel_output, is_array($result) ? $result : []);
                     }
                     break;
             }
