@@ -11,8 +11,8 @@
         "php": "^8.2",
         "guzzlehttp/guzzle": "^7.0",
         "intervention/image": "^2.7",
-        "laravel/framework": "^11.0",
-        "laravel/tinker": "^2.9",
+        "laravel/framework": "^12.0",
+        "laravel/tinker": "^2.10",
         "maatwebsite/excel": "^3.1",
         "simplesoftwareio/simple-qrcode": "~4",
         "tymon/jwt-auth": "^2.0"
@@ -20,8 +20,8 @@
     "require-dev": {
         "fzaninotto/faker": "^1.9.1",
         "mockery/mockery": "^1.6",
-        "nunomaduro/collision": "^8.0",
-        "phpunit/phpunit": "^10.0",
+        "nunomaduro/collision": "^8.6",
+        "phpunit/phpunit": "^11.0",
         "spatie/laravel-ignition": "^2.0"
     },
     "config": {
