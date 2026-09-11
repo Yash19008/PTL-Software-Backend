@@ -1,5 +1,0 @@
-[21-Jan-2026 12:58:11 UTC] PHP Warning:  require(/home/papertra/admin.paptechsales.com/vendor/autoload.php): Failed to open stream: No such file or directory in /home/papertra/admin.paptechsales.com/artisan on line 18
-[21-Jan-2026 12:58:11 UTC] PHP Fatal error:  Uncaught Error: Failed opening required '/home/papertra/admin.paptechsales.com/vendor/autoload.php' (include_path='.:/opt/alt/php80/usr/share/pear:/opt/alt/php80/usr/share/php:/usr/share/pear:/usr/share/php') in /home/papertra/admin.paptechsales.com/artisan:18
-Stack trace:
-#0 {main}
-  thrown in /home/papertra/admin.paptechsales.com/artisan on line 18
