@@ -107,7 +107,7 @@ class QrAuthController extends Controller
         ];
 
         try {
-            $webTtl = (int) env('WEB_JWT_TTL', 43200);
+            $webTtl = (int) config('jwt.web_ttl', 43200);
             if ($webTtl > 0) {
                 $JWTAuth->factory()->setTTL($webTtl);
             }

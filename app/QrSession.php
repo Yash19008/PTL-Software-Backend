@@ -13,5 +13,7 @@ class QrSession extends Model
         'expires_at'
     ];
 
-    protected $dates = ['expires_at'];
+    protected $casts = [
+        'expires_at' => 'datetime',
+    ];
 }

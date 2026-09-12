@@ -29,7 +29,7 @@ class LoginController extends Controller
             'name' => $user->employee_name
         ];
         try {
-            $adminTtl = (int) env('ADMIN_JWT_TTL', 43200);
+            $adminTtl = (int) config('jwt.admin_ttl', 43200);
             if ($adminTtl > 0) {
                 $JWTAuth->factory()->setTTL($adminTtl);
             }
